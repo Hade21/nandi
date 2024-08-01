@@ -1,3 +1,4 @@
+import StoreProvider from "@/components/StoreProvider";
 import ThemeProvider from "@/components/ThemeProvider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -24,7 +25,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="min-h-screen">{children}</div>
+          <div className="min-h-screen">
+            <StoreProvider>{children}</StoreProvider>
+          </div>
         </ThemeProvider>
       </body>
     </html>
