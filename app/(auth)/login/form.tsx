@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { loginSchema } from "@/validator/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -44,8 +44,16 @@ const LoginForm = () => {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Welcome to Nandi</CardTitle>
-        <CardDescription>Login to get access all features</CardDescription>
+        <div className="flex gap-2 -translate-x-5">
+          <ArrowLeft
+            onClick={() => router.push("/")}
+            className="cursor-pointer"
+          />
+          <div>
+            <CardTitle>Welcome to Nandi</CardTitle>
+            <CardDescription>Login to get access all features</CardDescription>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <Form {...form}>
