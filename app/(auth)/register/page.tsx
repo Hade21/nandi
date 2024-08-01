@@ -1,5 +1,10 @@
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { Metadata } from "next";
 import RegisterForm from "./form";
+
+export const metadata: Metadata = {
+  title: "Register",
+};
 
 const Register = () => {
   return (
