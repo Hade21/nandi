@@ -51,7 +51,7 @@ const RegisterForm = () => {
             onClick={() => router.push("/")}
             className="cursor-pointer"
           />
-          <div className="justify-self-center">
+          <div>
             <CardTitle>Welcome to Nandi</CardTitle>
             <CardDescription>Register to get started</CardDescription>
           </div>
