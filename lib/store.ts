@@ -1,8 +1,13 @@
+import { userApi } from "@/services/userApi";
 import { configureStore } from "@reduxjs/toolkit";
 
 export const makeStore = () => {
   return configureStore({
-    reducer: {},
+    reducer: {
+      [userApi.reducerPath]: userApi.reducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(userApi.middleware),
   });
 };
 
