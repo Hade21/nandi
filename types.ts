@@ -29,3 +29,17 @@ export type RegisterResponse = {
     email: string;
   };
 };
+
+export interface ErrorType {
+  data: {
+    errors: {
+      message: string;
+      error: string;
+      statusCode: number;
+    };
+  };
+}
+
+export type NotFound = {
+  errors: string;
+};
