@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { useRegisterMutation } from "@/services/userApi";
 import { ErrorType } from "@/types";
 import { registerSchema } from "@/validator/auth";
@@ -38,6 +39,7 @@ const RegisterForm = () => {
   const [errDesc, setErrDesc] = useState<string>("");
   const [register, { isLoading, data, error }] = useRegisterMutation();
   const router = useRouter();
+  const { toast } = useToast();
   const form = useForm<Input>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -52,8 +54,17 @@ const RegisterForm = () => {
   }
 
   useEffect(() => {
-    console.log("🚀 ~ useEffect ~ data:", data);
-  }, [data]);
+    if (data?.data.id) {
+      toast({
+        title: "Register Success",
+        description: "You have successfully registered",
+      });
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
+    }
+  }, [data, router, toast]);
   useEffect(() => {
     if (error) {
       const errorObj = error as ErrorType;
