@@ -38,8 +38,9 @@ export interface ErrorType {
       statusCode: number;
     };
   };
+  status?: number;
 }
 
 export type NotFound = {
-  errors: string;
+  data: { errors: string };
 };
