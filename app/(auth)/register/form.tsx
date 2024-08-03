@@ -16,12 +16,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useRegisterMutation } from "@/services/userApi";
 import { registerSchema } from "@/validator/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { TailSpin } from "react-loader-spinner";
 import { z } from "zod";
 
 type Input = z.infer<typeof registerSchema>;
@@ -30,6 +32,7 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState<Boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<Boolean>(false);
+  const [register, { isLoading, data, error }] = useRegisterMutation();
   const router = useRouter();
   const form = useForm<Input>({
     resolver: zodResolver(registerSchema),
@@ -41,7 +44,13 @@ const RegisterForm = () => {
 
   function onSubmit(data: Input) {
     console.log("🚀 ~ onSubmit ~ data:", data);
+    register(data);
   }
+
+  useEffect(() => {
+    console.log("🚀 ~ useEffect ~ data:", data);
+    console.log("🚀 ~ useEffect ~ error:", error);
+  }, [data, error]);
 
   return (
     <Card className="w-full max-w-sm">
@@ -177,7 +186,10 @@ const RegisterForm = () => {
               )}
             />
             <div className="flex gap-3 items-center pt-4">
-              <Button type="submit">Register</Button>
+              <Button type="submit" disabled={isLoading} className="flex gap-2">
+                {isLoading && <TailSpin height="20" width="20" color="#000" />}
+                Register
+              </Button>
               <span>or</span>
               <Button type="button" variant="link">
                 Sign in as Guest
