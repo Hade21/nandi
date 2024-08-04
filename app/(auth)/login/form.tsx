@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { SetTokenCookies } from "@/lib/tokenCookies";
 import { useLoginMutation } from "@/services/userApi";
 import { ErrorType, NotFound } from "@/types";
 import { loginSchema } from "@/validator/auth";
@@ -49,9 +50,26 @@ const LoginForm = () => {
   }
 
   useEffect(() => {
-    console.log("🚀 ~ useEffect ~ data:", data);
-    console.log("🚀 ~ useEffect ~ error:", error);
-  }, [data, error]);
+    if (data?.data.id) {
+      const id = data?.data.id;
+      const accessToken = data?.data.token.accessToken;
+      const refreshToken = data?.data.token.refreshToken;
+      SetTokenCookies({ accessToken, refreshToken, id })
+        .then((res) => {
+          if (!res.ok) {
+            setErrMsg("Error");
+            setErrDesc("Cookies not saved");
+          }
+          if (res.ok) {
+            router.push("/");
+          }
+        })
+        .catch((err) => {
+          setErrMsg("Error");
+          setErrDesc(err);
+        });
+    }
+  }, [data, router]);
   useEffect(() => {
     if (error) {
       const errorObj = error as ErrorType;
