@@ -1,5 +1,6 @@
 "use client";
 import AlertComponent from "@/components/AlertComponent";
+import { BackgroundGradient } from "@/components/ui/background-gradient";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -95,90 +96,98 @@ const LoginForm = () => {
 
   return (
     <div className="relative">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <div className="flex gap-2 -translate-x-5">
-            <ArrowLeft
-              onClick={() => router.push("/")}
-              className="cursor-pointer"
-            />
-            <div>
-              <CardTitle>Welcome to Nandi</CardTitle>
-              <CardDescription>
-                Login to get access all features
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your username..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+      <BackgroundGradient>
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <div className="flex gap-2 -translate-x-5">
+              <ArrowLeft
+                onClick={() => router.push("/")}
+                className="cursor-pointer"
               />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
+              <div>
+                <CardTitle>Welcome to Nandi</CardTitle>
+                <CardDescription>
+                  Login to get access all features
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-3"
+              >
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
                         <Input
-                          placeholder="Enter your password..."
-                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter your username..."
                           {...field}
                         />
-                        <div
-                          className="cursor-pointer absolute top-1/2 right-2 -translate-y-1/2 bg-white dark:bg-gray-950"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <EyeOff /> : <Eye />}
-                        </div>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex gap-3 items-center pt-4">
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="flex gap-2"
-                >
-                  {isLoading && (
-                    <TailSpin height="20" width="20" color="#000" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                  Login
-                </Button>
-                <span>or</span>
-                <Button type="button" variant="link">
-                  Sign in as Guest
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-      {error && (
-        <AlertComponent
-          variant="destructive"
-          title={errMsg}
-          desc={errDesc}
-          className="bg-red-400 top-0 absolute"
-        />
-      )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            placeholder="Enter your password..."
+                            type={showPassword ? "text" : "password"}
+                            {...field}
+                          />
+                          <div
+                            className="cursor-pointer absolute top-1/2 right-2 -translate-y-1/2 bg-white dark:bg-gray-950"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff /> : <Eye />}
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex gap-3 items-center pt-4">
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    className="flex gap-2"
+                  >
+                    {isLoading && (
+                      <TailSpin height="20" width="20" color="#000" />
+                    )}
+                    Login
+                  </Button>
+                  <span>or</span>
+                  <Button type="button" variant="link">
+                    Sign in as Guest
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+        {error && (
+          <AlertComponent
+            variant="destructive"
+            title={errMsg}
+            desc={errDesc}
+            className="bg-red-400 top-0 absolute"
+          />
+        )}
+      </BackgroundGradient>
     </div>
   );
 };
