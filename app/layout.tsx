@@ -1,6 +1,7 @@
 import FramerMotionPresent from "@/components/FramerMotionPresent";
 import StoreProvider from "@/components/StoreProvider";
 import ThemeProvider from "@/components/ThemeProvider";
+import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { Inter, Rubik_Moonrocks } from "next/font/google";
 import "./globals.css";
@@ -34,6 +35,7 @@ export default function RootLayout({
           <StoreProvider>
             <FramerMotionPresent>{children}</FramerMotionPresent>
           </StoreProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
