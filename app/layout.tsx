@@ -1,3 +1,4 @@
+import FramerMotionPresent from "@/components/FramerMotionPresent";
 import StoreProvider from "@/components/StoreProvider";
 import ThemeProvider from "@/components/ThemeProvider";
 import type { Metadata } from "next";
@@ -30,7 +31,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <StoreProvider>{children}</StoreProvider>
+          <StoreProvider>
+            <FramerMotionPresent>{children}</FramerMotionPresent>
+          </StoreProvider>
         </ThemeProvider>
       </body>
     </html>

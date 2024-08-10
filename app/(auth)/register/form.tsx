@@ -23,6 +23,7 @@ import { useRegisterMutation } from "@/services/userApi";
 import { ErrorType } from "@/types";
 import { registerSchema } from "@/validator/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { motion } from "framer-motion";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -50,7 +51,6 @@ const RegisterForm = () => {
   });
 
   function onSubmit(data: Input) {
-    console.log("🚀 ~ onSubmit ~ data:", data);
     register(data);
   }
 
@@ -87,13 +87,18 @@ const RegisterForm = () => {
       <BackgroundGradient>
         <Card className="w-full max-w-sm">
           <CardHeader>
-            <div className="flex gap-2 -translate-x-5">
+            <div className="flex justify-between items-center">
               <ArrowLeft
                 onClick={() => router.push("/")}
                 className="cursor-pointer"
               />
-              <div>
-                <CardTitle>Welcome to Nandi</CardTitle>
+              <div className="text-right">
+                <CardTitle>
+                  Welcome to{" "}
+                  <span className="font-rubik-moonrocks text-blue-500">
+                    Nandi
+                  </span>
+                </CardTitle>
                 <CardDescription>Register to get started</CardDescription>
               </div>
             </div>
@@ -232,7 +237,7 @@ const RegisterForm = () => {
                     Register
                   </Button>
                   <span>or</span>
-                  <Button type="button" variant="link">
+                  <Button type="button" variant="ghost">
                     Sign in as Guest
                   </Button>
                 </div>
@@ -241,12 +246,25 @@ const RegisterForm = () => {
           </CardContent>
         </Card>
         {error && (
-          <AlertComponent
-            variant="destructive"
-            title={errMsg}
-            desc={errDesc}
-            className="bg-red-400 top-0 absolute"
-          />
+          <motion.div
+            key="error"
+            initial={{ opacity: 0, y: 50, scale: 0.3 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              transition: { duration: 0.2 },
+            }}
+            exit={{ opacity: 0, scale: 0.3, transition: { duration: 0.2 } }}
+            className="top-0 absolute w-full"
+          >
+            <AlertComponent
+              variant="destructive"
+              title={errMsg}
+              desc={errDesc}
+              className="bg-red-400"
+            />
+          </motion.div>
         )}
       </BackgroundGradient>
     </div>
