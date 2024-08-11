@@ -1,7 +1,13 @@
 "use client";
+import { useAddUnitMutation } from "@/services/unitService";
+import { UnitSchema as UnitTypes } from "@/types";
+import { unitSchema } from "@/validator/unit";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { TailSpin } from "react-loader-spinner";
 import { BackgroundGradient } from "./ui/background-gradient";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -17,12 +23,25 @@ import { Input } from "./ui/input";
 
 const FormUnit = () => {
   const router = useRouter();
-  const form = useForm();
+  const form = useForm<UnitTypes>({
+    resolver: zodResolver(unitSchema),
+  });
+  const [add, { isLoading, data, error }] = useAddUnitMutation();
+
+  function onSubmit(data: UnitTypes) {
+    console.log(data);
+    add(data);
+  }
+
+  useEffect(() => {
+    console.log("🚀 ~ useEffect ~ data:", data);
+    console.log("🚀 ~ useEffect ~ error:", error);
+  }, [data, error]);
 
   return (
-    <div>
+    <div className="w-full max-w-sm">
       <BackgroundGradient>
-        <Card className="w-full max-w-sm">
+        <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
               <ArrowLeft
@@ -36,7 +55,10 @@ const FormUnit = () => {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form className="space-y-3">
+              <form
+                className="space-y-3"
+                onSubmit={form.handleSubmit(onSubmit)}
+              >
                 <FormField
                   control={form.control}
                   name="name"
@@ -79,15 +101,19 @@ const FormUnit = () => {
                 <div className="flex items-center pt-4 justify-between">
                   <Button
                     type="submit"
-                    // disabled={isLoading}
-                    className="flex gap-2 w-1/3"
+                    disabled={isLoading}
+                    className="flex gap-2 min-w-[40%]"
                   >
-                    {/* {isLoading && (
+                    {isLoading && (
                       <TailSpin height="20" width="20" color="#000" />
-                    )} */}
+                    )}
                     Save
                   </Button>
-                  <Button type="reset" variant="destructive" className="w-1/3">
+                  <Button
+                    type="reset"
+                    variant="destructive"
+                    className="min-w-[40%]"
+                  >
                     Cancel
                   </Button>
                 </div>
