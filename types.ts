@@ -44,3 +44,10 @@ export interface ErrorType {
 export type NotFound = {
   data: { errors: string };
 };
+
+export type UnitSchema = {
+  id?: string;
+  name: string;
+  type: string;
+  egi: string;
+};
