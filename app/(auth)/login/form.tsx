@@ -82,7 +82,7 @@ const LoginForm = () => {
           setErrMsg("Error");
           setErrDesc(notFound.data.errors);
         } else if (errorObj.data?.errors.statusCode) {
-          setErrMsg(errorObj.data.errors.error);
+          setErrMsg(errorObj.data.errors.error!);
           setErrDesc(errorObj.data.errors.message);
         }
       } else {

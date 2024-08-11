@@ -1,5 +1,4 @@
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import { Toaster } from "@/components/ui/toaster";
 import { Metadata } from "next";
 import RegisterForm from "./form";
 
@@ -16,7 +15,6 @@ const Register = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm px-4">
         <RegisterForm />
       </div>
-      <Toaster />
     </div>
   );
 };

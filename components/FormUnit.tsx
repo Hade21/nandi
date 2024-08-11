@@ -1,6 +1,6 @@
 "use client";
 import { useAddUnitMutation } from "@/services/unitService";
-import { UnitSchema as UnitTypes } from "@/types";
+import { ErrorType, UnitSchema as UnitTypes } from "@/types";
 import { unitSchema } from "@/validator/unit";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
@@ -20,9 +20,11 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
+import { useToast } from "./ui/use-toast";
 
 const FormUnit = () => {
   const router = useRouter();
+  const { toast } = useToast();
   const form = useForm<UnitTypes>({
     resolver: zodResolver(unitSchema),
   });
@@ -35,8 +37,33 @@ const FormUnit = () => {
 
   useEffect(() => {
     console.log("🚀 ~ useEffect ~ data:", data);
-    console.log("🚀 ~ useEffect ~ error:", error);
-  }, [data, error]);
+  }, [data]);
+  useEffect(() => {
+    if (error) {
+      const errObj = error as ErrorType;
+      if (errObj.status === 401) {
+        toast({
+          title: errObj.data.errors.message,
+          description: "Login as Admin to use this feature",
+          variant: "destructive",
+          action: (
+            <Button onClick={() => router.push("/login")}>Relogin</Button>
+          ),
+        });
+      } else if (errObj.data?.errors.statusCode) {
+        toast({
+          description: errObj.data.errors.error!,
+          title: errObj.data.errors.message,
+        });
+      }
+    } else {
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+    }
+  }, [error, router, toast]);
 
   return (
     <div className="w-full max-w-sm">

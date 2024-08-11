@@ -34,7 +34,7 @@ export interface ErrorType {
   data: {
     errors: {
       message: string;
-      error: string;
+      error?: string;
       statusCode: number;
     };
   };

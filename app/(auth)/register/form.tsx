@@ -70,7 +70,7 @@ const RegisterForm = () => {
     if (error) {
       const errorObj = error as ErrorType;
       if (errorObj.data?.errors) {
-        setErrMsg(errorObj.data.errors.error);
+        setErrMsg(errorObj.data.errors.error!);
         setErrDesc(errorObj.data.errors.message);
       } else {
         setErrMsg("Error");
