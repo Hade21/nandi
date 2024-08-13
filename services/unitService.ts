@@ -23,7 +23,21 @@ export const unitApi = createApi({
         },
       }),
     }),
+    updateUnit: builder.mutation<UnitResponse, UnitTypes & AuthorizationTypes>({
+      query: (body) => ({
+        url: `/units/${body.id}`,
+        method: "PUT",
+        body: {
+          name: body.name,
+          type: body.type,
+          egi: body.egi,
+        },
+        headers: {
+          Authorization: `Bearer ${body.accessToken}`,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useAddUnitMutation } = unitApi;
+export const { useAddUnitMutation, useUpdateUnitMutation } = unitApi;
