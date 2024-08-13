@@ -45,9 +45,24 @@ export type NotFound = {
   data: { errors: string };
 };
 
-export type UnitSchema = {
+export type UnitTypes = {
   id?: string;
   name: string;
   type: string;
   egi: string;
+};
+
+export type AuthorizationTypes = {
+  accessToken: string;
+  refreshToken?: string;
+  id?: string;
+};
+
+export type UnitResponse = {
+  data: {
+    id: string;
+    name: string;
+    type: string;
+    egi: string;
+  };
 };

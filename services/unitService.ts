@@ -1,4 +1,4 @@
-import { UnitSchema } from "@/types";
+import { AuthorizationTypes, UnitResponse, UnitTypes } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseUrl = process.env.NEXT_PUBLIC_URL_SERVER;
@@ -9,11 +9,18 @@ export const unitApi = createApi({
     baseUrl: `${baseUrl}/api/v1`,
   }),
   endpoints: (builder) => ({
-    addUnit: builder.mutation<any, UnitSchema>({
+    addUnit: builder.mutation<UnitResponse, UnitTypes & AuthorizationTypes>({
       query: (body) => ({
         url: "/units",
         method: "POST",
-        body,
+        body: {
+          name: body.name,
+          type: body.type,
+          egi: body.egi,
+        },
+        headers: {
+          Authorization: `Bearer ${body.accessToken}`,
+        },
       }),
     }),
   }),
