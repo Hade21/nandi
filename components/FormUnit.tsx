@@ -1,6 +1,7 @@
 "use client";
+import { GetTokenCookies } from "@/lib/tokenCookies";
 import { useAddUnitMutation } from "@/services/unitService";
-import { ErrorType, UnitSchema as UnitTypes } from "@/types";
+import { ErrorType, UnitTypes } from "@/types";
 import { unitSchema } from "@/validator/unit";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
@@ -30,14 +31,20 @@ const FormUnit = () => {
   });
   const [add, { isLoading, data, error }] = useAddUnitMutation();
 
-  function onSubmit(data: UnitTypes) {
-    console.log(data);
-    add(data);
+  async function onSubmit(data: UnitTypes) {
+    const token = await GetTokenCookies();
+    add({ ...data, accessToken: token.data.accessToken });
   }
 
   useEffect(() => {
-    console.log("🚀 ~ useEffect ~ data:", data);
-  }, [data]);
+    if (data?.data.id) {
+      toast({
+        title: "Success",
+        description: "New Unit added",
+      });
+      form.reset({ egi: "", name: "", type: "" });
+    }
+  }, [data, form, toast]);
   useEffect(() => {
     if (error) {
       const errObj = error as ErrorType;
@@ -55,13 +62,13 @@ const FormUnit = () => {
           description: errObj.data.errors.error!,
           title: errObj.data.errors.message,
         });
+      } else {
+        toast({
+          title: "Error",
+          description: (error as any)?.data.errors,
+          variant: "destructive",
+        });
       }
-    } else {
-      toast({
-        title: "Error",
-        description: "Something went wrong",
-        variant: "destructive",
-      });
     }
   }, [error, router, toast]);
 
