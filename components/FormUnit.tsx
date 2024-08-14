@@ -249,10 +249,10 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
                 <div className="flex items-center pt-4 justify-between">
                   <Button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={addLoading || updateLoading}
                     className="flex gap-2 min-w-[40%]"
                   >
-                    {isLoading && (
+                    {(addLoading || updateLoading) && (
                       <TailSpin height="20" width="20" color="#000" />
                     )}
                     Save
