@@ -1,6 +1,9 @@
 "use client";
 import { GetTokenCookies } from "@/lib/tokenCookies";
-import { useAddUnitMutation } from "@/services/unitService";
+import {
+  useAddUnitMutation,
+  useUpdateUnitMutation,
+} from "@/services/unitService";
 import { ErrorType, UnitTypes } from "@/types";
 import { unitSchema } from "@/validator/unit";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,31 +26,57 @@ import {
 import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
 
-const FormUnit = () => {
+const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
   const router = useRouter();
   const { toast } = useToast();
   const form = useForm<UnitTypes>({
     resolver: zodResolver(unitSchema),
   });
-  const [add, { isLoading, data, error }] = useAddUnitMutation();
+  const [add, { isLoading: addLoading, data: addData, error: addError }] =
+    useAddUnitMutation();
+  const [
+    update,
+    { isLoading: updateLoading, data: updateData, error: updateError },
+  ] = useUpdateUnitMutation();
 
   async function onSubmit(data: UnitTypes) {
     const token = await GetTokenCookies();
-    add({ ...data, accessToken: token.data.accessToken });
+    if (!token.data) {
+      toast({
+        title: "Session over",
+        description: "Please login again",
+      });
+      setTimeout(() => {
+        router.push("/login");
+      }, 5000);
+      return;
+    }
+    if (type === "new") {
+      add({ ...data, accessToken: token.data.accessToken });
+    } else {
+      update({ ...data, id, accessToken: token.data.accessToken });
+    }
   }
 
   useEffect(() => {
-    if (data?.data.id) {
+    if (addData?.data.id) {
       toast({
         title: "Success",
         description: "New Unit added",
       });
       form.reset({ egi: "", name: "", type: "" });
     }
-  }, [data, form, toast]);
+    if (updateData?.data.id) {
+      toast({
+        title: "Success",
+        description: "Unit updated successfully",
+      });
+      form.reset({ egi: "", name: "", type: "" });
+    }
+  }, [addData, form, toast, updateData?.data.id]);
   useEffect(() => {
-    if (error) {
-      const errObj = error as ErrorType;
+    if (addError) {
+      const errObj = addError as ErrorType;
       if (errObj.status === 401) {
         toast({
           title: errObj.data.errors.message,
@@ -65,12 +94,36 @@ const FormUnit = () => {
       } else {
         toast({
           title: "Error",
-          description: (error as any)?.data.errors,
+          description: (addError as any)?.data.errors,
           variant: "destructive",
         });
       }
     }
-  }, [error, router, toast]);
+    if (updateError) {
+      const errObj = updateError as ErrorType;
+      if (errObj.status === 401) {
+        toast({
+          title: errObj.data.errors.message,
+          description: "Login as Admin to use this feature",
+          variant: "destructive",
+          action: (
+            <Button onClick={() => router.push("/login")}>Relogin</Button>
+          ),
+        });
+      } else if (errObj.data?.errors.statusCode) {
+        toast({
+          description: errObj.data.errors.error!,
+          title: errObj.data.errors.message,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: (updateError as any)?.data.errors,
+          variant: "destructive",
+        });
+      }
+    }
+  }, [updateError, router, toast, addError]);
 
   return (
     <div className="w-full max-w-sm">
@@ -83,7 +136,11 @@ const FormUnit = () => {
                 className="cursor-pointer"
               />
               <div className="text-right">
-                <CardTitle>Add New Unit</CardTitle>
+                {type === "new" ? (
+                  <CardTitle>Add New Unit</CardTitle>
+                ) : (
+                  <CardTitle>Update Unit</CardTitle>
+                )}
               </div>
             </div>
           </CardHeader>
@@ -135,10 +192,10 @@ const FormUnit = () => {
                 <div className="flex items-center pt-4 justify-between">
                   <Button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={addLoading || updateLoading}
                     className="flex gap-2 min-w-[40%]"
                   >
-                    {isLoading && (
+                    {(addLoading || updateLoading) && (
                       <TailSpin height="20" width="20" color="#000" />
                     )}
                     Save
