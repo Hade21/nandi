@@ -34,7 +34,7 @@ export interface ErrorType {
   data: {
     errors: {
       message: string;
-      error: string;
+      error?: string;
       statusCode: number;
     };
   };
@@ -43,4 +43,33 @@ export interface ErrorType {
 
 export type NotFound = {
   data: { errors: string };
+};
+
+export type UnitTypes = {
+  id?: string;
+  name: string;
+  type: string;
+  egi: string;
+};
+
+export type AuthorizationTypes = {
+  accessToken: string;
+  refreshToken?: string;
+  id?: string;
+};
+
+export type UnitResponse = {
+  data: UnitTypes;
+};
+
+export type UnitsResponse = {
+  data: UnitTypes[];
+};
+
+export type UserData = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
 };
