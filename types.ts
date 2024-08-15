@@ -59,10 +59,17 @@ export type AuthorizationTypes = {
 };
 
 export type UnitResponse = {
-  data: {
-    id: string;
-    name: string;
-    type: string;
-    egi: string;
-  };
+  data: UnitTypes;
+};
+
+export type UnitsResponse = {
+  data: UnitTypes[];
+};
+
+export type UserData = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
 };
