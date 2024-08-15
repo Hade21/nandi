@@ -1,4 +1,9 @@
-import { AuthorizationTypes, UnitResponse, UnitTypes } from "@/types";
+import {
+  AuthorizationTypes,
+  UnitResponse,
+  UnitTypes,
+  UnitsResponse,
+} from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseUrl = process.env.NEXT_PUBLIC_URL_SERVER;
@@ -37,7 +42,22 @@ export const unitApi = createApi({
         },
       }),
     }),
+    getUnitById: builder.query<UnitResponse, string>({
+      query: (id) => ({
+        url: `/units/${id}`,
+      }),
+    }),
+    getUnits: builder.query<UnitsResponse, void>({
+      query: () => ({
+        url: "/units",
+      }),
+    }),
   }),
 });
 
-export const { useAddUnitMutation, useUpdateUnitMutation } = unitApi;
+export const {
+  useAddUnitMutation,
+  useUpdateUnitMutation,
+  useGetUnitByIdQuery,
+  useGetUnitsQuery,
+} = unitApi;
