@@ -2,14 +2,15 @@
 import { GetTokenCookies } from "@/lib/tokenCookies";
 import {
   useAddUnitMutation,
+  useGetUnitByIdQuery,
   useUpdateUnitMutation,
 } from "@/services/unitService";
-import { ErrorType, UnitTypes } from "@/types";
+import { ErrorType, NotFound, UnitTypes } from "@/types";
 import { unitSchema } from "@/validator/unit";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { TailSpin } from "react-loader-spinner";
 import { BackgroundGradient } from "./ui/background-gradient";
@@ -27,6 +28,7 @@ import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
 
 const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
+  const [isLoading, setIsloading] = useState<boolean>(false);
   const router = useRouter();
   const { toast } = useToast();
   const form = useForm<UnitTypes>({
@@ -38,8 +40,14 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
     update,
     { isLoading: updateLoading, data: updateData, error: updateError },
   ] = useUpdateUnitMutation();
+  const {
+    data: prevData,
+    isLoading: prevDataLoading,
+    error: prevDataError,
+  } = useGetUnitByIdQuery(id ?? "");
 
   async function onSubmit(data: UnitTypes) {
+    setIsloading(true);
     const token = await GetTokenCookies();
     if (!token.data) {
       toast({
@@ -56,8 +64,16 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
     } else {
       update({ ...data, id, accessToken: token.data.accessToken });
     }
+    setIsloading(false);
   }
 
+  useEffect(() => {
+    if (addLoading || updateLoading) {
+      setIsloading(true);
+    } else {
+      setIsloading(false);
+    }
+  }, [addLoading, updateLoading]);
   useEffect(() => {
     if (addData?.data.id) {
       toast({
@@ -124,6 +140,47 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
       }
     }
   }, [updateError, router, toast, addError]);
+  useEffect(() => {
+    if (type === "update" && prevData) {
+      form.setValue("name", prevData.data.name);
+      form.setValue("egi", prevData.data.egi);
+      form.setValue("type", prevData.data.type);
+    }
+  }, [type, form, prevData]);
+
+  if (type === "update" && prevDataLoading) {
+    return (
+      <div className="w-full h-full flex justify-center items-center gap-4">
+        <h1>Loading data ...</h1>
+        <TailSpin color="#3b82f6" height={24} width={24} />
+      </div>
+    );
+  }
+
+  if (type === "update" && prevDataError) {
+    if ((prevDataError as NotFound).data.errors) {
+      return (
+        <div className="w-full h-full flex flex-col justify-center items-center gap-4">
+          <h1 className="text-xl font-bold">
+            {(prevDataError as NotFound).data.errors}
+          </h1>
+          <Button variant="ghost" onClick={() => router.back()}>
+            <ArrowLeft size={16} /> Go Back
+          </Button>
+        </div>
+      );
+    } else {
+      return (
+        <div className="w-full h-full flex justify-center items-center gap-4">
+          <h1 className="text-xl font-bold">Error loading data</h1>
+          <h2>Please check your internet connection and try again</h2>
+          <Button variant="ghost" onClick={() => router.refresh()}>
+            <ArrowLeft size={16} /> Go Back
+          </Button>
+        </div>
+      );
+    }
+  }
 
   return (
     <div className="w-full max-w-sm">
@@ -192,10 +249,10 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
                 <div className="flex items-center pt-4 justify-between">
                   <Button
                     type="submit"
-                    disabled={addLoading || updateLoading}
+                    disabled={isLoading}
                     className="flex gap-2 min-w-[40%]"
                   >
-                    {(addLoading || updateLoading) && (
+                    {isLoading && (
                       <TailSpin height="20" width="20" color="#000" />
                     )}
                     Save
