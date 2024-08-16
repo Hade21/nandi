@@ -4,7 +4,7 @@ import {
   useAddUnitMutation,
   useGetUnitByIdQuery,
   useUpdateUnitMutation,
-} from "@/services/unitService";
+} from "@/services/unitApi";
 import { ErrorType, NotFound, UnitTypes } from "@/types";
 import { unitSchema } from "@/validator/unit";
 import { zodResolver } from "@hookform/resolvers/zod";
