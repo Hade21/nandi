@@ -1,4 +1,9 @@
-import type { AuthRequest, LoginResponse, RegisterResponse } from "@/types";
+import type {
+  AuthRequest,
+  LoginResponse,
+  RegisterResponse,
+  UserResponse,
+} from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseUrl = "https://geolocation-map.adaptable.app";
@@ -26,7 +31,16 @@ export const userApi = createApi({
         body,
       }),
     }),
+    getUser: builder.query<UserResponse, string>({
+      query: (accessToken) => ({
+        url: "/auth/user",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation } = userApi;
+export const { useLoginMutation, useRegisterMutation, useGetUserQuery } =
+  userApi;

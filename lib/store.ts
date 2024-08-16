@@ -1,4 +1,4 @@
-import { unitApi } from "@/services/unitService";
+import { unitApi } from "@/services/unitApi";
 import { userApi } from "@/services/userApi";
 import { configureStore } from "@reduxjs/toolkit";
 
