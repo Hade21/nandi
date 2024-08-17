@@ -1,10 +1,10 @@
-import Maps from "./Maps";
+import MapsDataProvider from "./MapsDataProvider";
 import MapsProvider from "./MapsProvider";
 
 const HomeSignedIn = () => {
   return (
     <MapsProvider>
-      <Maps />
+      <MapsDataProvider />
     </MapsProvider>
   );
 };

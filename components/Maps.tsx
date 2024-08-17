@@ -1,6 +1,6 @@
 "use client";
-import { GoogleMap, MarkerF } from "@react-google-maps/api";
-import { useState } from "react";
+import { GoogleMap, Marker } from "@react-google-maps/api";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
 
 export const defaultMapsContainerStyle = {
   width: "100%",
@@ -8,45 +8,85 @@ export const defaultMapsContainerStyle = {
   borderRadius: "15px",
 };
 
-const Maps = () => {
-  const [myLoc, setMyLoc] = useState({ lat: 0, lng: 0 });
+interface MapsProps {
+  markers: {
+    latitude: number;
+    longitude: number;
+    label: string;
+  }[];
+}
 
-  function onPositionUpdate(position: GeolocationPosition) {
-    console.log("🚀 ~ onPositionUpdate ~ position:", position);
-    let lng: number = position.coords.longitude;
-    let lat: number = position.coords.latitude;
+const Maps = ({ markers }: MapsProps) => {
+  const [maps, setMaps] = useState<google.maps.Map | null>(null);
 
-    return setMyLoc({ lat, lng });
-  }
+  const onLoad = useCallback(
+    (maps: SetStateAction<google.maps.Map | null>) => setMaps(maps),
+    []
+  );
 
-  const defaultMapCenter = {
-    lat: -2.175375,
-    lng: 115.5584851,
-  };
+  useEffect(() => {
+    if (maps) {
+      const bounds = new window.google.maps.LatLngBounds();
+      markers.map((marker) => {
+        bounds.extend({
+          lat: marker.latitude,
+          lng: marker.longitude,
+        });
+      });
+      maps.fitBounds(bounds);
+    }
+  }, [maps, markers]);
 
-  const defaultMapOption = {
-    zoomControl: true,
-    tilt: 0,
-    gestureHandling: "auto",
-    mapTypeId: "satellite",
-  };
-
-  if (navigator.geolocation)
-    navigator.geolocation.getCurrentPosition(onPositionUpdate, (error) =>
-      console.log(error)
-    );
-  else console.log("geolocation not supported");
+  console.log("🚀 ~ Maps ~ markers:", markers);
 
   return (
     <div>
       <GoogleMap
         mapContainerStyle={defaultMapsContainerStyle}
-        center={defaultMapCenter}
-        options={defaultMapOption}
-        zoom={18}
+        center={{
+          lat: markers[markers.length - 1].latitude!,
+          lng: markers[markers.length - 1].longitude!,
+        }}
+        zoom={10}
+        onLoad={onLoad}
       >
-        {/* <Marker position={defaultMapCenter} /> */}
-        <MarkerF position={myLoc} label="My location" />
+        {markers &&
+          markers.map((marker, index) => {
+            if (marker.label === "My Position") {
+              return (
+                <Marker
+                  key={index}
+                  label={marker.label}
+                  position={{ lat: marker.latitude, lng: marker.longitude }}
+                  animation={google.maps.Animation.BOUNCE}
+                  icon={{
+                    url: "/car.png",
+                    scaledSize: {
+                      width: 40,
+                      height: 40,
+                      equals: () => true,
+                    },
+                  }}
+                />
+              );
+            }
+            return (
+              <Marker
+                key={index}
+                label={marker.label}
+                position={{ lat: marker.latitude, lng: marker.longitude }}
+                animation={google.maps.Animation.DROP}
+                icon={{
+                  url: "/marker.png",
+                  scaledSize: {
+                    width: 40,
+                    height: 40,
+                    equals: () => true,
+                  },
+                }}
+              />
+            );
+          })}
       </GoogleMap>
     </div>
   );
