@@ -1,30 +1,12 @@
 "use client";
+import { useGetUnitsQuery } from "@/services/unitService";
+import { MarkerTypes, UnitTypes } from "@/types";
 import { useEffect, useState } from "react";
 import Maps from "./Maps";
 
 const MapsDataProvider = () => {
-  const [markers, setMarkers] = useState([
-    {
-      latitude: -2.176375,
-      longitude: 115.5584851,
-      label: "Location 1",
-    },
-    {
-      latitude: -2.175275,
-      longitude: 115.5604851,
-      label: "Location 2",
-    },
-    {
-      latitude: -2.175175,
-      longitude: 115.5624851,
-      label: "Location 3",
-    },
-    {
-      latitude: -2.175075,
-      longitude: 115.5644851,
-      label: "Location 4",
-    },
-  ]);
+  const { isLoading, data, error } = useGetUnitsQuery();
+  const [markers, setMarkers] = useState<MarkerTypes[]>();
 
   function removeDuplicates(arr: any, value: any) {
     let index = 0;
@@ -38,18 +20,63 @@ const MapsDataProvider = () => {
   }
 
   useEffect(() => {
+    if (data) {
+      data.data.forEach((unit: UnitTypes) => {
+        setMarkers((prevMarkers) => {
+          if (!prevMarkers) {
+            return [
+              {
+                latitude: Number(
+                  unit.locations![unit.locations!.length - 1].lat
+                ),
+                longitude: Number(
+                  unit.locations![unit.locations!.length - 1].long
+                ),
+                label: unit.name,
+              },
+            ];
+          } else {
+            removeDuplicates(prevMarkers, unit.name);
+            return [
+              ...prevMarkers,
+              {
+                latitude: Number(
+                  unit.locations![unit.locations!.length - 1].lat
+                ),
+                longitude: Number(
+                  unit.locations![unit.locations!.length - 1].long
+                ),
+                label: unit.name,
+              },
+            ];
+          }
+        });
+      });
+    }
+  }, [data]);
+  useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition((position) => {
         setMarkers((prevMarkers) => {
-          removeDuplicates(prevMarkers, "My Position");
-          return [
-            ...prevMarkers,
-            {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              label: "My Position",
-            },
-          ];
+          if (!prevMarkers) {
+            return [
+              {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                label: "My Position",
+              },
+            ];
+          } else {
+            removeDuplicates(prevMarkers, "My Position");
+            return [
+              ...prevMarkers,
+              {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                label: "My Position",
+              },
+            ];
+          }
         });
       });
     }
@@ -58,11 +85,7 @@ const MapsDataProvider = () => {
     };
   }, []);
 
-  return (
-    <div>
-      <Maps markers={markers} />
-    </div>
-  );
+  return <div>{markers && <Maps markers={markers} />}</div>;
 };
 
 export default MapsDataProvider;

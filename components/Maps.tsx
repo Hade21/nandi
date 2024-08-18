@@ -4,7 +4,7 @@ import { SetStateAction, useCallback, useEffect, useState } from "react";
 
 export const defaultMapsContainerStyle = {
   width: "100%",
-  height: "80vh",
+  height: "100vh",
   borderRadius: "15px",
 };
 
