@@ -45,11 +45,24 @@ export type NotFound = {
   data: { errors: string };
 };
 
+export type LocationTypes = {
+  id: string;
+  long: number;
+  lat: number;
+  alt: number;
+  location: string;
+  dateTime: string;
+  unitId: string;
+  createdBy: string;
+};
+
 export type UnitTypes = {
   id?: string;
   name: string;
   type: string;
   egi: string;
+  locations?: LocationTypes[];
+  createdBy?: string;
 };
 
 export type AuthorizationTypes = {
@@ -72,4 +85,10 @@ export type UserData = {
   lastName: string;
   username: string;
   email: string;
+};
+
+export type MarkerTypes = {
+  latitude: number;
+  longitude: number;
+  label: string;
 };
