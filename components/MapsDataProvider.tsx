@@ -1,5 +1,5 @@
 "use client";
-import { useGetUnitsQuery } from "@/services/unitService";
+import { useGetUnitsQuery } from "@/services/unitApi";
 import { MarkerTypes, UnitTypes } from "@/types";
 import { useEffect, useState } from "react";
 import Maps from "./Maps";
