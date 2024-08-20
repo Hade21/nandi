@@ -175,7 +175,7 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
           <h1 className="text-xl font-bold">Error loading data</h1>
           <h2>Please check your internet connection and try again</h2>
           <Button variant="ghost" onClick={() => router.refresh()}>
-            <ArrowLeft size={16} /> Go Back
+            Refresh
           </Button>
         </div>
       );

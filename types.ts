@@ -96,4 +96,5 @@ export type MarkerTypes = {
   latitude: number;
   longitude: number;
   label: string;
+  locationName?: string;
 };
