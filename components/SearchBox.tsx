@@ -1,6 +1,7 @@
 "use client";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { cn } from "@/lib/utils";
+import { usePrefetch } from "@/services/unitApi";
 import { setSearchQuery } from "@/services/unitService";
 import { UnitTypes } from "@/types";
 import { CommandInput } from "cmdk";
@@ -21,6 +22,7 @@ const SearchBox = () => {
   const searchQuery = useAppSelector((state) => state.units.searchQuery);
   const units = useAppSelector((state) => state.units.units);
   const dispatch = useAppDispatch();
+  const prefetch = usePrefetch("getUnitById");
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -64,6 +66,7 @@ const SearchBox = () => {
                       )
                     );
                     setIsOpen(false);
+                    prefetch(unit.id!);
                   }}
                 >
                   <Check
