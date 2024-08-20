@@ -69,7 +69,7 @@ const MapsDataProvider = () => {
 
   return (
     <div className="relative">
-      <div className="search z-10 absolute lg:w-[60%] w-[97%] top-16 lg:top-2.5 left-1/2 -translate-x-1/2">
+      <div className="search z-10 absolute w-1/3 top-2.5 left-1/2 -translate-x-1/2">
         <SearchBox />
       </div>
       <div className="theme absolute top-2.5 right-16 z-10">
