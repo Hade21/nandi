@@ -25,7 +25,7 @@ const Maps = ({ markers }: MapsProps) => {
   );
 
   useEffect(() => {
-    if (maps) {
+    if (maps && markers) {
       const bounds = new window.google.maps.LatLngBounds();
       markers.map((marker) => {
         bounds.extend({
@@ -43,10 +43,6 @@ const Maps = ({ markers }: MapsProps) => {
     <div>
       <GoogleMap
         mapContainerStyle={defaultMapsContainerStyle}
-        center={{
-          lat: markers[markers.length - 1].latitude!,
-          lng: markers[markers.length - 1].longitude!,
-        }}
         zoom={10}
         onLoad={onLoad}
       >

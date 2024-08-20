@@ -60,4 +60,5 @@ export const {
   useUpdateUnitMutation,
   useGetUnitByIdQuery,
   useGetUnitsQuery,
+  usePrefetch,
 } = unitApi;
