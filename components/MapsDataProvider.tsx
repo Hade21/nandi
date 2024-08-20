@@ -17,7 +17,33 @@ const MapsDataProvider = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const markers = useAppSelector((state) => state.units.markers);
+  const searchQuery = useAppSelector((state) => state.units.searchQuery);
 
+  useEffect(() => {
+    if (searchQuery) {
+      const unit = data?.data.filter((unit) => unit.id === searchQuery);
+      const location = [
+        {
+          latitude: Number(unit![0].locations![0].lat),
+          longitude: Number(unit![0].locations![0].long),
+          label: unit![0].name,
+          locationName: unit![0].locations![0].location,
+        },
+      ];
+      dispatch(setMarkers(location));
+    } else {
+      const locations: MarkerTypes[] = [];
+      data?.data.forEach((unit) => {
+        locations.push({
+          latitude: Number(unit.locations![0].lat),
+          longitude: Number(unit.locations![0].long),
+          label: unit.name,
+          locationName: unit.locations![0].location,
+        });
+      });
+      dispatch(setMarkers(locations));
+    }
+  }, [data?.data, dispatch, searchQuery]);
   useEffect(() => {
     if (data) {
       dispatch(setUnits(data.data));
