@@ -15,7 +15,7 @@ const initialState: UnitState = {
 
 function removeDuplicate(arr: any, value: any) {
   let index = 0;
-  if (arr[0].id) {
+  if (arr[0] && arr[0].id) {
     while (index < arr.length) {
       if (arr[index].id === value) {
         arr.splice(index, 1);
@@ -45,7 +45,8 @@ export const unitSlice = createSlice({
         state.units = action.payload;
       } else {
         action.payload.forEach((unit) => {
-          state.units = [...state.units, unit];
+          const cleanedArr = removeDuplicate(state.units, unit.id);
+          state.units = [...cleanedArr, unit];
         });
       }
     },
@@ -53,15 +54,14 @@ export const unitSlice = createSlice({
       state.searchQuery = action.payload;
     },
     setMarkers: (state, action: PayloadAction<MarkerTypes[]>) => {
-      // if (!state.markers) {
-      //   state.markers = action.payload;
-      // } else {
-      //   action.payload.forEach((marker) => {
-      //     const cleanedArr = removeDuplicate(state.markers, marker.label);
-      //     state.markers = [...cleanedArr, marker];
-      //   });
-      // }
-
+      if (!state.markers) {
+        state.markers = action.payload;
+      } else {
+        action.payload.forEach((marker) => {
+          const cleanedArr = removeDuplicate(state.markers, marker.label);
+          state.markers = [...cleanedArr, marker];
+        });
+      }
       state.markers = action.payload;
     },
   },
