@@ -66,7 +66,7 @@ const Maps = ({ markers }: MapsProps) => {
         {markers &&
           markers.map((marker, index) => {
             const unitData = findUnit(units, marker.latitude, marker.longitude);
-            if (marker.label === "My Position") {
+            if (marker.label === "Current Location") {
               return (
                 <Marker
                   key={index}

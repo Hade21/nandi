@@ -54,15 +54,16 @@ export const unitSlice = createSlice({
       state.searchQuery = action.payload;
     },
     setMarkers: (state, action: PayloadAction<MarkerTypes[]>) => {
+      let cleanedArr = state.markers;
       if (!state.markers) {
         state.markers = action.payload;
       } else {
         action.payload.forEach((marker) => {
-          const cleanedArr = removeDuplicate(state.markers, marker.label);
+          cleanedArr = removeDuplicate(state.markers, marker.label);
+          console.log(cleanedArr);
           state.markers = [...cleanedArr, marker];
         });
       }
-      state.markers = action.payload;
     },
   },
 });
