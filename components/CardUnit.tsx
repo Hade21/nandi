@@ -1,3 +1,4 @@
+import { PopoverClose } from "@radix-ui/react-popover";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 
@@ -6,8 +7,15 @@ interface CardUnitProps {
   type: string;
   egi: string;
   locationName: string;
+  onClick?: () => void;
 }
-const CardUnit = ({ name, type, egi, locationName }: CardUnitProps) => {
+const CardUnit = ({
+  name,
+  type,
+  egi,
+  locationName,
+  onClick,
+}: CardUnitProps) => {
   return (
     <div className="space-y-2">
       <h1 className="text-center font-semibold text-lg">{name}</h1>
@@ -28,7 +36,9 @@ const CardUnit = ({ name, type, egi, locationName }: CardUnitProps) => {
         <p className="text-sm font-semibold">{locationName}</p>
       </div>
       <div className="flex pt-4 justify-center">
-        <Button variant="default">Edit Location</Button>
+        <PopoverClose>
+          <Button onClick={onClick}>Edit Location</Button>
+        </PopoverClose>
       </div>
     </div>
   );
