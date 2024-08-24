@@ -36,6 +36,7 @@ export default function RootLayout({
             <FramerMotionPresent>{children}</FramerMotionPresent>
             <Toaster />
           </StoreProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
