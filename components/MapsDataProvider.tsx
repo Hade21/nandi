@@ -3,7 +3,7 @@ import Loading from "@/app/loading";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { useGetUnitsQuery } from "@/services/unitApi";
 import { setMarkers, setUnits } from "@/services/unitService";
-import { MarkerTypes } from "@/types";
+import { MarkerTypes, UnitTypes } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Maps from "./Maps";
@@ -21,7 +21,9 @@ const MapsDataProvider = () => {
 
   useEffect(() => {
     if (searchQuery) {
-      const unit = data?.data.filter((unit) => unit.id === searchQuery);
+      const unit = data?.data.filter((units) => {
+        return units.id === searchQuery;
+      });
       const location = [
         {
           latitude: Number(unit![0].locations![0].lat),
@@ -31,7 +33,7 @@ const MapsDataProvider = () => {
         },
       ];
       dispatch(setMarkers(location));
-    } else {
+    } else if (data?.data && data.data.length > 0) {
       const locations: MarkerTypes[] = [];
       data?.data.forEach((unit) => {
         locations.push({
@@ -47,7 +49,7 @@ const MapsDataProvider = () => {
   useEffect(() => {
     if (data) {
       dispatch(setUnits(data.data));
-      const unitMarkers: MarkerTypes[] = data.data.map((unit) => {
+      const unitMarkers: MarkerTypes[] = data.data.map((unit: UnitTypes) => {
         return {
           latitude: Number(unit.locations![0].lat),
           longitude: Number(unit.locations![0].long),

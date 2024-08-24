@@ -5,12 +5,28 @@ interface UnitState {
   units: UnitTypes[];
   searchQuery: string;
   markers: MarkerTypes[];
+  selectedUnit: {
+    id: string;
+    name: string;
+    type: string;
+    egi: string;
+    locationName: string;
+  };
+  openModal: boolean;
 }
 
 const initialState: UnitState = {
   units: [],
   searchQuery: "",
   markers: [],
+  selectedUnit: {
+    id: "",
+    name: "",
+    type: "",
+    egi: "",
+    locationName: "",
+  },
+  openModal: false,
 };
 
 function removeDuplicate(arr: any, value: any) {
@@ -54,20 +70,30 @@ export const unitSlice = createSlice({
       state.searchQuery = action.payload;
     },
     setMarkers: (state, action: PayloadAction<MarkerTypes[]>) => {
-      let cleanedArr = state.markers;
-      if (!state.markers) {
-        state.markers = action.payload;
+      if (action.payload[0]?.label === "Current Location") {
+        state.markers = [...state.markers, action.payload[0]];
       } else {
-        action.payload.forEach((marker) => {
-          cleanedArr = removeDuplicate(state.markers, marker.label);
-          console.log(cleanedArr);
-          state.markers = [...cleanedArr, marker];
-        });
+        state.markers = action.payload;
       }
+    },
+    setSelectedUnit: (
+      state,
+      action: PayloadAction<Pick<UnitState, "selectedUnit">>
+    ) => {
+      state.selectedUnit = action.payload.selectedUnit;
+    },
+    setOpenModal: (state, action: PayloadAction<boolean>) => {
+      state.openModal = action.payload;
     },
   },
 });
 
-export const { setSearchQuery, setUnits, setMarkers } = unitSlice.actions;
+export const {
+  setSearchQuery,
+  setUnits,
+  setMarkers,
+  setSelectedUnit,
+  setOpenModal,
+} = unitSlice.actions;
 
 export default unitSlice.reducer;

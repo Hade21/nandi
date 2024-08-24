@@ -1,5 +1,6 @@
 "use client";
-import { useAppSelector } from "@/hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { setOpenModal, setSelectedUnit } from "@/services/unitService";
 import { MarkerTypes, UnitTypes } from "@/types";
 import { GoogleMap, Marker, OverlayView } from "@react-google-maps/api";
 import { SetStateAction, useCallback, useEffect, useState } from "react";
@@ -19,6 +20,8 @@ interface MapsProps {
 const Maps = ({ markers }: MapsProps) => {
   const [maps, setMaps] = useState<google.maps.Map | null>(null);
   const units = useAppSelector((state) => state.units.units);
+  const selectedUnit = useAppSelector((state) => state.units.selectedUnit);
+  const dispatch = useAppDispatch();
 
   const onLoad = useCallback(
     (maps: SetStateAction<google.maps.Map | null>) => setMaps(maps),
@@ -31,12 +34,9 @@ const Maps = ({ markers }: MapsProps) => {
     long: number
   ): UnitTypes | undefined => {
     const unit = arr.find((unit) => {
-      if (unit.locations) {
-        const found = unit.locations.filter(
-          (coord) => Number(coord.lat) === lat && Number(coord.long) === long
-        );
-        if (found) return found;
-      }
+      return unit.locations?.some((location) => {
+        return Number(location.lat) === lat && Number(location.long) === long;
+      });
     });
     return unit;
   };
@@ -54,8 +54,6 @@ const Maps = ({ markers }: MapsProps) => {
     }
   }, [maps, markers]);
 
-  console.log("🚀 ~ Maps ~ markers:", markers);
-
   return (
     <div>
       <GoogleMap
@@ -65,7 +63,7 @@ const Maps = ({ markers }: MapsProps) => {
       >
         {markers &&
           markers.map((marker, index) => {
-            const unitData = findUnit(units, marker.latitude, marker.longitude);
+            let unitData = findUnit(units, marker.latitude, marker.longitude);
             if (marker.label === "Current Location") {
               return (
                 <Marker
@@ -81,7 +79,16 @@ const Maps = ({ markers }: MapsProps) => {
                       equals: () => true,
                     },
                   }}
-                />
+                >
+                  <OverlayView
+                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                    position={{ lat: marker.latitude, lng: marker.longitude }}
+                  >
+                    <div className="p-2 bg-white rounded-sm w-max -translate-x-1/2 left-1/2 -translate-y-[235%] cursor-pointer hover:bg-opacity-60">
+                      <p>{marker.label}</p>
+                    </div>
+                  </OverlayView>
+                </Marker>
               );
             }
             return (
@@ -104,17 +111,32 @@ const Maps = ({ markers }: MapsProps) => {
                     position={{ lat: marker.latitude, lng: marker.longitude }}
                   >
                     <PopoverTrigger asChild>
-                      <div className="p-2 bg-white rounded-sm w-max -translate-x-1/2 left-1/2 -translate-y-[235%] cursor-pointer">
+                      <div
+                        className="p-2 bg-white rounded-sm w-max -translate-x-1/2 left-1/2 -translate-y-[235%] cursor-pointer hover:bg-opacity-60"
+                        onClick={() => {
+                          const unit = {
+                            selectedUnit: {
+                              id: unitData!.id ?? "",
+                              egi: unitData!.egi ?? "",
+                              name: unitData!.name ?? "",
+                              type: unitData!.type ?? "",
+                              locationName: marker.locationName!,
+                            },
+                          };
+                          dispatch(setSelectedUnit(unit));
+                        }}
+                      >
                         <p>{marker.label}</p>
                       </div>
                     </PopoverTrigger>
                   </OverlayView>
                   <PopoverContent>
                     <CardUnit
-                      egi={unitData ? unitData.egi : "Unit not found"}
-                      name={unitData ? unitData.name : "Unit not found"}
-                      type={unitData ? unitData.type : "Unit not found"}
-                      locationName={marker.locationName!}
+                      egi={selectedUnit.egi}
+                      name={selectedUnit.name}
+                      type={selectedUnit.type}
+                      locationName={selectedUnit.locationName!}
+                      onClick={() => dispatch(setOpenModal(true))}
                     />
                   </PopoverContent>
                 </Popover>
