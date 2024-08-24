@@ -71,7 +71,12 @@ export const unitSlice = createSlice({
     },
     setMarkers: (state, action: PayloadAction<MarkerTypes[]>) => {
       if (action.payload[0]?.label === "Current Location") {
-        state.markers = [...state.markers, action.payload[0]];
+
+        let cleanedArr = removeDuplicate(
+          state.markers,
+          action.payload[0].label
+        );
+        state.markers = [...cleanedArr, action.payload[0]];
       } else {
         state.markers = action.payload;
       }

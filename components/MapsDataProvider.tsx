@@ -80,7 +80,8 @@ const MapsDataProvider = () => {
     return () => {
       navigator.geolocation.clearWatch(0);
     };
-  }, [dispatch]);
+
+}, [dispatch, markers]);
 
   if (isLoading) return <Loading />;
 
