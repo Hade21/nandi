@@ -83,7 +83,6 @@ const Maps = ({ markers }: MapsProps) => {
                     mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                     position={{ lat: marker.latitude, lng: marker.longitude }}
                   >
-
                     <div className="p-2 bg-white rounded-sm w-max -translate-x-1/2 left-1/2 translate-y-2 cursor-pointer hover:bg-opacity-60">
                       <p>{marker.label}</p>
                     </div>
