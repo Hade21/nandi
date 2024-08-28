@@ -50,7 +50,7 @@ const ChangeLocationCard = () => {
       dateTime: unitData.dateTime,
     };
 
-    if (!res) {
+    if (!res.data) {
       toast({
         title: "Unauthorized",
         description: "Please login to update location",
@@ -58,7 +58,7 @@ const ChangeLocationCard = () => {
       });
       return;
     }
-    if (res.ok) {
+    if (res.data) {
       updateLocation({
         id: unitData.id,
         ...body,
@@ -165,7 +165,7 @@ const ChangeLocationCard = () => {
               />
             </div>
             <div className="flex pt-4 justify-center">
-              <Button type="submit" disabled={isLoading}>
+              <Button type="submit" disabled={isLoading} className="flex gap-2">
                 {isLoading && <TailSpin height="20" width="20" color="#000" />}
                 Save Location
               </Button>
