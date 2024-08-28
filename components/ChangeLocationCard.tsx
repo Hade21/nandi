@@ -109,7 +109,6 @@ const ChangeLocationCard = () => {
         title: "Location updated",
         description: "Location updated successfully",
       });
-      console.log(data);
       dispatch(setOpenModal(false));
     }
   }, [data, dispatch]);
