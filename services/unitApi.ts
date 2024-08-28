@@ -1,5 +1,6 @@
 import {
   AuthorizationTypes,
+  LocationBody,
   UnitResponse,
   UnitTypes,
   UnitsResponse,
@@ -52,6 +53,19 @@ export const unitApi = createApi({
         url: "/units",
       }),
     }),
+    updateLocation: builder.mutation<any, LocationBody & AuthorizationTypes>({
+      query: (body) => ({
+        url: `/units/${body.id}location`,
+        method: "POST",
+        body: {
+          long: body.long,
+          lat: body.lat,
+          alt: body.alt,
+          location: body.location,
+          dateTime: body.dateTime,
+        },
+      }),
+    }),
   }),
 });
 
@@ -61,4 +75,5 @@ export const {
   useGetUnitByIdQuery,
   useGetUnitsQuery,
   usePrefetch,
+  useUpdateLocationMutation,
 } = unitApi;

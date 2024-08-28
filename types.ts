@@ -98,3 +98,11 @@ export type MarkerTypes = {
   label: string;
   locationName?: string;
 };
+
+export type LocationBody = {
+  long: string;
+  lat: string;
+  alt: string;
+  location: string;
+  dateTime: string;
+};
