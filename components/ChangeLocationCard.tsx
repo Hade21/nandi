@@ -67,11 +67,8 @@ const ChangeLocationCard = () => {
     }
   }
   const useGPSLocation = () => {
-    if (!navigator.geolocation) {
-      setLocationLoading(true);
-    }
+    setLocationLoading(true);
     if (navigator.geolocation) {
-      console.log("use navigation");
       navigator.geolocation.getCurrentPosition((position) => {
         const location = {
           latitude: position.coords.latitude,
@@ -185,10 +182,7 @@ const ChangeLocationCard = () => {
           setDialogOpen(false);
         }}
       />
-      <RetrievingLocation
-        isOpen={locationLoading}
-        onOpenChange={setLocationLoading}
-      />
+      <RetrievingLocation isOpen={locationLoading} />
     </motion.div>
   );
 };
