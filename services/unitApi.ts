@@ -1,6 +1,7 @@
 import {
   AuthorizationTypes,
   LocationBody,
+  LocationResponse,
   UnitResponse,
   UnitTypes,
   UnitsResponse,
@@ -14,6 +15,7 @@ export const unitApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${baseUrl}/api/v1`,
   }),
+  tagTypes: ["Units"],
   endpoints: (builder) => ({
     addUnit: builder.mutation<UnitResponse, UnitTypes & AuthorizationTypes>({
       query: (body) => ({
@@ -47,13 +49,18 @@ export const unitApi = createApi({
       query: (id) => ({
         url: `/units/${id}`,
       }),
+      providesTags: ["Units"],
     }),
     getUnits: builder.query<UnitsResponse, void>({
       query: () => ({
         url: "/units",
       }),
+      providesTags: ["Units"],
     }),
-    updateLocation: builder.mutation<any, LocationBody & AuthorizationTypes>({
+    updateLocation: builder.mutation<
+      LocationResponse,
+      LocationBody & AuthorizationTypes
+    >({
       query: (body) => ({
         url: `/units/${body.id}location`,
         method: "POST",
@@ -65,6 +72,7 @@ export const unitApi = createApi({
           dateTime: body.dateTime,
         },
       }),
+      invalidatesTags: ["Units"],
     }),
   }),
 });

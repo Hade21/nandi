@@ -52,7 +52,6 @@ export type LocationTypes = {
   alt: number;
   location: string;
   dateTime: string;
-  unitId: string;
   createdBy: string;
 };
 
@@ -105,4 +104,8 @@ export type LocationBody = {
   alt: string;
   location: string;
   dateTime: string;
+};
+
+export type LocationResponse = {
+  data: LocationTypes;
 };
