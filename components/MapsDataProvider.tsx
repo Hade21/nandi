@@ -18,6 +18,7 @@ const MapsDataProvider = () => {
   const dispatch = useAppDispatch();
   const markers = useAppSelector((state) => state.units.markers);
   const searchQuery = useAppSelector((state) => state.units.searchQuery);
+  const isUpdating = useAppSelector((state) => state.units.isUpdating);
 
   useEffect(() => {
     if (searchQuery) {
@@ -61,27 +62,28 @@ const MapsDataProvider = () => {
     }
   }, [data, dispatch]);
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition((position) => {
-        const location = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          label: "Current Location",
-        };
-        dispatch(setMarkers([location]));
-      });
-    } else {
-      toast({
-        title: "Your location cannot be determined",
-        description: "Please enable geolocation on your browser.",
-        variant: "destructive",
-      });
+    if (!isUpdating) {
+      if (navigator.geolocation) {
+        navigator.geolocation.watchPosition((position) => {
+          const location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            label: "Current Location",
+          };
+          dispatch(setMarkers([location]));
+        });
+      } else {
+        toast({
+          title: "Your location cannot be determined",
+          description: "Please enable geolocation on your browser.",
+          variant: "destructive",
+        });
+      }
     }
     return () => {
       navigator.geolocation.clearWatch(0);
     };
-
-}, [dispatch, markers]);
+  }, [dispatch, isUpdating, markers]);
 
   if (isLoading) return <Loading />;
 
