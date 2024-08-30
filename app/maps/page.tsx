@@ -1,14 +1,7 @@
-import ChangeLocationCard from "@/components/ChangeLocationCard";
-import MapsDataProvider from "@/components/MapsDataProvider";
-import MapsProvider from "@/components/MapsProvider";
+import AuthWrapper from "./AuthWrapper";
 
 const page = () => {
-  return (
-    <MapsProvider>
-      <MapsDataProvider />
-      <ChangeLocationCard />
-    </MapsProvider>
-  );
+  return <AuthWrapper />;
 };
 
 export default page;

@@ -5,6 +5,7 @@ import { MarkerTypes, UnitTypes } from "@/types";
 import { GoogleMap, Marker, OverlayView } from "@react-google-maps/api";
 import { SetStateAction, useCallback, useEffect, useState } from "react";
 import CardUnit from "./CardUnit";
+import GuestUnitCard from "./GuestUnitCard";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export const defaultMapsContainerStyle = {
@@ -23,6 +24,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
   const units = useAppSelector((state) => state.units.units);
   const selectedUnit = useAppSelector((state) => state.units.selectedUnit);
   const isUpdating = useAppSelector((state) => state.units.isUpdating);
+  const isGuest = useAppSelector((state) => state.user.isGuest);
   const dispatch = useAppDispatch();
 
   const onLoad = useCallback(
@@ -130,13 +132,23 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                     </PopoverTrigger>
                   </OverlayView>
                   <PopoverContent>
-                    <CardUnit
-                      egi={selectedUnit.egi}
-                      name={selectedUnit.name}
-                      type={selectedUnit.type}
-                      locationName={selectedUnit.locationName!}
-                      onClick={() => dispatch(setOpenModal(true))}
-                    />
+                    {isGuest ? (
+                      <GuestUnitCard
+                        egi={selectedUnit.egi}
+                        name={selectedUnit.name}
+                        type={selectedUnit.type}
+                        locationName={selectedUnit.locationName!}
+                        onClick={() => dispatch(setOpenModal(true))}
+                      />
+                    ) : (
+                      <CardUnit
+                        egi={selectedUnit.egi}
+                        name={selectedUnit.name}
+                        type={selectedUnit.type}
+                        locationName={selectedUnit.locationName!}
+                        onClick={() => dispatch(setOpenModal(true))}
+                      />
+                    )}
                   </PopoverContent>
                 </Popover>
               </Marker>
