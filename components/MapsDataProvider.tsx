@@ -5,7 +5,7 @@ import { useGetUnitsQuery } from "@/services/unitApi";
 import { setMarkers, setUnits } from "@/services/unitService";
 import { MarkerTypes, UnitTypes } from "@/types";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Maps from "./Maps";
 import SearchBox from "./SearchBox";
 import ThemeSwitcher from "./ThemeSwitcher";
@@ -19,6 +19,7 @@ const MapsDataProvider = () => {
   const markers = useAppSelector((state) => state.units.markers);
   const searchQuery = useAppSelector((state) => state.units.searchQuery);
   const isUpdating = useAppSelector((state) => state.units.isUpdating);
+  const [location, setLocation] = useState<MarkerTypes | undefined>(undefined);
 
   useEffect(() => {
     if (searchQuery) {
@@ -61,7 +62,7 @@ const MapsDataProvider = () => {
       dispatch(setMarkers(unitMarkers));
     }
   }, [data, dispatch]);
-  useEffect(() => {
+  useCallback(() => {
     if (!isUpdating) {
       if (navigator.geolocation) {
         navigator.geolocation.watchPosition((position) => {
@@ -70,7 +71,7 @@ const MapsDataProvider = () => {
             longitude: position.coords.longitude,
             label: "Current Location",
           };
-          dispatch(setMarkers([location]));
+          setLocation(location);
         });
       } else {
         toast({
@@ -83,7 +84,7 @@ const MapsDataProvider = () => {
     return () => {
       navigator.geolocation.clearWatch(0);
     };
-  }, [dispatch, isUpdating, markers]);
+  }, [isUpdating]);
 
   if (isLoading) return <Loading />;
 
@@ -106,7 +107,7 @@ const MapsDataProvider = () => {
       <div className="theme absolute top-2.5 right-16 z-10">
         <ThemeSwitcher />
       </div>
-      {markers && <Maps markers={markers} />}
+      {markers && <Maps markers={markers} myLocation={location} />}
     </div>
   );
 };

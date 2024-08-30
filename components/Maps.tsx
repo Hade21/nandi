@@ -15,9 +15,10 @@ export const defaultMapsContainerStyle = {
 
 interface MapsProps {
   markers: MarkerTypes[];
+  myLocation: MarkerTypes | undefined;
 }
 
-const Maps = ({ markers }: MapsProps) => {
+const Maps = ({ markers, myLocation }: MapsProps) => {
   const [maps, setMaps] = useState<google.maps.Map | null>(null);
   const units = useAppSelector((state) => state.units.units);
   const selectedUnit = useAppSelector((state) => state.units.selectedUnit);
@@ -61,35 +62,33 @@ const Maps = ({ markers }: MapsProps) => {
         zoom={10}
         onLoad={onLoad}
       >
+        {myLocation && (
+          <Marker
+            key="my-location"
+            position={{ lat: myLocation.latitude, lng: myLocation.longitude }}
+            animation={google.maps.Animation.BOUNCE}
+            icon={{
+              url: "/car.png",
+              scaledSize: {
+                width: 40,
+                height: 40,
+                equals: () => true,
+              },
+            }}
+          >
+            <OverlayView
+              mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+              position={{ lat: myLocation.latitude, lng: myLocation.longitude }}
+            >
+              <div className="p-2 bg-white dark:bg-slate-950 rounded-sm w-max -translate-x-1/2 left-1/2 translate-y-2 cursor-pointer hover:bg-opacity-60">
+                <p>{myLocation.label}</p>
+              </div>
+            </OverlayView>
+          </Marker>
+        )}
         {markers &&
           markers.map((marker, index) => {
             let unitData = findUnit(units, marker.latitude, marker.longitude);
-            if (marker.label === "Current Location") {
-              return (
-                <Marker
-                  key={index}
-                  position={{ lat: marker.latitude, lng: marker.longitude }}
-                  animation={google.maps.Animation.BOUNCE}
-                  icon={{
-                    url: "/car.png",
-                    scaledSize: {
-                      width: 40,
-                      height: 40,
-                      equals: () => true,
-                    },
-                  }}
-                >
-                  <OverlayView
-                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                    position={{ lat: marker.latitude, lng: marker.longitude }}
-                  >
-                    <div className="p-2 bg-white dark:bg-slate-950 rounded-sm w-max -translate-x-1/2 left-1/2 translate-y-2 cursor-pointer hover:bg-opacity-60">
-                      <p>{marker.label}</p>
-                    </div>
-                  </OverlayView>
-                </Marker>
-              );
-            }
             return (
               <Marker
                 key={index}
