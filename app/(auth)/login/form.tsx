@@ -63,7 +63,7 @@ const LoginForm = () => {
             setErrDesc("Cookies not saved");
           }
           if (res.ok) {
-            router.push("/");
+            router.push("/maps");
           }
         })
         .catch((err) => {
