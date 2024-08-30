@@ -1,3 +1,4 @@
+import GuestButton from "@/components/GuestButton";
 import { Button } from "@/components/ui/button";
 import { ShootingStars } from "@/components/ui/shooting-stars";
 import { StarsBackground } from "@/components/ui/stars-background";
@@ -31,9 +32,7 @@ export default function Home() {
               <Link href="/register">Register</Link>
             </Button>
             <p className="w-full text-center">or</p>
-            <Button variant="ghost" className="w-full">
-              Login as Guest
-            </Button>
+            <GuestButton />
           </div>
         </div>
         <ShootingStars />
