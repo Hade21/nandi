@@ -2,7 +2,11 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { GetTokenCookies } from "@/lib/tokenCookies";
 import { useUpdateLocationMutation } from "@/services/unitApi";
-import { setIsUpdating, setOpenModal } from "@/services/unitService";
+import {
+  setIsUpdating,
+  setMarkers,
+  setOpenModal,
+} from "@/services/unitService";
 import { MarkerTypes } from "@/types";
 import { locationNameSchema } from "@/validator/unit";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -71,31 +75,31 @@ const ChangeLocationCard = () => {
     setLocationLoading(true);
     dispatch(setIsUpdating(true));
     if (isUpdating) {
-      // if (navigator.geolocation) {
-      //   navigator.geolocation.getCurrentPosition((position) => {
-      //     const location = {
-      //       latitude: position.coords.latitude,
-      //       longitude: position.coords.longitude,
-      //       label: name,
-      //     };
-      //     setLocationLoading(false);
-      //     dispatch(setMarkers([location]));
-      //     setUnitData({
-      //       lat: position.coords.latitude.toString(),
-      //       long: position.coords.longitude.toString(),
-      //       alt: position.coords.altitude?.toString() ?? "",
-      //       id,
-      //       locationName: name,
-      //       dateTime: new Date().toISOString(),
-      //     });
-      //   });
-      // } else {
-      //   toast({
-      //     title: "Your location cannot be determined",
-      //     description: "Please enable geolocation on your browser.",
-      //     variant: "destructive",
-      //   });
-      // }
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            label: name,
+          };
+          setLocationLoading(false);
+          dispatch(setMarkers([location]));
+          setUnitData({
+            lat: position.coords.latitude.toString(),
+            long: position.coords.longitude.toString(),
+            alt: position.coords.altitude?.toString() ?? "",
+            id,
+            locationName: name,
+            dateTime: new Date().toISOString(),
+          });
+        });
+      } else {
+        toast({
+          title: "Your location cannot be determined",
+          description: "Please enable geolocation on your browser.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
