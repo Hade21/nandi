@@ -5,7 +5,7 @@ import { useGetUnitsQuery } from "@/services/unitApi";
 import { setMarkers, setUnits } from "@/services/unitService";
 import { MarkerTypes, UnitTypes } from "@/types";
 import { useRouter } from "next/navigation";
-import { useMemo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Maps from "./Maps";
 import SearchBox from "./SearchBox";
 import ThemeSwitcher from "./ThemeSwitcher";
@@ -62,7 +62,7 @@ const MapsDataProvider = () => {
       dispatch(setMarkers(unitMarkers));
     }
   }, [data, dispatch]);
-  useMemo(() => {
+  useEffect(() => {
     if (!isUpdating) {
       if (navigator.geolocation) {
         navigator.geolocation.watchPosition((position) => {
