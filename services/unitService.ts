@@ -11,6 +11,7 @@ interface UnitState {
     type: string;
     egi: string;
     locationName: string;
+    timeStamp: string;
   };
   openModal: boolean;
   isUpdating: boolean;
@@ -26,6 +27,7 @@ const initialState: UnitState = {
     type: "",
     egi: "",
     locationName: "",
+    timeStamp: "",
   },
   openModal: false,
   isUpdating: false,

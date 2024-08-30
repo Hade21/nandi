@@ -122,6 +122,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                               name: unitData!.name ?? "",
                               type: unitData!.type ?? "",
                               locationName: marker.locationName!,
+                              timeStamp: marker.timeStamp!,
                             },
                           };
                           dispatch(setSelectedUnit(unit));
@@ -138,7 +139,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                         name={selectedUnit.name}
                         type={selectedUnit.type}
                         locationName={selectedUnit.locationName!}
-                        onClick={() => dispatch(setOpenModal(true))}
+                        timeStamp={selectedUnit.timeStamp}
                       />
                     ) : (
                       <CardUnit

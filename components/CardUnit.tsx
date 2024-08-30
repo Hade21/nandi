@@ -8,6 +8,7 @@ interface CardUnitProps {
   egi: string;
   locationName: string;
   onClick?: () => void;
+  timeStamp?: string;
 }
 const CardUnit = ({
   name,
@@ -15,7 +16,14 @@ const CardUnit = ({
   egi,
   locationName,
   onClick,
+  timeStamp,
 }: CardUnitProps) => {
+  const date = new Date(timeStamp!);
+  const timeStampFormatted = `${date.toLocaleDateString()} ${date.toLocaleTimeString(
+    "id-ID",
+    { hour: "numeric", minute: "numeric" }
+  )}`;
+
   return (
     <div className="space-y-2">
       <h1 className="text-center font-semibold text-lg">{name}</h1>
@@ -39,6 +47,11 @@ const CardUnit = ({
         <PopoverClose>
           <Button onClick={onClick}>Edit Location</Button>
         </PopoverClose>
+      </div>
+      <div className="flex items-center space-x-2 h-10">
+        <p className="w-1/3 text-sm">Last Updated</p>
+        <Separator orientation="vertical" />
+        <p className="text-sm font-semibold">{timeStampFormatted}</p>
       </div>
     </div>
   );

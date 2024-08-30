@@ -32,6 +32,7 @@ const MapsDataProvider = () => {
           longitude: Number(unit![0].locations![0].long),
           label: unit![0].name,
           locationName: unit![0].locations![0].location,
+          timeStamp: unit![0].locations![0].dateTime,
         },
       ];
       dispatch(setMarkers(location));
@@ -43,6 +44,7 @@ const MapsDataProvider = () => {
           longitude: Number(unit.locations![0].long),
           label: unit.name,
           locationName: unit.locations![0].location,
+          timeStamp: unit.locations![0].dateTime,
         });
       });
       dispatch(setMarkers(locations));
@@ -57,6 +59,7 @@ const MapsDataProvider = () => {
           longitude: Number(unit.locations![0].long),
           label: unit.name,
           locationName: unit.locations![0].location,
+          timeStamp: unit.locations![0].dateTime,
         };
       });
       dispatch(setMarkers(unitMarkers));
@@ -99,6 +102,7 @@ const MapsDataProvider = () => {
       </div>
     );
 
+  console.log(markers);
   return (
     <div className="relative">
       <div className="search z-10 absolute w-1/3 sm:top-2.5 sm:left-1/2 sm:-translate-x-1/2 top-14 left-2 min-w-48">
