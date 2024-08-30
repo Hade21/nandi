@@ -19,7 +19,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { useAppDispatch } from "@/hooks/reduxHooks";
 import { useRegisterMutation } from "@/services/userApi";
+import { setIsGuest } from "@/services/userService";
 import { ErrorType } from "@/types";
 import { registerSchema } from "@/validator/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,6 +43,7 @@ const RegisterForm = () => {
   const [errDesc, setErrDesc] = useState<string>("");
   const [register, { isLoading, data, error }] = useRegisterMutation();
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const { toast } = useToast();
   const form = useForm<Input>({
     resolver: zodResolver(registerSchema),
@@ -237,7 +240,11 @@ const RegisterForm = () => {
                     Register
                   </Button>
                   <span>or</span>
-                  <Button type="button" variant="ghost">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => dispatch(setIsGuest(true))}
+                  >
                     Sign in as Guest
                   </Button>
                 </div>
