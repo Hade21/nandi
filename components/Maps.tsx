@@ -22,6 +22,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
   const [maps, setMaps] = useState<google.maps.Map | null>(null);
   const units = useAppSelector((state) => state.units.units);
   const selectedUnit = useAppSelector((state) => state.units.selectedUnit);
+  const isUpdating = useAppSelector((state) => state.units.isUpdating);
   const dispatch = useAppDispatch();
 
   const onLoad = useCallback(
@@ -62,7 +63,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
         zoom={10}
         onLoad={onLoad}
       >
-        {myLocation && (
+        {myLocation && !isUpdating && (
           <Marker
             key="my-location"
             position={{ lat: myLocation.latitude, lng: myLocation.longitude }}
