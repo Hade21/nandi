@@ -66,6 +66,7 @@ const LoginForm = () => {
             setErrDesc("Cookies not saved");
           }
           if (res.ok) {
+            dispatch(setIsGuest(false));
             router.push("/maps");
           }
         })
@@ -74,7 +75,7 @@ const LoginForm = () => {
           setErrDesc(err);
         });
     }
-  }, [data, router]);
+  }, [data, dispatch, router]);
   useEffect(() => {
     if (error) {
       const errorObj = error as ErrorType;
