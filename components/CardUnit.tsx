@@ -43,15 +43,15 @@ const CardUnit = ({
         <Separator orientation="vertical" />
         <p className="text-sm font-semibold">{locationName}</p>
       </div>
-      <div className="flex pt-4 justify-center">
-        <PopoverClose>
-          <Button onClick={onClick}>Edit Location</Button>
-        </PopoverClose>
-      </div>
       <div className="flex items-center space-x-2 h-10">
         <p className="w-1/3 text-sm">Last Updated</p>
         <Separator orientation="vertical" />
         <p className="text-sm font-semibold">{timeStampFormatted}</p>
+      </div>
+      <div className="flex pt-4 justify-center">
+        <PopoverClose>
+          <Button onClick={onClick}>Edit Location</Button>
+        </PopoverClose>
       </div>
     </div>
   );

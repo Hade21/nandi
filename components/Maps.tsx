@@ -149,6 +149,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                         name={selectedUnit.name}
                         type={selectedUnit.type}
                         locationName={selectedUnit.locationName!}
+                        timeStamp={selectedUnit.timeStamp}
                         onClick={() => dispatch(setOpenModal(true))}
                       />
                     )}
