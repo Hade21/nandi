@@ -68,7 +68,7 @@ const MapsDataProvider = () => {
   useEffect(() => {
     if (!isUpdating) {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
+        navigator.geolocation.watchPosition((position) => {
           const location = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
