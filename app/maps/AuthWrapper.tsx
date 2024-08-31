@@ -2,29 +2,36 @@
 import ChangeLocationCard from "@/components/ChangeLocationCard";
 import MapsDataProvider from "@/components/MapsDataProvider";
 import MapsProvider from "@/components/MapsProvider";
-import { useAppSelector } from "@/hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { GetTokenCookies } from "@/lib/tokenCookies";
-import { useRouter } from "next/navigation";
+import { setIsGuest } from "@/services/userService";
 import { useEffect, useState } from "react";
 
 const AuthWrapper = () => {
   const isGuest = useAppSelector((state) => state.user.isGuest);
-  const [auth, setAuth] = useState(undefined);
-  const router = useRouter();
+  const [validToken, setValidToken] = useState<string>("");
+  const dispatch = useAppDispatch();
 
-  async function chcekAuth() {
+  async function checkAuth() {
     return await GetTokenCookies();
   }
 
   useEffect(() => {
-    chcekAuth()
-      .then((data) => {
-        setAuth(data);
+    checkAuth()
+      .then((res) => {
+        setValidToken(res.data?.accessToken);
       })
-      .catch((error) => {
-        setAuth(undefined);
+      .catch((err) => {
+        setValidToken("");
       });
   }, []);
+  useEffect(() => {
+    if (!validToken) {
+      dispatch(setIsGuest(true));
+    } else if (validToken) {
+      dispatch(setIsGuest(false));
+    }
+  }, [dispatch, validToken]);
 
   if (isGuest) {
     return (
@@ -32,9 +39,7 @@ const AuthWrapper = () => {
         <MapsDataProvider />
       </MapsProvider>
     );
-  }
-
-  if (auth) {
+  } else {
     return (
       <MapsProvider>
         <MapsDataProvider />
@@ -42,8 +47,6 @@ const AuthWrapper = () => {
       </MapsProvider>
     );
   }
-
-  router.push("/");
 };
 
 export default AuthWrapper;
