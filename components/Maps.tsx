@@ -58,6 +58,8 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
     }
   }, [maps, markers]);
 
+  console.log(isGuest);
+
   return (
     <div>
       <GoogleMap
