@@ -1,23 +1,19 @@
-import { PopoverClose } from "@radix-ui/react-popover";
-import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 
-interface CardUnitProps {
+interface GuestUnitCardProps {
   name: string;
   type: string;
   egi: string;
   locationName: string;
-  onClick?: () => void;
   timeStamp?: string;
 }
-const CardUnit = ({
+const GuestUnitCard = ({
   name,
   type,
   egi,
   locationName,
-  onClick,
   timeStamp,
-}: CardUnitProps) => {
+}: GuestUnitCardProps) => {
   const date = new Date(timeStamp!);
   const timeStampFormatted = `${date.toLocaleDateString()} ${date.toLocaleTimeString(
     "id-ID",
@@ -48,13 +44,8 @@ const CardUnit = ({
         <Separator orientation="vertical" />
         <p className="text-sm font-semibold">{timeStampFormatted}</p>
       </div>
-      <div className="flex pt-4 justify-center">
-        <PopoverClose>
-          <Button onClick={onClick}>Edit Location</Button>
-        </PopoverClose>
-      </div>
     </div>
   );
 };
 
-export default CardUnit;
+export default GuestUnitCard;

@@ -33,7 +33,7 @@ export const userApi = createApi({
     }),
     getUser: builder.query<UserResponse, string>({
       query: (accessToken) => ({
-        url: "/auth/user",
+        url: "/users",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

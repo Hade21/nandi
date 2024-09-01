@@ -18,8 +18,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAppDispatch } from "@/hooks/reduxHooks";
 import { SetTokenCookies } from "@/lib/tokenCookies";
 import { useLoginMutation } from "@/services/userApi";
+import { setIsGuest } from "@/services/userService";
 import { ErrorType, NotFound } from "@/types";
 import { loginSchema } from "@/validator/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,6 +41,7 @@ const LoginForm = () => {
   const [errDesc, setErrDesc] = useState<string>("");
   const [login, { isLoading, data, error }] = useLoginMutation();
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const form = useForm<Input>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -63,7 +66,8 @@ const LoginForm = () => {
             setErrDesc("Cookies not saved");
           }
           if (res.ok) {
-            router.push("/");
+            dispatch(setIsGuest(false));
+            router.push("/maps");
           }
         })
         .catch((err) => {
@@ -71,7 +75,7 @@ const LoginForm = () => {
           setErrDesc(err);
         });
     }
-  }, [data, router]);
+  }, [data, dispatch, router]);
   useEffect(() => {
     if (error) {
       const errorObj = error as ErrorType;
@@ -172,12 +176,19 @@ const LoginForm = () => {
                     className="flex gap-2"
                   >
                     {isLoading && (
-                      <TailSpin height="20" width="20" color="#000" />
+                      <TailSpin height="20" width="20" color="#3b82f6" />
                     )}
                     Login
                   </Button>
                   <span>or</span>
-                  <Button type="button" variant="ghost">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      dispatch(setIsGuest(true));
+                      router.push("/maps");
+                    }}
+                  >
                     Sign in as Guest
                   </Button>
                 </div>
@@ -202,7 +213,7 @@ const LoginForm = () => {
               variant="destructive"
               title={errMsg}
               desc={errDesc}
-              className="bg-red-400"
+              className="bg-red-800 dark:bg-red-400 text-red-500 dark:text-red-950"
             />
           </motion.div>
         )}

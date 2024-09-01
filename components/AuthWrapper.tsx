@@ -29,10 +29,15 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!data || error) {
+    console.log(validToken);
+    console.log(data, error);
     push("/login");
   }
 
-  if (data && data.data.role !== "admin") {
+  if (data && data.data.role !== "ADMIN") {
+    setTimeout(() => {
+      push("/login");
+    }, 5000);
     return <Unauthorized />;
   }
 

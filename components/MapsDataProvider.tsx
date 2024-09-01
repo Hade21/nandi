@@ -5,7 +5,7 @@ import { useGetUnitsQuery } from "@/services/unitApi";
 import { setMarkers, setUnits } from "@/services/unitService";
 import { MarkerTypes, UnitTypes } from "@/types";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Maps from "./Maps";
 import SearchBox from "./SearchBox";
 import ThemeSwitcher from "./ThemeSwitcher";
@@ -18,18 +18,22 @@ const MapsDataProvider = () => {
   const dispatch = useAppDispatch();
   const markers = useAppSelector((state) => state.units.markers);
   const searchQuery = useAppSelector((state) => state.units.searchQuery);
+  const isUpdating = useAppSelector((state) => state.units.isUpdating);
+  const [location, setLocation] = useState<MarkerTypes | undefined>(undefined);
 
   useEffect(() => {
     if (searchQuery) {
       const unit = data?.data.filter((units) => {
         return units.id === searchQuery;
       });
+      const latestLocation = unit![0].locations!.slice(-1)[0];
       const location = [
         {
-          latitude: Number(unit![0].locations![0].lat),
-          longitude: Number(unit![0].locations![0].long),
+          latitude: Number(latestLocation!.lat),
+          longitude: Number(latestLocation!.long),
           label: unit![0].name,
-          locationName: unit![0].locations![0].location,
+          locationName: latestLocation!.location,
+          timeStamp: latestLocation!.dateTime,
         },
       ];
       dispatch(setMarkers(location));
@@ -37,10 +41,11 @@ const MapsDataProvider = () => {
       const locations: MarkerTypes[] = [];
       data?.data.forEach((unit) => {
         locations.push({
-          latitude: Number(unit.locations![0].lat),
-          longitude: Number(unit.locations![0].long),
+          latitude: Number(unit.locations![unit.locations!.length - 1].lat),
+          longitude: Number(unit.locations![unit.locations!.length - 1].long),
           label: unit.name,
-          locationName: unit.locations![0].location,
+          locationName: unit.locations![unit.locations!.length - 1].location,
+          timeStamp: unit.locations![unit.locations!.length - 1].dateTime,
         });
       });
       dispatch(setMarkers(locations));
@@ -51,37 +56,39 @@ const MapsDataProvider = () => {
       dispatch(setUnits(data.data));
       const unitMarkers: MarkerTypes[] = data.data.map((unit: UnitTypes) => {
         return {
-          latitude: Number(unit.locations![0].lat),
-          longitude: Number(unit.locations![0].long),
+          latitude: Number(unit.locations![unit.locations!.length - 1].lat),
+          longitude: Number(unit.locations![unit.locations!.length - 1].long),
           label: unit.name,
-          locationName: unit.locations![0].location,
+          locationName: unit.locations![unit.locations!.length - 1].location,
+          timeStamp: unit.locations![unit.locations!.length - 1].dateTime,
         };
       });
       dispatch(setMarkers(unitMarkers));
     }
   }, [data, dispatch]);
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition((position) => {
-        const location = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          label: "Current Location",
-        };
-        dispatch(setMarkers([location]));
-      });
-    } else {
-      toast({
-        title: "Your location cannot be determined",
-        description: "Please enable geolocation on your browser.",
-        variant: "destructive",
-      });
+    if (!isUpdating) {
+      if (navigator.geolocation) {
+        navigator.geolocation.watchPosition((position) => {
+          const location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            label: "Current Location",
+          };
+          setLocation(location);
+        });
+      } else {
+        toast({
+          title: "Your location cannot be determined",
+          description: "Please enable geolocation on your browser.",
+          variant: "destructive",
+        });
+      }
     }
     return () => {
       navigator.geolocation.clearWatch(0);
     };
-
-}, [dispatch, markers]);
+  }, [isUpdating]);
 
   if (isLoading) return <Loading />;
 
@@ -104,7 +111,7 @@ const MapsDataProvider = () => {
       <div className="theme absolute top-2.5 right-16 z-10">
         <ThemeSwitcher />
       </div>
-      {markers && <Maps markers={markers} />}
+      {markers && <Maps markers={markers} myLocation={location} />}
     </div>
   );
 };

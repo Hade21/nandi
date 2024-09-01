@@ -5,6 +5,7 @@ import { MarkerTypes, UnitTypes } from "@/types";
 import { GoogleMap, Marker, OverlayView } from "@react-google-maps/api";
 import { SetStateAction, useCallback, useEffect, useState } from "react";
 import CardUnit from "./CardUnit";
+import GuestUnitCard from "./GuestUnitCard";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export const defaultMapsContainerStyle = {
@@ -15,12 +16,15 @@ export const defaultMapsContainerStyle = {
 
 interface MapsProps {
   markers: MarkerTypes[];
+  myLocation: MarkerTypes | undefined;
 }
 
-const Maps = ({ markers }: MapsProps) => {
+const Maps = ({ markers, myLocation }: MapsProps) => {
   const [maps, setMaps] = useState<google.maps.Map | null>(null);
   const units = useAppSelector((state) => state.units.units);
   const selectedUnit = useAppSelector((state) => state.units.selectedUnit);
+  const isUpdating = useAppSelector((state) => state.units.isUpdating);
+  const isGuest = useAppSelector((state) => state.user.isGuest);
   const dispatch = useAppDispatch();
 
   const onLoad = useCallback(
@@ -61,35 +65,33 @@ const Maps = ({ markers }: MapsProps) => {
         zoom={10}
         onLoad={onLoad}
       >
+        {myLocation && !isUpdating && (
+          <Marker
+            key="my-location"
+            position={{ lat: myLocation.latitude, lng: myLocation.longitude }}
+            animation={google.maps.Animation.BOUNCE}
+            icon={{
+              url: "/car.png",
+              scaledSize: {
+                width: 40,
+                height: 40,
+                equals: () => true,
+              },
+            }}
+          >
+            <OverlayView
+              mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+              position={{ lat: myLocation.latitude, lng: myLocation.longitude }}
+            >
+              <div className="p-2 bg-white dark:bg-slate-950 rounded-sm w-max -translate-x-1/2 left-1/2 translate-y-2 cursor-pointer hover:bg-opacity-60">
+                <p>{myLocation.label}</p>
+              </div>
+            </OverlayView>
+          </Marker>
+        )}
         {markers &&
           markers.map((marker, index) => {
             let unitData = findUnit(units, marker.latitude, marker.longitude);
-            if (marker.label === "Current Location") {
-              return (
-                <Marker
-                  key={index}
-                  position={{ lat: marker.latitude, lng: marker.longitude }}
-                  animation={google.maps.Animation.BOUNCE}
-                  icon={{
-                    url: "/car.png",
-                    scaledSize: {
-                      width: 40,
-                      height: 40,
-                      equals: () => true,
-                    },
-                  }}
-                >
-                  <OverlayView
-                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                    position={{ lat: marker.latitude, lng: marker.longitude }}
-                  >
-                    <div className="p-2 bg-white dark:bg-slate-950 rounded-sm w-max -translate-x-1/2 left-1/2 translate-y-2 cursor-pointer hover:bg-opacity-60">
-                      <p>{marker.label}</p>
-                    </div>
-                  </OverlayView>
-                </Marker>
-              );
-            }
             return (
               <Marker
                 key={index}
@@ -120,6 +122,7 @@ const Maps = ({ markers }: MapsProps) => {
                               name: unitData!.name ?? "",
                               type: unitData!.type ?? "",
                               locationName: marker.locationName!,
+                              timeStamp: marker.timeStamp!,
                             },
                           };
                           dispatch(setSelectedUnit(unit));
@@ -130,13 +133,24 @@ const Maps = ({ markers }: MapsProps) => {
                     </PopoverTrigger>
                   </OverlayView>
                   <PopoverContent>
-                    <CardUnit
-                      egi={selectedUnit.egi}
-                      name={selectedUnit.name}
-                      type={selectedUnit.type}
-                      locationName={selectedUnit.locationName!}
-                      onClick={() => dispatch(setOpenModal(true))}
-                    />
+                    {isGuest ? (
+                      <GuestUnitCard
+                        egi={selectedUnit.egi}
+                        name={selectedUnit.name}
+                        type={selectedUnit.type}
+                        locationName={selectedUnit.locationName!}
+                        timeStamp={selectedUnit.timeStamp}
+                      />
+                    ) : (
+                      <CardUnit
+                        egi={selectedUnit.egi}
+                        name={selectedUnit.name}
+                        type={selectedUnit.type}
+                        locationName={selectedUnit.locationName!}
+                        timeStamp={selectedUnit.timeStamp}
+                        onClick={() => dispatch(setOpenModal(true))}
+                      />
+                    )}
                   </PopoverContent>
                 </Popover>
               </Marker>

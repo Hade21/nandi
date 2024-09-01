@@ -11,8 +11,10 @@ interface UnitState {
     type: string;
     egi: string;
     locationName: string;
+    timeStamp: string;
   };
   openModal: boolean;
+  isUpdating: boolean;
 }
 
 const initialState: UnitState = {
@@ -25,8 +27,10 @@ const initialState: UnitState = {
     type: "",
     egi: "",
     locationName: "",
+    timeStamp: "",
   },
   openModal: false,
+  isUpdating: false,
 };
 
 function removeDuplicate(arr: any, value: any) {
@@ -71,7 +75,6 @@ export const unitSlice = createSlice({
     },
     setMarkers: (state, action: PayloadAction<MarkerTypes[]>) => {
       if (action.payload[0]?.label === "Current Location") {
-
         let cleanedArr = removeDuplicate(
           state.markers,
           action.payload[0].label
@@ -90,6 +93,9 @@ export const unitSlice = createSlice({
     setOpenModal: (state, action: PayloadAction<boolean>) => {
       state.openModal = action.payload;
     },
+    setIsUpdating: (state, action: PayloadAction<boolean>) => {
+      state.isUpdating = action.payload;
+    },
   },
 });
 
@@ -99,6 +105,7 @@ export const {
   setMarkers,
   setSelectedUnit,
   setOpenModal,
+  setIsUpdating,
 } = unitSlice.actions;
 
 export default unitSlice.reducer;

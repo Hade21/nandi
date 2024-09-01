@@ -96,6 +96,7 @@ export type MarkerTypes = {
   longitude: number;
   label: string;
   locationName?: string;
+  timeStamp?: string;
 };
 
 export type LocationBody = {

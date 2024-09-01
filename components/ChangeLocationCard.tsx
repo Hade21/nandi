@@ -2,8 +2,12 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { GetTokenCookies } from "@/lib/tokenCookies";
 import { useUpdateLocationMutation } from "@/services/unitApi";
-import { setMarkers, setOpenModal } from "@/services/unitService";
-import { MarkerTypes } from "@/types";
+import {
+  setIsUpdating,
+  setMarkers,
+  setOpenModal,
+} from "@/services/unitService";
+import { ErrorType, MarkerTypes } from "@/types";
 import { locationNameSchema } from "@/validator/unit";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
@@ -46,7 +50,7 @@ const ChangeLocationCard = () => {
       long: unitData.long,
       lat: unitData.lat,
       alt: unitData.alt,
-      location: unitData.locationName,
+      location: form.getValues("locationName")!,
       dateTime: unitData.dateTime,
     };
 
@@ -68,8 +72,9 @@ const ChangeLocationCard = () => {
   }
   const useGPSLocation = () => {
     setLocationLoading(true);
+    dispatch(setIsUpdating(true));
     if (navigator.geolocation) {
-      navigator.geolocation.watchPosition((position) => {
+      navigator.geolocation.getCurrentPosition((position) => {
         const location = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -80,7 +85,7 @@ const ChangeLocationCard = () => {
         setUnitData({
           lat: position.coords.latitude.toString(),
           long: position.coords.longitude.toString(),
-          alt: position.coords.altitude?.toString() ?? "",
+          alt: position.coords.altitude?.toString() ?? "100",
           id,
           locationName: name,
           dateTime: new Date().toISOString(),
@@ -112,6 +117,16 @@ const ChangeLocationCard = () => {
       dispatch(setOpenModal(false));
     }
   }, [data, dispatch]);
+  useEffect(() => {
+    if (error) {
+      const errObj = error as ErrorType;
+      toast({
+        title: errObj.data.errors.message || "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+    }
+  }, [error]);
 
   return (
     <motion.div

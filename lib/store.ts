@@ -1,6 +1,7 @@
 import { unitApi } from "@/services/unitApi";
 import unitReducer from "@/services/unitService";
 import { userApi } from "@/services/userApi";
+import userReducer from "@/services/userService";
 import { configureStore } from "@reduxjs/toolkit";
 
 export const makeStore = () => {
@@ -9,6 +10,7 @@ export const makeStore = () => {
       [userApi.reducerPath]: userApi.reducer,
       [unitApi.reducerPath]: unitApi.reducer,
       units: unitReducer,
+      user: userReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat([userApi.middleware, unitApi.middleware]),

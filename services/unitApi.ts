@@ -62,7 +62,7 @@ export const unitApi = createApi({
       LocationBody & AuthorizationTypes
     >({
       query: (body) => ({
-        url: `/units/${body.id}location`,
+        url: `/units/${body.id}/location`,
         method: "POST",
         body: {
           long: body.long,
@@ -70,6 +70,9 @@ export const unitApi = createApi({
           alt: body.alt,
           location: body.location,
           dateTime: body.dateTime,
+        },
+        headers: {
+          Authorization: `Bearer ${body.accessToken}`,
         },
       }),
       invalidatesTags: ["Units"],
