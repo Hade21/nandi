@@ -26,13 +26,14 @@ const MapsDataProvider = () => {
       const unit = data?.data.filter((units) => {
         return units.id === searchQuery;
       });
+      const latestLocation = unit![0].locations!.slice(-1)[0];
       const location = [
         {
-          latitude: Number(unit![0].locations![0].lat),
-          longitude: Number(unit![0].locations![0].long),
+          latitude: Number(latestLocation!.lat),
+          longitude: Number(latestLocation!.long),
           label: unit![0].name,
-          locationName: unit![0].locations![0].location,
-          timeStamp: unit![0].locations![0].dateTime,
+          locationName: latestLocation!.location,
+          timeStamp: latestLocation!.dateTime,
         },
       ];
       dispatch(setMarkers(location));
@@ -40,11 +41,11 @@ const MapsDataProvider = () => {
       const locations: MarkerTypes[] = [];
       data?.data.forEach((unit) => {
         locations.push({
-          latitude: Number(unit.locations![0].lat),
-          longitude: Number(unit.locations![0].long),
+          latitude: Number(unit.locations![unit.locations!.length - 1].lat),
+          longitude: Number(unit.locations![unit.locations!.length - 1].long),
           label: unit.name,
-          locationName: unit.locations![0].location,
-          timeStamp: unit.locations![0].dateTime,
+          locationName: unit.locations![unit.locations!.length - 1].location,
+          timeStamp: unit.locations![unit.locations!.length - 1].dateTime,
         });
       });
       dispatch(setMarkers(locations));
@@ -55,11 +56,11 @@ const MapsDataProvider = () => {
       dispatch(setUnits(data.data));
       const unitMarkers: MarkerTypes[] = data.data.map((unit: UnitTypes) => {
         return {
-          latitude: Number(unit.locations![0].lat),
-          longitude: Number(unit.locations![0].long),
+          latitude: Number(unit.locations![unit.locations!.length - 1].lat),
+          longitude: Number(unit.locations![unit.locations!.length - 1].long),
           label: unit.name,
-          locationName: unit.locations![0].location,
-          timeStamp: unit.locations![0].dateTime,
+          locationName: unit.locations![unit.locations!.length - 1].location,
+          timeStamp: unit.locations![unit.locations!.length - 1].dateTime,
         };
       });
       dispatch(setMarkers(unitMarkers));
