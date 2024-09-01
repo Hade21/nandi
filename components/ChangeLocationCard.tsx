@@ -7,7 +7,7 @@ import {
   setMarkers,
   setOpenModal,
 } from "@/services/unitService";
-import { MarkerTypes } from "@/types";
+import { ErrorType, MarkerTypes } from "@/types";
 import { locationNameSchema } from "@/validator/unit";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
@@ -37,7 +37,6 @@ const ChangeLocationCard = () => {
   const { id, name, type, egi, locationName } = useAppSelector(
     (state) => state.units.selectedUnit
   );
-  const isUpdating = useAppSelector((state) => state.units.isUpdating);
   const dispatch = useAppDispatch();
   const [updateLocation, { isLoading, error, data }] =
     useUpdateLocationMutation();
@@ -51,7 +50,7 @@ const ChangeLocationCard = () => {
       long: unitData.long,
       lat: unitData.lat,
       alt: unitData.alt,
-      location: unitData.locationName,
+      location: form.getValues("locationName")!,
       dateTime: unitData.dateTime,
     };
 
@@ -86,7 +85,7 @@ const ChangeLocationCard = () => {
         setUnitData({
           lat: position.coords.latitude.toString(),
           long: position.coords.longitude.toString(),
-          alt: position.coords.altitude?.toString() ?? "",
+          alt: position.coords.altitude?.toString() ?? "100",
           id,
           locationName: name,
           dateTime: new Date().toISOString(),
@@ -118,6 +117,16 @@ const ChangeLocationCard = () => {
       dispatch(setOpenModal(false));
     }
   }, [data, dispatch]);
+  useEffect(() => {
+    if (error) {
+      const errObj = error as ErrorType;
+      toast({
+        title: errObj.data.errors.message || "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+    }
+  }, [error]);
 
   return (
     <motion.div
