@@ -235,7 +235,7 @@ const RegisterForm = () => {
                     className="flex gap-2"
                   >
                     {isLoading && (
-                      <TailSpin height="20" width="20" color="#000" />
+                      <TailSpin height="20" width="20" color="#3b82f6" />
                     )}
                     Register
                   </Button>
@@ -243,7 +243,10 @@ const RegisterForm = () => {
                   <Button
                     type="button"
                     variant="ghost"
-                    onClick={() => dispatch(setIsGuest(true))}
+                    onClick={() => {
+                      dispatch(setIsGuest(true));
+                      router.push("/maps");
+                    }}
                   >
                     Sign in as Guest
                   </Button>

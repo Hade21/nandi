@@ -176,7 +176,7 @@ const LoginForm = () => {
                     className="flex gap-2"
                   >
                     {isLoading && (
-                      <TailSpin height="20" width="20" color="#000" />
+                      <TailSpin height="20" width="20" color="#3b82f6" />
                     )}
                     Login
                   </Button>
@@ -184,7 +184,10 @@ const LoginForm = () => {
                   <Button
                     type="button"
                     variant="ghost"
-                    onClick={() => dispatch(setIsGuest(true))}
+                    onClick={() => {
+                      dispatch(setIsGuest(true));
+                      router.push("/maps");
+                    }}
                   >
                     Sign in as Guest
                   </Button>
@@ -210,7 +213,7 @@ const LoginForm = () => {
               variant="destructive"
               title={errMsg}
               desc={errDesc}
-              className="bg-red-400"
+              className="bg-red-800 dark:bg-red-400 text-red-500 dark:text-red-950"
             />
           </motion.div>
         )}
