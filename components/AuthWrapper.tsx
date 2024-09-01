@@ -35,7 +35,9 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (data && data.data.role !== "ADMIN") {
-    console.log(data.data.role);
+    setTimeout(() => {
+      push("/login");
+    }, 5000);
     return <Unauthorized />;
   }
 
