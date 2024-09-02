@@ -6,6 +6,7 @@ import { GoogleMap, Marker, OverlayView } from "@react-google-maps/api";
 import { useCallback, useEffect, useRef, useState } from "react";
 import CardUnit from "./CardUnit";
 import GuestUnitCard from "./GuestUnitCard";
+import Logout from "./Logout";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export const defaultMapsContainerStyle = {
@@ -174,6 +175,9 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
             );
           })}
       </GoogleMap>
+      <div className="absolute top-14 right-2">
+        <Logout />
+      </div>
     </div>
   );
 };
