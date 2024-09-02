@@ -7,7 +7,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
-import { Button } from "./ui/button";
 
 interface AlertDialogLocationProps {
   isOpen: boolean;
@@ -32,11 +31,12 @@ const AlertDialogLocation = ({
             Use your current GPS location or pin on maps
           </AlertDialogDescription>
           <AlertDialogFooter>
-            <AlertDialogAction>
-              <Button onClick={useGPSLocation}>Use My Location</Button>
+            <AlertDialogAction onClick={useGPSLocation}>
+              Use My Location
             </AlertDialogAction>
-            <AlertDialogAction>
-              <Button onClick={pinOnMap}>Pin On Maps</Button>
+            <div className="h-2"></div>
+            <AlertDialogAction onClick={pinOnMap}>
+              Pin On Maps
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogHeader>
