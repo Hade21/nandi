@@ -3,9 +3,11 @@ import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { setOpenModal, setSelectedUnit } from "@/services/unitService";
 import { MarkerTypes, UnitTypes } from "@/types";
 import { GoogleMap, Marker, OverlayView } from "@react-google-maps/api";
-import { SetStateAction, useCallback, useEffect, useState } from "react";
+import { LocateFixed } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import CardUnit from "./CardUnit";
 import GuestUnitCard from "./GuestUnitCard";
+import MoreOption from "./MoreOption";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export const defaultMapsContainerStyle = {
@@ -21,17 +23,27 @@ interface MapsProps {
 
 const Maps = ({ markers, myLocation }: MapsProps) => {
   const [maps, setMaps] = useState<google.maps.Map | null>(null);
+  const [center, setCenter] = useState({ lat: 0, lng: 0 });
   const units = useAppSelector((state) => state.units.units);
   const selectedUnit = useAppSelector((state) => state.units.selectedUnit);
   const isUpdating = useAppSelector((state) => state.units.isUpdating);
   const isGuest = useAppSelector((state) => state.user.isGuest);
   const dispatch = useAppDispatch();
+  const mapRef2 = useRef<google.maps.Map | null>(null);
 
-  const onLoad = useCallback(
-    (maps: SetStateAction<google.maps.Map | null>) => setMaps(maps),
-    []
-  );
-
+  const onMapLoad = (map: google.maps.Map | null) => {
+    mapRef2.current = map;
+    setMaps(map);
+  };
+  const onCenterChanged = () => {
+    if (maps) {
+      const newCenter = maps.getCenter();
+      setCenter({ lat: newCenter!.lat(), lng: newCenter!.lng() });
+    }
+  };
+  const panTo = useCallback(({ lat, lng }: { lat: number; lng: number }) => {
+    mapRef2.current?.panTo({ lat, lng });
+  }, []);
   const findUnit = (
     arr: UnitTypes[],
     lat: number,
@@ -63,7 +75,9 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
       <GoogleMap
         mapContainerStyle={defaultMapsContainerStyle}
         zoom={10}
-        onLoad={onLoad}
+        center={center}
+        onLoad={onMapLoad}
+        // onBoundsChanged={onCenterChanged}
       >
         {myLocation && !isUpdating && (
           <Marker
@@ -157,6 +171,17 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
             );
           })}
       </GoogleMap>
+      <div
+        className="absolute bottom-7 left-2 bg-white dark:bg-slate-950 rounded-sm p-2 cursor-pointer"
+        onClick={() =>
+          panTo({ lat: myLocation?.latitude!, lng: myLocation?.longitude! })
+        }
+      >
+        <LocateFixed />
+      </div>
+      <div className="absolute top-14 right-2">
+        <MoreOption />
+      </div>
     </div>
   );
 };

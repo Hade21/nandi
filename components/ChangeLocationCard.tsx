@@ -74,29 +74,37 @@ const ChangeLocationCard = () => {
     setLocationLoading(true);
     dispatch(setIsUpdating(true));
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const location = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          label: name,
-        };
-        setLocationLoading(false);
-        dispatch(setMarkers([location]));
-        setUnitData({
-          lat: position.coords.latitude.toString(),
-          long: position.coords.longitude.toString(),
-          alt: position.coords.altitude?.toString() ?? "100",
-          id,
-          locationName: name,
-          dateTime: new Date().toISOString(),
-        });
-      });
-    } else {
-      toast({
-        title: "Your location cannot be determined",
-        description: "Please enable geolocation on your browser.",
-        variant: "destructive",
-      });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            label: name,
+          };
+          setLocationLoading(false);
+          dispatch(setMarkers([location]));
+          setUnitData({
+            lat: position.coords.latitude.toString(),
+            long: position.coords.longitude.toString(),
+            alt: position.coords.altitude?.toString() ?? "100",
+            id,
+            locationName: name,
+            dateTime: new Date().toISOString(),
+          });
+        },
+        (error) => {
+          toast({
+            title: "Your location cannot be determined",
+            description: "Please enable geolocation on your browser.",
+            variant: "destructive",
+          });
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        }
+      );
     }
   };
 

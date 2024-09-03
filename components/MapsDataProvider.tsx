@@ -69,14 +69,24 @@ const MapsDataProvider = () => {
   useEffect(() => {
     if (!isUpdating) {
       if (navigator.geolocation) {
-        navigator.geolocation.watchPosition((position) => {
-          const location = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            label: "Current Location",
-          };
-          setLocation(location);
-        });
+        navigator.geolocation.watchPosition(
+          (position) => {
+            const location = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              label: "Current Location",
+            };
+            setLocation(location);
+          },
+          (error) => {
+            console.log(error);
+          },
+          {
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 10000,
+          }
+        );
       } else {
         toast({
           title: "Your location cannot be determined",
@@ -88,7 +98,7 @@ const MapsDataProvider = () => {
     return () => {
       navigator.geolocation.clearWatch(0);
     };
-  }, [isUpdating]);
+  }, [isUpdating, location]);
 
   if (isLoading) return <Loading />;
 
