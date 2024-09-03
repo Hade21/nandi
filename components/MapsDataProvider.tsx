@@ -79,11 +79,7 @@ const MapsDataProvider = () => {
             setLocation(location);
           },
           (error) => {
-            toast({
-              title: "Your location cannot be determined",
-              description: "Please enable geolocation on your browser.",
-              variant: "destructive",
-            });
+            console.log(error);
           },
           {
             enableHighAccuracy: true,
@@ -91,6 +87,12 @@ const MapsDataProvider = () => {
             timeout: 10000,
           }
         );
+      } else {
+        toast({
+          title: "Your location cannot be determined",
+          description: "Please enable geolocation on your browser.",
+          variant: "destructive",
+        });
       }
     }
     return () => {

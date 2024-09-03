@@ -3,10 +3,11 @@ import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { setOpenModal, setSelectedUnit } from "@/services/unitService";
 import { MarkerTypes, UnitTypes } from "@/types";
 import { GoogleMap, Marker, OverlayView } from "@react-google-maps/api";
+import { LocateFixed } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import CardUnit from "./CardUnit";
 import GuestUnitCard from "./GuestUnitCard";
-import Logout from "./Logout";
+import MoreOption from "./MoreOption";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export const defaultMapsContainerStyle = {
@@ -68,11 +69,6 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
       maps.fitBounds(bounds);
     }
   }, [maps, markers]);
-  useEffect(() => {
-    if (myLocation) {
-      panTo({ lat: myLocation.latitude, lng: myLocation.longitude });
-    }
-  }, [myLocation, panTo]);
 
   return (
     <div>
@@ -175,8 +171,16 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
             );
           })}
       </GoogleMap>
+      <div
+        className="absolute bottom-7 left-2 bg-white dark:bg-slate-950 rounded-sm p-2 cursor-pointer"
+        onClick={() =>
+          panTo({ lat: myLocation?.latitude!, lng: myLocation?.longitude! })
+        }
+      >
+        <LocateFixed />
+      </div>
       <div className="absolute top-14 right-2">
-        <Logout />
+        <MoreOption />
       </div>
     </div>
   );

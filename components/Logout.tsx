@@ -14,7 +14,11 @@ const Logout = () => {
   };
 
   return (
-    <Button variant="destructive" className="flex gap-2" onClick={onLogout}>
+    <Button
+      variant="destructive"
+      className="flex gap-2 w-full"
+      onClick={onLogout}
+    >
       <LogOut />
       <span className="hidden sm:block">Logout</span>
     </Button>
