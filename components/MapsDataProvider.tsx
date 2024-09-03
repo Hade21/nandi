@@ -57,6 +57,7 @@ const MapsDataProvider = () => {
     if (data?.data && data?.data.length > 0) {
       dispatch(setUnits(data.data));
       if (data.data[0].locations && data.data[0]!.locations.length > 0) {
+        console.log(data.data);
         const unitMarkers: MarkerTypes[] = data.data.map((unit: UnitTypes) => {
           return {
             latitude: Number(unit.locations![unit.locations!.length - 1].lat),
