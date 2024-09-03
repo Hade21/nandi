@@ -123,6 +123,7 @@ const ChangeLocationCard = () => {
         description: "Location updated successfully",
       });
       dispatch(setOpenModal(false));
+      dispatch(setIsUpdating(false));
     }
   }, [data, dispatch]);
   useEffect(() => {

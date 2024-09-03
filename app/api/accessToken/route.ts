@@ -23,6 +23,7 @@ export async function GET() {
         },
         body: JSON.stringify({ refreshToken }),
       });
+      console.log(res);
 
       if (!res.ok) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

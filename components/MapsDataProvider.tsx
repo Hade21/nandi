@@ -2,7 +2,12 @@
 import Loading from "@/app/loading";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { useGetUnitsQuery } from "@/services/unitApi";
-import { setMarkers, setUnits } from "@/services/unitService";
+import {
+  setMarkers,
+  setOpenModal,
+  setSelectedUnit,
+  setUnits,
+} from "@/services/unitService";
 import { MarkerTypes, UnitTypes } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -32,6 +37,18 @@ const MapsDataProvider = () => {
           title: "Location not found",
           description: "Please set location",
         });
+        dispatch(setOpenModal(true));
+        const selectedUnit: any = {
+          selectedUnit: {
+            id: unit![0].id ?? "",
+            egi: unit![0].egi ?? "",
+            name: unit![0].name ?? "",
+            type: unit![0].type ?? "",
+            locationName: "",
+            timeStamp: "",
+          },
+        };
+        dispatch(setSelectedUnit(selectedUnit));
         return;
       }
       const location = [
@@ -47,8 +64,11 @@ const MapsDataProvider = () => {
     } else if (data?.data && data.data.length > 0) {
       const locations: MarkerTypes[] = [];
       if (data?.data.length > 0) {
-        if (data.data[0].locations && data.data[0]!.locations.length > 0) {
-          data?.data.forEach((unit) => {
+        data?.data.forEach((unit, index) => {
+          if (
+            data.data[index].locations &&
+            data.data[index]!.locations.length > 0
+          ) {
             locations.push({
               latitude: Number(unit.locations![unit.locations!.length - 1].lat),
               longitude: Number(
@@ -59,8 +79,8 @@ const MapsDataProvider = () => {
                 unit.locations![unit.locations!.length - 1].location,
               timeStamp: unit.locations![unit.locations!.length - 1].dateTime,
             });
-          });
-        }
+          }
+        });
       }
       dispatch(setMarkers(locations));
     }

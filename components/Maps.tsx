@@ -173,9 +173,11 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
       </GoogleMap>
       <div
         className="absolute bottom-7 left-2 bg-white dark:bg-slate-950 rounded-sm p-2 cursor-pointer"
-        onClick={() =>
-          panTo({ lat: myLocation?.latitude!, lng: myLocation?.longitude! })
-        }
+        onClick={() => {
+          if (myLocation?.latitude && myLocation?.longitude) {
+            panTo({ lat: myLocation?.latitude!, lng: myLocation?.longitude! });
+          }
+        }}
       >
         <LocateFixed />
       </div>
