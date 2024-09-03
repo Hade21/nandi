@@ -54,18 +54,20 @@ const MapsDataProvider = () => {
     }
   }, [data?.data, dispatch, searchQuery]);
   useEffect(() => {
-    if (data?.data && data.data.length > 0) {
+    if (data?.data && data?.data.length > 0) {
       dispatch(setUnits(data.data));
-      const unitMarkers: MarkerTypes[] = data.data.map((unit: UnitTypes) => {
-        return {
-          latitude: Number(unit.locations![unit.locations!.length - 1].lat),
-          longitude: Number(unit.locations![unit.locations!.length - 1].long),
-          label: unit.name,
-          locationName: unit.locations![unit.locations!.length - 1].location,
-          timeStamp: unit.locations![unit.locations!.length - 1].dateTime,
-        };
-      });
-      dispatch(setMarkers(unitMarkers));
+      if (data.data[0].locations && data.data[0]!.locations.length > 0) {
+        const unitMarkers: MarkerTypes[] = data.data.map((unit: UnitTypes) => {
+          return {
+            latitude: Number(unit.locations![unit.locations!.length - 1].lat),
+            longitude: Number(unit.locations![unit.locations!.length - 1].long),
+            label: unit.name,
+            locationName: unit.locations![unit.locations!.length - 1].location,
+            timeStamp: unit.locations![unit.locations!.length - 1].dateTime,
+          };
+        });
+        dispatch(setMarkers(unitMarkers));
+      }
     }
   }, [data, dispatch]);
   useEffect(() => {
