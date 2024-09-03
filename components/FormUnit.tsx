@@ -189,7 +189,7 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
           <CardHeader>
             <div className="flex justify-between items-center">
               <ArrowLeft
-                onClick={() => router.push("/")}
+                onClick={() => router.back()}
                 className="cursor-pointer"
               />
               <div className="text-right">
