@@ -6,7 +6,7 @@ import type {
 } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const baseUrl = "https://geolocation-map.adaptable.app";
+const baseUrl = process.env.NEXT_PUBLIC_URL_SERVER;
 
 export const userApi = createApi({
   reducerPath: "userApi",
