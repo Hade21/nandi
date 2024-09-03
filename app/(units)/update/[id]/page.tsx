@@ -1,3 +1,4 @@
+import AuthWrapper from "@/components/AuthWrapper";
 import FormUnit from "@/components/FormUnit";
 import { Metadata } from "next";
 
@@ -7,9 +8,11 @@ export const metadata: Metadata = {
 
 const Update = ({ params }: { params: { id: string } }) => {
   return (
-    <div className="w-full min-h-screen flex justify-center items-center">
-      <FormUnit type="update" id={params.id} />
-    </div>
+    <AuthWrapper>
+      <div className="w-full min-h-screen flex justify-center items-center">
+        <FormUnit type="update" id={params.id} />
+      </div>
+    </AuthWrapper>
   );
 };
 
