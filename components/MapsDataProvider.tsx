@@ -27,6 +27,12 @@ const MapsDataProvider = () => {
         return units.id === searchQuery;
       });
       const latestLocation = unit![0].locations!.slice(-1)[0];
+      if (!latestLocation) {
+        toast({
+          title: "Location not found",
+          description: "Please enter a intial location",
+        });
+      }
       const location = [
         {
           latitude: Number(latestLocation!.lat),
