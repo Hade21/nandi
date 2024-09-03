@@ -39,15 +39,17 @@ const MapsDataProvider = () => {
       dispatch(setMarkers(location));
     } else if (data?.data && data.data.length > 0) {
       const locations: MarkerTypes[] = [];
-      data?.data.forEach((unit) => {
-        locations.push({
-          latitude: Number(unit.locations![unit.locations!.length - 1].lat),
-          longitude: Number(unit.locations![unit.locations!.length - 1].long),
-          label: unit.name,
-          locationName: unit.locations![unit.locations!.length - 1].location,
-          timeStamp: unit.locations![unit.locations!.length - 1].dateTime,
+      if (data?.data.length > 0) {
+        data?.data.forEach((unit) => {
+          locations.push({
+            latitude: Number(unit.locations![unit.locations!.length - 1].lat),
+            longitude: Number(unit.locations![unit.locations!.length - 1].long),
+            label: unit.name,
+            locationName: unit.locations![unit.locations!.length - 1].location,
+            timeStamp: unit.locations![unit.locations!.length - 1].dateTime,
+          });
         });
-      });
+      }
       dispatch(setMarkers(locations));
     }
   }, [data?.data, dispatch, searchQuery]);
