@@ -30,8 +30,9 @@ const MapsDataProvider = () => {
       if (!latestLocation) {
         toast({
           title: "Location not found",
-          description: "Please enter a intial location",
+          description: "Please set location",
         });
+        return;
       }
       const location = [
         {
@@ -67,18 +68,22 @@ const MapsDataProvider = () => {
   useEffect(() => {
     if (data?.data && data?.data.length > 0) {
       dispatch(setUnits(data.data));
-      if (data.data[0].locations && data.data[0]!.locations.length > 0) {
-        const unitMarkers: MarkerTypes[] = data.data.map((unit: UnitTypes) => {
-          return {
+      const unitMarkers: MarkerTypes[] = [];
+      data.data.map((unit: UnitTypes, index) => {
+        if (
+          data.data[index].locations &&
+          data.data[index]!.locations.length > 0
+        ) {
+          unitMarkers.push({
             latitude: Number(unit.locations![unit.locations!.length - 1].lat),
             longitude: Number(unit.locations![unit.locations!.length - 1].long),
             label: unit.name,
             locationName: unit.locations![unit.locations!.length - 1].location,
             timeStamp: unit.locations![unit.locations!.length - 1].dateTime,
-          };
-        });
-        dispatch(setMarkers(unitMarkers));
-      }
+          });
+        }
+      });
+      dispatch(setMarkers(unitMarkers));
     }
   }, [data, dispatch]);
   useEffect(() => {
