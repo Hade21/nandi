@@ -54,7 +54,7 @@ const MapsDataProvider = () => {
     }
   }, [data?.data, dispatch, searchQuery]);
   useEffect(() => {
-    if (data) {
+    if (data?.data && data.data.length > 0) {
       dispatch(setUnits(data.data));
       const unitMarkers: MarkerTypes[] = data.data.map((unit: UnitTypes) => {
         return {
