@@ -59,7 +59,8 @@ const LoginForm = () => {
       const id = data?.data.id;
       const accessToken = data?.data.token.accessToken;
       const refreshToken = data?.data.token.refreshToken;
-      SetTokenCookies({ accessToken, refreshToken, id })
+      const role = data?.data.role;
+      SetTokenCookies({ accessToken, refreshToken, id, role })
         .then((res) => {
           if (!res.ok) {
             setErrMsg("Error");
