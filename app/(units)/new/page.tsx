@@ -8,11 +8,9 @@ export const metadata: Metadata = {
 
 const NewUnits = () => {
   return (
-    // <AuthWrapper>
     <div className="w-full min-h-screen flex justify-center items-center">
       <FormUnit type="new" />
     </div>
-    // </AuthWrapper>
   );
 };
 
