@@ -1,11 +1,16 @@
+import { UserData } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface UserState {
   isGuest: boolean;
+  users: UserData[];
+  changedRole: UserData[];
 }
 
 const initialState: UserState = {
   isGuest: false,
+  users: [],
+  changedRole: [],
 };
 
 export const userSlice = createSlice({
@@ -15,8 +20,16 @@ export const userSlice = createSlice({
     setIsGuest: (state, action: PayloadAction<boolean>) => {
       state.isGuest = action.payload;
     },
+    setUser: (state, action: PayloadAction<UserData[]>) => {
+      state.users = action.payload;
+    },
+    setChagedRole: (state, action: PayloadAction<UserData[]>) => {
+      action.payload.forEach((user) => {
+        state.changedRole.push(user);
+      });
+    },
   },
 });
 
-export const { setIsGuest } = userSlice.actions;
+export const { setIsGuest, setUser, setChagedRole } = userSlice.actions;
 export default userSlice.reducer;
