@@ -261,6 +261,7 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
                     type="reset"
                     variant="destructive"
                     className="min-w-[40%]"
+                    onClick={() => router.back()}
                   >
                     Cancel
                   </Button>
