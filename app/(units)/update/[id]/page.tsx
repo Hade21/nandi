@@ -7,11 +7,9 @@ export const metadata: Metadata = {
 
 const Update = ({ params }: { params: { id: string } }) => {
   return (
-    // <AuthWrapper>
     <div className="w-full min-h-screen flex justify-center items-center">
       <FormUnit type="update" id={params.id} />
     </div>
-    // </AuthWrapper>
   );
 };
 

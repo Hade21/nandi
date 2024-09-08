@@ -17,7 +17,7 @@ type Session =
     };
 
 export default async function middleware(req: NextRequest) {
-  const token = (await cookies().get("token")?.value) || "";
+  const token = cookies().get("token")?.value || "";
   console.log("🚀 ~ middleware ~ token:", token);
 
   const path = req.nextUrl.pathname;
