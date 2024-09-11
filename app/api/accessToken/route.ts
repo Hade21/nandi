@@ -2,7 +2,7 @@ import { jwtDecode, JwtPayload } from "jwt-decode";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-const baseUrl = process.env.URL_SERVER;
+const baseUrl = process.env.NEXT_PUBLIC_URL_SERVER;
 
 export async function GET() {
   const tokenCookies = cookies().get("token");
@@ -16,25 +16,24 @@ export async function GET() {
 
   if (isExpired) {
     try {
-      const res = await fetch(`${baseUrl}/api/v1/auth/refreshToken`, {
+      const res = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ refreshToken }),
       });
-      console.log(res);
 
       if (!res.ok) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       } else if (res.ok) {
-        const { body } = await res.json();
+        const { data } = await res.json();
         cookies().set(
           "token",
           JSON.stringify({
             id,
             refreshToken,
-            accessToken: body.data.token.accessToken,
+            accessToken: data.token.accessToken,
           }),
           {
             httpOnly: true,
@@ -47,12 +46,13 @@ export async function GET() {
         return NextResponse.json(
           {
             message: "Success",
-            data: { id, accessToken: body.data.token.accessToken },
+            data: { id, accessToken: data.token.accessToken },
           },
           { status: 200 }
         );
       }
     } catch (error) {
+      console.log("🚀 ~ GET ~ error:", error);
       return NextResponse.json(error);
     }
   } else {
