@@ -98,6 +98,7 @@ export type MarkerTypes = {
   label: string;
   locationName?: string;
   timeStamp?: string;
+  heading?: number | null;
 };
 
 export type LocationBody = {

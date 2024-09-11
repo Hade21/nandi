@@ -83,7 +83,6 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
           <Marker
             key="my-location"
             position={{ lat: myLocation.latitude, lng: myLocation.longitude }}
-            animation={google.maps.Animation.BOUNCE}
             icon={{
               url: "/car.png",
               scaledSize: {
@@ -91,6 +90,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                 height: 40,
                 equals: () => true,
               },
+              rotation: myLocation.heading,
             }}
           >
             <OverlayView

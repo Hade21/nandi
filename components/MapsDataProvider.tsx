@@ -115,11 +115,13 @@ const MapsDataProvider = () => {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
               label: "Current Location",
+              heading: position.coords.heading,
             };
+
             setLocation(location);
           },
           (error) => {
-            console.log(error);
+            console.error(error);
           },
           {
             enableHighAccuracy: true,

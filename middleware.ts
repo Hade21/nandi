@@ -17,15 +17,11 @@ type Session =
     };
 
 export default async function middleware(req: NextRequest) {
-  const token = (await cookies().get("token")?.value) || "";
-  console.log("🚀 ~ middleware ~ token:", token);
+  const token = cookies().get("token")?.value || "";
 
   const path = req.nextUrl.pathname;
-  console.log("🚀 ~ middleware ~ path:", path);
   const isProtectedRoute = protectedRoutes.includes(path);
-  console.log("🚀 ~ middleware ~ isProtectedRoute:", isProtectedRoute, path);
   const isPublicRoute = publicRoutes.includes(path);
-  console.log("🚀 ~ middleware ~ isPublicRoute:", isPublicRoute);
 
   const session: Session = await decryptSession(token);
 
@@ -46,7 +42,6 @@ export default async function middleware(req: NextRequest) {
   }
 
   if (isPublicRoute && session?.data?.id) {
-    console.log("🚀 ~ middleware ~ session:", session);
     return NextResponse.redirect(new URL("/maps", req.url));
   }
 
