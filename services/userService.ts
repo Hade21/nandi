@@ -23,10 +23,16 @@ export const userSlice = createSlice({
     setUser: (state, action: PayloadAction<UserData[]>) => {
       state.users = action.payload;
     },
-    setChagedRole: (state, action: PayloadAction<UserData[]>) => {
-      action.payload.forEach((user) => {
-        state.changedRole.push(user);
-      });
+    setChagedRole: (state, action: PayloadAction<UserData>) => {
+      if (!state.changedRole.find((user) => user.id === action.payload.id)) {
+        state.changedRole.push(action.payload);
+      } else {
+        const changed = state.changedRole.filter(
+          (user) => user.id !== action.payload.id
+        );
+        state.changedRole = changed;
+        state.changedRole.push(action.payload);
+      }
     },
   },
 });
