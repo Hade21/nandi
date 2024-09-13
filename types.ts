@@ -121,8 +121,3 @@ export type UsersResponse = {
 export type ChangeRoleResponse = {
   data: UserData;
 };
-
-export type ResetPasswordRequest = {
-  newPassword: string;
-  token: string;
-};
