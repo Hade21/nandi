@@ -1,8 +1,11 @@
 import type {
   AuthRequest,
+  ChangeRoleResponse,
   LoginResponse,
   RegisterResponse,
+  UserData,
   UserResponse,
+  UsersResponse,
 } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -39,12 +42,19 @@ export const userApi = createApi({
         },
       }),
     }),
-    getAllUsers: builder.query<UserResponse[], string>({
+    getAllUsers: builder.query<UsersResponse, string>({
       query: (accessToken) => ({
         url: "/users/all",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+      }),
+    }),
+    changeRole: builder.mutation<ChangeRoleResponse, UserData>({
+      query: (body) => ({
+        url: `/users/${body.id}`,
+        method: "PATCH",
+        body,
       }),
     }),
   }),
