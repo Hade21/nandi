@@ -50,13 +50,21 @@ export const userApi = createApi({
           Authorization: `Bearer ${accessToken}`,
         },
       }),
+      providesTags: ["Users"],
     }),
-    changeRole: builder.mutation<ChangeRoleResponse, UserData>({
+    changeRole: builder.mutation<
+      ChangeRoleResponse,
+      UserData & { accessToken: string }
+    >({
       query: (body) => ({
         url: `/users/${body.id}`,
         method: "PATCH",
         body,
+        headers: {
+          Authorization: `Bearer ${body.accessToken}`,
+        },
       }),
+      invalidatesTags: ["Users"],
     }),
   }),
 });
@@ -66,4 +74,5 @@ export const {
   useRegisterMutation,
   useGetUserQuery,
   useGetAllUsersQuery,
+  useChangeRoleMutation,
 } = userApi;
