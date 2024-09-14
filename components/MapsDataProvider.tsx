@@ -1,7 +1,11 @@
 "use client";
 import Loading from "@/app/loading";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
-import { useGetUnitsQuery } from "@/services/unitApi";
+import { GetTokenCookies } from "@/lib/tokenCookies";
+import {
+  useGetUnitsQuery,
+  useUpdateLocationMutation,
+} from "@/services/unitApi";
 import {
   setMarkers,
   setOpenModal,
@@ -17,8 +21,19 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import { Button } from "./ui/button";
 import { toast } from "./ui/use-toast";
 
+interface UnitData {
+  id: string;
+  long: string;
+  lat: string;
+  alt: string;
+  location: string;
+  dateTime: string;
+  accessToken: string;
+}
+
 const MapsDataProvider = () => {
   const { isLoading, data, error } = useGetUnitsQuery();
+  const [updateLocation] = useUpdateLocationMutation();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const markers = useAppSelector((state) => state.units.markers);
@@ -26,6 +41,37 @@ const MapsDataProvider = () => {
   const isUpdating = useAppSelector((state) => state.units.isUpdating);
   const [location, setLocation] = useState<MarkerTypes | undefined>(undefined);
 
+  useEffect(() => {
+    const update = async (data: UnitData[]) => {
+      const token = await GetTokenCookies();
+      if (!token.data) {
+        toast({
+          title: "There is pending update exist",
+          description: "Please login to continue update location",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (token.data) {
+        if (data.length > 0) {
+          data.forEach((unit: UnitData) => {
+            updateLocation({
+              ...unit,
+              accessToken: token.data.accessToken,
+            });
+          });
+        }
+        localStorage.removeItem("updatePending");
+        return;
+      }
+    };
+
+    const pendingUpdate = localStorage.getItem("updatePending");
+    const storedData = pendingUpdate ? JSON.parse(pendingUpdate) : [];
+    if (storedData.length > 0) {
+      update(storedData);
+    }
+  }, [updateLocation]);
   useEffect(() => {
     if (searchQuery) {
       const unit = data?.data.filter((units) => {
