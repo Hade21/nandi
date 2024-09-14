@@ -25,6 +25,7 @@ export async function GET() {
       });
 
       if (!res.ok) {
+        cookies().delete("token");
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       } else if (res.ok) {
         const { data } = await res.json();
