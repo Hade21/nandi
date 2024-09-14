@@ -89,6 +89,17 @@ const ChangeLocationCard = () => {
       return;
     }
     if (res.data) {
+      if (!isOnline) {
+        const pendingUpdate = localStorage.getItem("updatePending");
+        const storedData = pendingUpdate ? JSON.parse(pendingUpdate) : [];
+        storedData.push({
+          id: unitData.id,
+          ...body,
+          accessToken: res.data.accessToken,
+        });
+        localStorage.setItem("updatePending", JSON.stringify(storedData));
+        return;
+      }
       updateLocation({
         id: unitData.id,
         ...body,
@@ -161,6 +172,9 @@ const ChangeLocationCard = () => {
     });
   };
 
+  useEffect(() => {
+    console.log("🚀 ~ useEffect ~ isOnline:", isOnline);
+  }, [isOnline]);
   useEffect(() => {
     form.setValue("locationName", locationName);
   }, [form, locationName]);
