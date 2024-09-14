@@ -112,3 +112,11 @@ export type LocationBody = {
 export type LocationResponse = {
   data: LocationTypes;
 };
+
+export type UsersResponse = {
+  data: UserData[];
+};
+
+export type ChangeRoleResponse = {
+  data: UserData;
+};
