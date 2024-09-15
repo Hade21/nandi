@@ -1,4 +1,5 @@
 "use client";
+import useNetworkStatus from "@/hooks/networkStatus";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { GetTokenCookies } from "@/lib/tokenCookies";
 import { useUpdateLocationMutation } from "@/services/unitApi";
@@ -38,6 +39,7 @@ const ChangeLocationCard = () => {
     (state) => state.units.selectedUnit
   );
   const dispatch = useAppDispatch();
+  const { isOnline } = useNetworkStatus();
   const [updateLocation, { isLoading, error, data }] =
     useUpdateLocationMutation();
   const form = useForm<Pick<MarkerTypes, "locationName">>({
@@ -63,6 +65,25 @@ const ChangeLocationCard = () => {
       return;
     }
     if (res.data) {
+      if (!isOnline) {
+        const pendingUpdate = localStorage.getItem("updatePending");
+        const storedData = pendingUpdate ? JSON.parse(pendingUpdate) : [];
+        storedData.push({
+          id: unitData.id,
+          ...body,
+          accessToken: res.data.accessToken,
+        });
+        localStorage.setItem("updatePending", JSON.stringify(storedData));
+        dispatch(setOpenModal(false));
+        dispatch(setIsUpdating(false));
+        toast({
+          title: "No Connection",
+          description:
+            "Update will stored and uploaded when connection is alive",
+          variant: "default",
+        });
+        return;
+      }
       updateLocation({
         id: unitData.id,
         ...body,
@@ -108,6 +129,9 @@ const ChangeLocationCard = () => {
     }
   };
 
+  useEffect(() => {
+    console.log("🚀 ~ useEffect ~ isOnline:", isOnline);
+  }, [isOnline]);
   useEffect(() => {
     form.setValue("locationName", locationName);
   }, [form, locationName]);
