@@ -47,7 +47,8 @@ const MapsDataProvider = () => {
       if (!token.data) {
         toast({
           title: "There is pending update exist",
-          description: "Please login to continue update location",
+          description:
+            "Make sure you've logged in and your connection is alive",
           variant: "destructive",
         });
         return;
