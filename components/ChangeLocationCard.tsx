@@ -74,6 +74,14 @@ const ChangeLocationCard = () => {
           accessToken: res.data.accessToken,
         });
         localStorage.setItem("updatePending", JSON.stringify(storedData));
+        dispatch(setOpenModal(false));
+        dispatch(setIsUpdating(false));
+        toast({
+          title: "No Connection",
+          description:
+            "Update will stored and uploaded when connection is alive",
+          variant: "default",
+        });
         return;
       }
       updateLocation({
