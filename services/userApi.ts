@@ -1,8 +1,11 @@
 import type {
   AuthRequest,
+  ChangeRoleResponse,
   LoginResponse,
   RegisterResponse,
+  UserData,
   UserResponse,
+  UsersResponse,
 } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -13,6 +16,7 @@ export const userApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${baseUrl}/api/v1`,
   }),
+  tagTypes: ["Users"],
   endpoints: (builder) => ({
     login: builder.mutation<
       LoginResponse,
@@ -39,13 +43,28 @@ export const userApi = createApi({
         },
       }),
     }),
-    getAllUsers: builder.query<UserResponse[], string>({
+    getAllUsers: builder.query<UsersResponse, string>({
       query: (accessToken) => ({
         url: "/users/all",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       }),
+      providesTags: ["Users"],
+    }),
+    changeRole: builder.mutation<
+      ChangeRoleResponse,
+      UserData & { accessToken: string }
+    >({
+      query: (body) => ({
+        url: `/users/${body.id}`,
+        method: "PATCH",
+        body,
+        headers: {
+          Authorization: `Bearer ${body.accessToken}`,
+        },
+      }),
+      invalidatesTags: ["Users"],
     }),
   }),
 });
@@ -55,4 +74,5 @@ export const {
   useRegisterMutation,
   useGetUserQuery,
   useGetAllUsersQuery,
+  useChangeRoleMutation,
 } = userApi;

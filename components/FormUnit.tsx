@@ -253,7 +253,7 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
                     className="flex gap-2 min-w-[40%]"
                   >
                     {isLoading && (
-                      <TailSpin height="20" width="20" color="#000" />
+                      <TailSpin height="20" width="20" color="#3b82f6" />
                     )}
                     Save
                   </Button>
