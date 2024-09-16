@@ -47,7 +47,7 @@ const ChangeLocationCard = () => {
   });
 
   async function onSubmit() {
-    const res = await GetTokenCookies();
+    console.log("button hit");
     const body = {
       long: unitData.long,
       lat: unitData.lat,
@@ -55,7 +55,6 @@ const ChangeLocationCard = () => {
       location: form.getValues("locationName")!,
       dateTime: unitData.dateTime,
     };
-    console.log("button hit");
 
     if (!isOnline) {
       console.log("offline");
@@ -64,7 +63,7 @@ const ChangeLocationCard = () => {
       storedData.push({
         id: unitData.id,
         ...body,
-        accessToken: res.data.accessToken ?? "",
+        accessToken: "",
       });
       localStorage.setItem("updatePending", JSON.stringify(storedData));
       dispatch(setOpenModal(false));
@@ -76,6 +75,8 @@ const ChangeLocationCard = () => {
       });
       return;
     }
+    const res = await GetTokenCookies();
+
     if (!res.data) {
       console.log("online");
       toast({
