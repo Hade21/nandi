@@ -47,7 +47,7 @@ const ChangeLocationCard = () => {
   });
 
   async function onSubmit() {
-    const res = await GetTokenCookies();
+    console.log("button hit");
     const body = {
       long: unitData.long,
       lat: unitData.lat,
@@ -56,7 +56,29 @@ const ChangeLocationCard = () => {
       dateTime: unitData.dateTime,
     };
 
+    if (!isOnline) {
+      console.log("offline");
+      const pendingUpdate = localStorage.getItem("updatePending");
+      const storedData = pendingUpdate ? JSON.parse(pendingUpdate) : [];
+      storedData.push({
+        id: unitData.id,
+        ...body,
+        accessToken: "",
+      });
+      localStorage.setItem("updatePending", JSON.stringify(storedData));
+      dispatch(setOpenModal(false));
+      dispatch(setIsUpdating(false));
+      toast({
+        title: "No Connection",
+        description: "Update will stored and uploaded when connection is alive",
+        variant: "default",
+      });
+      return;
+    }
+    const res = await GetTokenCookies();
+
     if (!res.data) {
+      console.log("online");
       toast({
         title: "Unauthorized",
         description: "Please login to update location",
@@ -65,25 +87,6 @@ const ChangeLocationCard = () => {
       return;
     }
     if (res.data) {
-      if (!isOnline) {
-        const pendingUpdate = localStorage.getItem("updatePending");
-        const storedData = pendingUpdate ? JSON.parse(pendingUpdate) : [];
-        storedData.push({
-          id: unitData.id,
-          ...body,
-          accessToken: res.data.accessToken,
-        });
-        localStorage.setItem("updatePending", JSON.stringify(storedData));
-        dispatch(setOpenModal(false));
-        dispatch(setIsUpdating(false));
-        toast({
-          title: "No Connection",
-          description:
-            "Update will stored and uploaded when connection is alive",
-          variant: "default",
-        });
-        return;
-      }
       updateLocation({
         id: unitData.id,
         ...body,

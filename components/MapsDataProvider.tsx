@@ -1,5 +1,6 @@
 "use client";
 import Loading from "@/app/loading";
+import useNetworkStatus from "@/hooks/networkStatus";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { GetTokenCookies } from "@/lib/tokenCookies";
 import {
@@ -36,6 +37,7 @@ const MapsDataProvider = () => {
   const [updateLocation] = useUpdateLocationMutation();
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { isOnline } = useNetworkStatus();
   const markers = useAppSelector((state) => state.units.markers);
   const searchQuery = useAppSelector((state) => state.units.searchQuery);
   const isUpdating = useAppSelector((state) => state.units.isUpdating);
@@ -48,13 +50,28 @@ const MapsDataProvider = () => {
         toast({
           title: "There is pending update exist",
           description:
-            "Make sure you've logged in and your connection is alive",
-          variant: "destructive",
+            "Please login and stay connected to continue updating location",
+          variant: "default",
+          action: (
+            <Button
+              onClick={() => {
+                router.push("/login");
+              }}
+            >
+              Login
+            </Button>
+          ),
         });
         return;
       }
       if (token.data) {
         if (data.length > 0) {
+          toast({
+            title: "There is pending update exist",
+            description:
+              "Make sure you've logged in and your connection is alive",
+            variant: "default",
+          });
           data.forEach((unit: UnitData) => {
             updateLocation({
               ...unit,
@@ -72,7 +89,7 @@ const MapsDataProvider = () => {
     if (storedData.length > 0) {
       update(storedData);
     }
-  }, [updateLocation]);
+  }, [router, updateLocation, isOnline]);
   useEffect(() => {
     if (searchQuery) {
       const unit = data?.data.filter((units) => {
