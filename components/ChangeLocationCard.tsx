@@ -58,7 +58,6 @@ const ChangeLocationCard = () => {
       location: form.getValues("locationName")!,
       dateTime: unitData.dateTime,
     };
-    console.log("button hit");
 
     if (!isOnline) {
       console.log("offline");
