@@ -58,8 +58,10 @@ const ChangeLocationCard = () => {
       location: form.getValues("locationName")!,
       dateTime: unitData.dateTime,
     };
+    console.log("button hit");
 
     if (!isOnline) {
+      console.log("offline");
       const pendingUpdate = localStorage.getItem("updatePending");
       const storedData = pendingUpdate ? JSON.parse(pendingUpdate) : [];
       storedData.push({
@@ -81,6 +83,7 @@ const ChangeLocationCard = () => {
     const res = await GetTokenCookies();
 
     if (!res.data) {
+      console.log("online");
       toast({
         title: "Unauthorized",
         description: "Please login to update location",
