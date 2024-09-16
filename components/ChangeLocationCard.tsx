@@ -89,25 +89,6 @@ const ChangeLocationCard = () => {
       return;
     }
     if (res.data) {
-      if (!isOnline) {
-        const pendingUpdate = localStorage.getItem("updatePending");
-        const storedData = pendingUpdate ? JSON.parse(pendingUpdate) : [];
-        storedData.push({
-          id: unitData.id,
-          ...body,
-          accessToken: res.data.accessToken,
-        });
-        localStorage.setItem("updatePending", JSON.stringify(storedData));
-        dispatch(setOpenModal(false));
-        dispatch(setIsUpdating(false));
-        toast({
-          title: "No Connection",
-          description:
-            "Update will stored and uploaded when connection is alive",
-          variant: "default",
-        });
-        return;
-      }
       updateLocation({
         id: unitData.id,
         ...body,
