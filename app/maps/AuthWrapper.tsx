@@ -12,18 +12,14 @@ const AuthWrapper = () => {
   const [validToken, setValidToken] = useState<string>("");
   const dispatch = useAppDispatch();
 
-  async function checkAuth() {
-    return await GetTokenCookies();
-  }
-
   useEffect(() => {
-    checkAuth()
-      .then((res) => {
-        setValidToken(res.data?.accessToken);
-      })
-      .catch((err) => {
-        setValidToken("");
-      });
+    async function checkAuth() {
+      const token = await GetTokenCookies();
+      if (token.data) {
+        setValidToken(token.data.accessToken);
+      }
+    }
+    checkAuth();
   }, []);
   useEffect(() => {
     if (!validToken) {
