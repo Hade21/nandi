@@ -184,9 +184,7 @@ const MapsDataProvider = () => {
 
             setLocation(location);
           },
-          (error) => {
-            console.error(error);
-          },
+          (error) => {},
           {
             enableHighAccuracy: true,
             maximumAge: 0,
