@@ -15,6 +15,7 @@ interface UnitState {
   };
   openModal: boolean;
   isUpdating: boolean;
+  pinMaps: boolean;
 }
 
 const initialState: UnitState = {
@@ -31,6 +32,7 @@ const initialState: UnitState = {
   },
   openModal: false,
   isUpdating: false,
+  pinMaps: false,
 };
 
 function removeDuplicate(arr: any, value: any) {
@@ -96,6 +98,9 @@ export const unitSlice = createSlice({
     setIsUpdating: (state, action: PayloadAction<boolean>) => {
       state.isUpdating = action.payload;
     },
+    setPinMaps: (state, action: PayloadAction<boolean>) => {
+      state.pinMaps = action.payload;
+    },
   },
 });
 
@@ -106,6 +111,7 @@ export const {
   setSelectedUnit,
   setOpenModal,
   setIsUpdating,
+  setPinMaps,
 } = unitSlice.actions;
 
 export default unitSlice.reducer;

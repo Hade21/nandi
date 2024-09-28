@@ -20,7 +20,7 @@ const Logout = () => {
       onClick={onLogout}
     >
       <LogOut />
-      <span className="hidden sm:block">Logout</span>
+      <span>Logout</span>
     </Button>
   );
 };

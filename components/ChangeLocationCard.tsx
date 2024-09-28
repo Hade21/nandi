@@ -7,6 +7,7 @@ import {
   setIsUpdating,
   setMarkers,
   setOpenModal,
+  setPinMaps,
 } from "@/services/unitService";
 import { ErrorType, MarkerTypes } from "@/types";
 import { locationNameSchema } from "@/validator/unit";
@@ -38,6 +39,9 @@ const ChangeLocationCard = () => {
   const { id, name, type, egi, locationName } = useAppSelector(
     (state) => state.units.selectedUnit
   );
+  const markers = useAppSelector((state) => state.units.markers);
+  const units = useAppSelector((state) => state.units.units);
+  const pinMaps = useAppSelector((state) => state.units.pinMaps);
   const dispatch = useAppDispatch();
   const { isOnline } = useNetworkStatus();
   const [updateLocation, { isLoading, error, data }] =
@@ -47,17 +51,15 @@ const ChangeLocationCard = () => {
   });
 
   async function onSubmit() {
-    console.log("button hit");
     const body = {
-      long: unitData.long,
-      lat: unitData.lat,
-      alt: unitData.alt,
+      long: pinMaps ? markers[0].longitude.toString() : unitData.long,
+      lat: pinMaps ? markers[0].latitude.toString() : unitData.lat,
+      alt: unitData.alt ?? "unknown",
       location: form.getValues("locationName")!,
       dateTime: unitData.dateTime,
     };
 
     if (!isOnline) {
-      console.log("offline");
       const pendingUpdate = localStorage.getItem("updatePending");
       const storedData = pendingUpdate ? JSON.parse(pendingUpdate) : [];
       storedData.push({
@@ -68,6 +70,7 @@ const ChangeLocationCard = () => {
       localStorage.setItem("updatePending", JSON.stringify(storedData));
       dispatch(setOpenModal(false));
       dispatch(setIsUpdating(false));
+      dispatch(setPinMaps(false));
       toast({
         title: "No Connection",
         description: "Update will stored and uploaded when connection is alive",
@@ -78,7 +81,6 @@ const ChangeLocationCard = () => {
     const res = await GetTokenCookies();
 
     if (!res.data) {
-      console.log("online");
       toast({
         title: "Unauthorized",
         description: "Please login to update location",
@@ -131,10 +133,34 @@ const ChangeLocationCard = () => {
       );
     }
   };
+  const pinOnMap = () => {
+    const unit = units.filter((unit) => unit.id === id)[0];
+    dispatch(setIsUpdating(true));
+    dispatch(setPinMaps(true));
+    toast({
+      title: "Pin on Map",
+      description: "Pin on map to update location",
+      variant: "default",
+    });
+    dispatch(
+      setMarkers([
+        {
+          latitude: Number(unit.locations![unit.locations!.length - 1].lat),
+          longitude: Number(unit.locations![unit.locations!.length - 1].long),
+          label: unit.name,
+        },
+      ])
+    );
+    setUnitData({
+      lat: unit.locations![unit.locations!.length - 1].lat.toString(),
+      long: unit.locations![unit.locations!.length - 1].long.toString(),
+      alt: unit.locations![unit.locations!.length - 1].alt.toString(),
+      id,
+      locationName: name,
+      dateTime: new Date().toISOString(),
+    });
+  };
 
-  useEffect(() => {
-    console.log("🚀 ~ useEffect ~ isOnline:", isOnline);
-  }, [isOnline]);
   useEffect(() => {
     form.setValue("locationName", locationName);
   }, [form, locationName]);
@@ -228,9 +254,7 @@ const ChangeLocationCard = () => {
         isOpen={dialogOpen}
         onOpenChange={setDialogOpen}
         useGPSLocation={useGPSLocation}
-        pinOnMap={() => {
-          setDialogOpen(false);
-        }}
+        pinOnMap={pinOnMap}
       />
       <RetrievingLocation isOpen={locationLoading} />
     </motion.div>
