@@ -1,6 +1,7 @@
 "use client";
 import { useAppSelector } from "@/hooks/reduxHooks";
-import { FilePenLine, ListPlus, Menu } from "lucide-react";
+import { GetTokenCookies } from "@/lib/tokenCookies";
+import { CircleUserRound, FilePenLine, ListPlus, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Logout from "./Logout";
 import { Button } from "./ui/button";
@@ -16,6 +17,13 @@ const MoreOption = () => {
   const isGuest = useAppSelector((state) => state.user.isGuest);
   const selectedUnit = useAppSelector((state) => state.units.selectedUnit);
   const { push } = useRouter();
+
+  const handleAccount = async () => {
+    const data = await GetTokenCookies();
+    console.log("🚀 ~ handleAccount ~ data:", data);
+    if (!data) return push("/login");
+    push(`/account/${data.data?.id}`);
+  };
 
   const handleEdit = () => {
     if (!selectedUnit.id) {
@@ -36,6 +44,15 @@ const MoreOption = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        {!isGuest && (
+          <DropdownMenuItem
+            className="flex gap-2 items-center cursor-pointer"
+            onClick={handleAccount}
+          >
+            <CircleUserRound />
+            <span>Account</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           className="flex gap-2 items-center cursor-pointer"
           onClick={() => push("/new")}
