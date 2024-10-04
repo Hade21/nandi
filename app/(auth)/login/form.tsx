@@ -91,6 +91,7 @@ const LoginForm = () => {
           setErrDesc(errorObj.data.errors.message);
         }
       } else {
+        console.log(error)
         setErrMsg("Error");
         setErrDesc("Network Error");
       }
