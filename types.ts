@@ -40,6 +40,7 @@ export interface ErrorType {
     };
   };
   status?: number;
+  statusCode?: number;
 }
 
 export type NotFound = {
