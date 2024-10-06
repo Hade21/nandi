@@ -1,10 +1,21 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 import { GetTokenCookies } from "@/lib/tokenCookies";
-import { useGetUserQuery } from "@/services/userApi";
-import { CircleUserRound } from "lucide-react";
+import { useGetUserQuery, useUpdateUserMutation } from "@/services/userApi";
+import { ErrorType } from "@/types";
+import {
+  ArrowLeft,
+  CircleUserRound,
+  KeyRound,
+  Mail,
+  UserRound,
+  UserRoundPen,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Loading from "../loading";
+import EditProfile from "./form";
 
 const AccountPage = () => {
   const [token, setToken] = useState<string>("");
@@ -74,23 +85,82 @@ const AccountPage = () => {
     getToken();
   }, []);
   useEffect(() => {
-    if (data) console.log("🚀 ~ useEffect ~ data:", data);
-    if (error) console.log("🚀 ~ useEffect ~ error:", error);
-  }, [data, error]);
+    if (error) {
+      const errorObj = error as ErrorType;
+      if (errorObj.statusCode === 500) {
+        toast({
+          title: "Network Error",
+          description: `Check your network connection`,
+        });
+      } else if (errorObj.status === 500) {
+        toast({
+          title: "Server Error",
+          description: "Try again in few seconds",
+        });
+      } else if (errorObj.status === 401) {
+        toast({
+          title: "Unauthorized",
+          description: "Please login again to access",
+        });
+      }
+    }
+  }, [error]);
+  useEffect(() => {
+    if (updateError) {
+      const errorObj = updateError as ErrorType;
+      if (errorObj.data?.errors) {
+        toast({
+          title: errorObj.data.errors.error,
+          description: errorObj.data.errors.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Network Error",
+          variant: "destructive",
+        });
+      }
+    }
+  }, [updateError]);
+  useEffect(() => {
+    if (updateSuccess) {
+      toast({
+        title: "Success",
+        description: "Profile updated successfully",
+      });
+      setEditMode(false);
+    }
+  }, [updateSuccess]);
+  useEffect(() => {
+    console.log("🚀 ~ AccountPage ~ editMode:", editMode);
+  }, [editMode]);
 
   if (isLoading) return <Loading />;
 
   return (
-    <main className="p-4 ">
-      <div>
-        <h1 className="font-bold text-2xl">
+    <main className="px-4 py-8 min-h-screen space-y-8">
+      <header className="flex justify-between items-center">
+        <div className="back flex items-center">
+          <ArrowLeft className="cursor-pointer" onClick={() => router.back()} />
+        </div>
+        <h1 className="font-bold text-lg text-right">
           Welcome back!{" "}
-          <span className="font-rubik-moonrocks bg-gradient-to-r from bg-purple-500 to-blue-500 text-transparent bg-clip-text uppercase">
-            {data?.data.lastName}
+          <span className="font-rubik-moonrocks bg-gradient-to-r from bg-purple-500 to-blue-500 text-transparent bg-clip-text uppercase text-3xl">
+            {user?.data ? user?.data.lastName : "Guests"}
           </span>
         </h1>
-        <CircleUserRound />
-      </div>
+      </header>
+      {editMode ? (
+        <EditProfile
+          user={user!.data}
+          isLoading={updating}
+          onSubmit={onSubmit}
+          cancelFunc={() => setEditMode(false)}
+        />
+      ) : (
+        <ProfileComponent />
+      )}
     </main>
   );
 };
