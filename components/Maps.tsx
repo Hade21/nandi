@@ -6,7 +6,12 @@ import {
   setSelectedUnit,
 } from "@/services/unitService";
 import { MarkerTypes, UnitTypes } from "@/types";
-import { GoogleMap, Marker, OverlayView } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  Marker,
+  MarkerF,
+  OverlayView,
+} from "@react-google-maps/api";
 import { LocateFixed } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import CardUnit from "./CardUnit";
@@ -123,7 +128,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
           markers.map((marker, index) => {
             let unitData = findUnit(units, marker.latitude, marker.longitude);
             return (
-              <Marker
+              <MarkerF
                 key={index}
                 position={{ lat: marker.latitude, lng: marker.longitude }}
                 animation={google.maps.Animation.DROP}
@@ -183,7 +188,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                     )}
                   </PopoverContent>
                 </Popover>
-              </Marker>
+              </MarkerF>
             );
           })}
       </GoogleMap>
