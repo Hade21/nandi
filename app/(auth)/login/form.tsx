@@ -80,13 +80,13 @@ const LoginForm = () => {
   useEffect(() => {
     if (error) {
       const errorObj = error as ErrorType;
-      console.log(errorObj);
+      console.log("🚀 ~ useEffect ~ errorObj:", errorObj);
       if (errorObj.data) {
         if (errorObj.status === 404) {
           const notFound = error as NotFound;
           setErrMsg("Error");
           setErrDesc(notFound.data.errors);
-        } else if (errorObj.data?.errors.statusCode) {
+        } else if (errorObj.data?.errors.statusCode !== undefined) {
           setErrMsg(errorObj.data.errors.error!);
           setErrDesc(errorObj.data.errors.message);
         }

@@ -1,8 +1,17 @@
 "use client";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
-import { setOpenModal, setSelectedUnit } from "@/services/unitService";
+import {
+  setMarkers,
+  setOpenModal,
+  setSelectedUnit,
+} from "@/services/unitService";
 import { MarkerTypes, UnitTypes } from "@/types";
-import { GoogleMap, Marker, OverlayView } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  Marker,
+  MarkerF,
+  OverlayView,
+} from "@react-google-maps/api";
 import { LocateFixed } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import CardUnit from "./CardUnit";
@@ -27,6 +36,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
   const units = useAppSelector((state) => state.units.units);
   const selectedUnit = useAppSelector((state) => state.units.selectedUnit);
   const isUpdating = useAppSelector((state) => state.units.isUpdating);
+  const pinMaps = useAppSelector((state) => state.units.pinMaps);
   const isGuest = useAppSelector((state) => state.user.isGuest);
   const dispatch = useAppDispatch();
   const mapRef2 = useRef<google.maps.Map | null>(null);
@@ -56,6 +66,16 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
     });
     return unit;
   };
+  const onMapClick = (e: google.maps.MapMouseEvent) => {
+    if (e.latLng) {
+      const location = {
+        latitude: e.latLng.lat(),
+        longitude: e.latLng.lng(),
+        label: "Choose Here",
+      };
+      if (isUpdating && pinMaps) dispatch(setMarkers([location]));
+    }
+  };
 
   useEffect(() => {
     if (maps && markers) {
@@ -77,6 +97,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
         zoom={10}
         center={center}
         onLoad={onMapLoad}
+        onClick={pinMaps ? onMapClick : undefined}
         // onBoundsChanged={onCenterChanged}
       >
         {myLocation && !isUpdating && (
@@ -107,7 +128,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
           markers.map((marker, index) => {
             let unitData = findUnit(units, marker.latitude, marker.longitude);
             return (
-              <Marker
+              <MarkerF
                 key={index}
                 position={{ lat: marker.latitude, lng: marker.longitude }}
                 animation={google.maps.Animation.DROP}
@@ -167,7 +188,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                     )}
                   </PopoverContent>
                 </Popover>
-              </Marker>
+              </MarkerF>
             );
           })}
       </GoogleMap>

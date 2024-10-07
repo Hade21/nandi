@@ -1,6 +1,6 @@
 "use client";
 import { useAppSelector } from "@/hooks/reduxHooks";
-import { FilePenLine, ListPlus, Menu } from "lucide-react";
+import { CircleUserRound, FilePenLine, ListPlus, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Logout from "./Logout";
 import { Button } from "./ui/button";
@@ -36,6 +36,15 @@ const MoreOption = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        {!isGuest && (
+          <DropdownMenuItem
+            className="flex gap-2 items-center cursor-pointer"
+            onClick={() => push("/account")}
+          >
+            <CircleUserRound />
+            <span>Account</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           className="flex gap-2 items-center cursor-pointer"
           onClick={() => push("/new")}
