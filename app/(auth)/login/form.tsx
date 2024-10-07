@@ -80,7 +80,6 @@ const LoginForm = () => {
   useEffect(() => {
     if (error) {
       const errorObj = error as ErrorType;
-      console.log("🚀 ~ useEffect ~ errorObj:", errorObj);
       if (errorObj.data) {
         if (errorObj.status === 404) {
           const notFound = error as NotFound;
