@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import UpcomingFeature from "@/components/UpcomingFeature";
 import { GetTokenCookies } from "@/lib/tokenCookies";
 import { useGetUserQuery, useUpdateUserMutation } from "@/services/userApi";
 import { ErrorType } from "@/types";
@@ -20,6 +21,7 @@ import EditProfile from "./form";
 const AccountPage = () => {
   const [token, setToken] = useState<string>("");
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [unavailable, setUnavailable] = useState<boolean>(false);
   const { data: user, isLoading, error } = useGetUserQuery(token);
   const [
     update,
@@ -66,10 +68,15 @@ const AccountPage = () => {
             <UserRoundPen className="mr-2" />
             Edit Profile
           </Button>
-          <Button type="button" variant="secondary">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => setUnavailable(true)}
+          >
             <KeyRound className="mr-2" />
             Change Password
           </Button>
+          <UpcomingFeature open={unavailable} onOpenChange={setUnavailable} />
         </section>
       </div>
     );
