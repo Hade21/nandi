@@ -30,6 +30,7 @@ export const unitApi = createApi({
           Authorization: `Bearer ${body.accessToken}`,
         },
       }),
+      invalidatesTags: ["Units"],
     }),
     updateUnit: builder.mutation<UnitResponse, UnitTypes & AuthorizationTypes>({
       query: (body) => ({
@@ -44,6 +45,7 @@ export const unitApi = createApi({
           Authorization: `Bearer ${body.accessToken}`,
         },
       }),
+      invalidatesTags: ["Units"],
     }),
     getUnitById: builder.query<UnitResponse, string>({
       query: (id) => ({
