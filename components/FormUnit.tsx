@@ -158,7 +158,8 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
   }
 
   if (type === "update" && prevDataError) {
-    if ((prevDataError as NotFound).data.errors) {
+    const notFound = prevDataError as NotFound;
+    if (notFound.data.errors) {
       return (
         <div className="w-full h-full flex flex-col justify-center items-center gap-4">
           <h1 className="text-xl font-bold">
