@@ -11,6 +11,7 @@ import {
   setMarkers,
   setOpenModal,
   setSelectedUnit,
+  setUnits,
 } from "@/services/unitService";
 import { MarkerTypes } from "@/types";
 import { useRouter } from "next/navigation";
@@ -125,6 +126,7 @@ const MapsDataProvider = () => {
       ];
       dispatch(setMarkers(location));
     } else if (data && data.data.length > 0) {
+      dispatch(setUnits(data.data));
       const locations: MarkerTypes[] = [];
       if (data?.data.length > 0) {
         data?.data.forEach((unit, index) => {
