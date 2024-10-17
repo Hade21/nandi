@@ -11,9 +11,8 @@ import {
   setMarkers,
   setOpenModal,
   setSelectedUnit,
-  setUnits,
 } from "@/services/unitService";
-import { MarkerTypes, UnitTypes } from "@/types";
+import { MarkerTypes } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Maps from "./Maps";
@@ -91,7 +90,7 @@ const MapsDataProvider = () => {
     }
   }, [router, updateLocation, isOnline]);
   useEffect(() => {
-    if (searchQuery) {
+    if (searchQuery && data) {
       const unit = data?.data.filter((units) => {
         return units.id === searchQuery;
       });
@@ -125,7 +124,7 @@ const MapsDataProvider = () => {
         },
       ];
       dispatch(setMarkers(location));
-    } else if (data?.data && data.data.length > 0) {
+    } else if (data && data.data.length > 0) {
       const locations: MarkerTypes[] = [];
       if (data?.data.length > 0) {
         data?.data.forEach((unit, index) => {
@@ -148,28 +147,7 @@ const MapsDataProvider = () => {
       }
       dispatch(setMarkers(locations));
     }
-  }, [data?.data, dispatch, searchQuery]);
-  useEffect(() => {
-    if (data?.data && data?.data.length > 0) {
-      dispatch(setUnits(data.data));
-      const unitMarkers: MarkerTypes[] = [];
-      data.data.map((unit: UnitTypes, index) => {
-        if (
-          data.data[index].locations &&
-          data.data[index]!.locations.length > 0
-        ) {
-          unitMarkers.push({
-            latitude: Number(unit.locations![unit.locations!.length - 1].lat),
-            longitude: Number(unit.locations![unit.locations!.length - 1].long),
-            label: unit.name,
-            locationName: unit.locations![unit.locations!.length - 1].location,
-            timeStamp: unit.locations![unit.locations!.length - 1].dateTime,
-          });
-        }
-      });
-      dispatch(setMarkers(unitMarkers));
-    }
-  }, [data, dispatch]);
+  }, [data, dispatch, searchQuery]);
   useEffect(() => {
     if (!isUpdating) {
       if (navigator.geolocation) {
