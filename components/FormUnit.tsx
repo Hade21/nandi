@@ -88,8 +88,9 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
         description: "Unit updated successfully",
       });
       form.reset({ egi: "", name: "", type: "" });
+      router.back();
     }
-  }, [addData, form, toast, updateData?.data.id]);
+  }, [addData, form, router, toast, updateData]);
   useEffect(() => {
     if (addError) {
       const errObj = addError as ErrorType;
