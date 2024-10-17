@@ -95,7 +95,7 @@ const MapsDataProvider = () => {
       const unit = data?.data.filter((units) => {
         return units.id === searchQuery;
       });
-      const latestLocation = unit![0].locations!.slice(-1)[0];
+      const latestLocation = unit![0].locations!.slice(-1)[0] ?? null;
       if (!latestLocation) {
         toast({
           title: "Location not found",
