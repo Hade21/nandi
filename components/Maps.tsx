@@ -67,6 +67,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
     return unit;
   };
   const onMapClick = (e: google.maps.MapMouseEvent) => {
+    if (!pinMaps) return;
     if (e.latLng) {
       const location = {
         latitude: e.latLng.lat(),

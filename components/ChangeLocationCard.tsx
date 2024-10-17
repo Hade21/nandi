@@ -26,6 +26,7 @@ import { toast } from "./ui/use-toast";
 
 const ChangeLocationCard = () => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [savingLocation, setSavingLocation] = useState<boolean>(false);
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
   const [unitData, setUnitData] = useState({
     id: "",
@@ -51,6 +52,7 @@ const ChangeLocationCard = () => {
   });
 
   async function onSubmit() {
+    setSavingLocation(true);
     const body = {
       long: pinMaps ? markers[0].longitude.toString() : unitData.long,
       lat: pinMaps ? markers[0].latitude.toString() : unitData.lat,
@@ -135,6 +137,16 @@ const ChangeLocationCard = () => {
   };
   const pinOnMap = () => {
     const unit = units.filter((unit) => unit.id === id)[0];
+    if (!unit.locations?.length) {
+      toast({
+        title: "Not Available",
+        description:
+          "For initial location please add location by your GPS location first",
+        variant: "destructive",
+      });
+      dispatch(setOpenModal(false));
+      return;
+    }
     dispatch(setIsUpdating(true));
     dispatch(setPinMaps(true));
     toast({
@@ -161,6 +173,10 @@ const ChangeLocationCard = () => {
     });
   };
 
+  useEffect(() => {
+    if (isLoading) setSavingLocation(true);
+    if (!isLoading) setSavingLocation(false);
+  }, [isLoading]);
   useEffect(() => {
     form.setValue("locationName", locationName);
   }, [form, locationName]);
@@ -242,8 +258,14 @@ const ChangeLocationCard = () => {
               />
             </div>
             <div className="flex pt-4 justify-center">
-              <Button type="submit" disabled={isLoading} className="flex gap-2">
-                {isLoading && <TailSpin height="20" width="20" color="#000" />}
+              <Button
+                type="submit"
+                disabled={savingLocation}
+                className="flex gap-2"
+              >
+                {savingLocation && (
+                  <TailSpin height="20" width="20" color="#000" />
+                )}
                 Save Location
               </Button>
             </div>
