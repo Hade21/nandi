@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     JSON.stringify({ accessToken, refreshToken, id, role }),
     {
       httpOnly: true,
-      secure: false,
+      secure: true,
       maxAge: 24 * 60 * 60,
       sameSite: "strict",
     }

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import decryptSession from "./lib/decrypt-session";
 
 const publicRoutes = ["/login", "/register", "/"];
-const protectedRoutes = ["/new", "/account"];
+const protectedRoutes = ["/new", "/account", "/change-role"];
 
 type Session =
   | undefined
