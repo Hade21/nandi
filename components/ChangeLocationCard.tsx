@@ -78,6 +78,7 @@ const ChangeLocationCard = () => {
         description: "Update will stored and uploaded when connection is alive",
         variant: "default",
       });
+      setSavingLocation(false);
       return;
     }
     const res = await GetTokenCookies();
@@ -193,6 +194,7 @@ const ChangeLocationCard = () => {
       });
       dispatch(setOpenModal(false));
       dispatch(setIsUpdating(false));
+      setSavingLocation(false);
     }
   }, [data, dispatch]);
   useEffect(() => {
@@ -203,6 +205,7 @@ const ChangeLocationCard = () => {
         description: "Something went wrong",
         variant: "destructive",
       });
+      setSavingLocation(false);
     }
   }, [error]);
 
