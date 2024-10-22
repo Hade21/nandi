@@ -6,7 +6,9 @@ const useNetworkStatus = () => {
 
   const updateNetworkStatus = async () => {
     try {
-      const res = await fetch(`${baseUrl}/api/v1/units`, {});
+      const res = await fetch(`${baseUrl}/api/v1/units`, {
+        signal: AbortSignal.timeout(1500),
+      });
       if (res.ok) {
         setIsOnline(true);
       } else {
