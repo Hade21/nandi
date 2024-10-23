@@ -190,7 +190,10 @@ const MapsDataProvider = () => {
     return (
       <div className="w-full h-full flex justify-center items-center gap-3 min-h-screen flex-col">
         <h1 className="text-xl font-bold">Error loading data</h1>
-        <h2>Please check your internet connection and try again</h2>
+        <h2>
+          Something Error with Server or Network. Please try again in few
+          seconds.
+        </h2>
         <Button variant="secondary" onClick={() => router.refresh()}>
           Refresh
         </Button>
