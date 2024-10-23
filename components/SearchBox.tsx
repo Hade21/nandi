@@ -2,7 +2,7 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { cn } from "@/lib/utils";
 import { usePrefetch } from "@/services/unitApi";
-import { setSearchQuery } from "@/services/unitService";
+import { setSearchQuery, setSelectedUnit } from "@/services/unitService";
 import { UnitTypes } from "@/types";
 import { CommandInput } from "cmdk";
 import { Check, ChevronsUpDown } from "lucide-react";
@@ -24,6 +24,28 @@ const SearchBox = () => {
   const dispatch = useAppDispatch();
   const prefetch = usePrefetch("getUnitById");
 
+  const handleSelect = (value: string) => {
+    const unit = units.find((unit) => unit.name === value)!;
+    const selected = {
+      selectedUnit: {
+        id: unit!.id ?? "",
+        egi: unit!.egi ?? "",
+        name: unit!.name ?? "",
+        type: unit!.type ?? "",
+        locationName:
+          unit.locations![unit.locations!.length - 1].location ?? "",
+        timeStamp: unit.locations![unit.locations!.length - 1].dateTime!,
+      },
+    };
+    if (unit.id !== searchQuery) {
+      dispatch(setSearchQuery(unit.id!));
+      dispatch(setSelectedUnit(selected));
+      setIsOpen(false);
+      prefetch(unit.id!);
+      return;
+    }
+    dispatch(setSearchQuery(""));
+  };
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
@@ -55,19 +77,7 @@ const SearchBox = () => {
                 <CommandItem
                   key={unit.id}
                   value={unit.name}
-                  onSelect={(currentValue) => {
-                    dispatch(
-                      setSearchQuery(
-                        units.find((unit) => unit.name === currentValue)?.id ===
-                          searchQuery
-                          ? ""
-                          : units.find((unit) => unit.name === currentValue)
-                              ?.id!
-                      )
-                    );
-                    setIsOpen(false);
-                    prefetch(unit.id!);
-                  }}
+                  onSelect={(currentValue) => handleSelect(currentValue)}
                 >
                   <Check
                     className={cn(
