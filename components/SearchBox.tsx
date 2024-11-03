@@ -33,8 +33,8 @@ const SearchBox = () => {
         name: unit!.name ?? "",
         type: unit!.type ?? "",
         locationName:
-          unit.locations![unit.locations!.length - 1].location ?? "",
-        timeStamp: unit.locations![unit.locations!.length - 1].dateTime!,
+          unit.locations![unit.locations!.length - 1]?.location ?? "",
+        timeStamp: unit.locations![unit.locations!.length - 1]?.dateTime ?? "",
       },
     };
     if (unit.id !== searchQuery) {
