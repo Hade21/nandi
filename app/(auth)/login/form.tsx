@@ -80,7 +80,6 @@ const LoginForm = () => {
   useEffect(() => {
     if (error) {
       const errorObj = error as ErrorType;
-      console.log("🚀 ~ useEffect ~ errorObj:", errorObj);
       if (errorObj.data) {
         if (errorObj.status === 404) {
           const notFound = error as NotFound;
@@ -91,7 +90,7 @@ const LoginForm = () => {
           setErrDesc(errorObj.data.errors.message);
         }
       } else {
-        console.log(error)
+        console.log(error);
         setErrMsg("Error");
         setErrDesc("Network Error");
       }
