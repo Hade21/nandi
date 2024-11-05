@@ -37,6 +37,7 @@ const ChangeLocationCard = () => {
     locationName: "",
   });
   const isOpen = useAppSelector((state) => state.units.openModal);
+  const selectedUnit = useAppSelector((state) => state.units.selectedUnit);
   const { id, name, type, egi, locationName } = useAppSelector(
     (state) => state.units.selectedUnit
   );
@@ -79,6 +80,13 @@ const ChangeLocationCard = () => {
         variant: "default",
       });
       setSavingLocation(false);
+      const location = {
+        latitude: Number(markers[0].latitude),
+        longitude: Number(markers[0].longitude),
+        label: selectedUnit.name,
+        locationName: markers[0].locationName,
+      };
+      dispatch(setMarkers([]));
       return;
     }
     const res = await GetTokenCookies();
