@@ -84,7 +84,7 @@ const ChangeLocationCard = () => {
         latitude: Number(markers[0].latitude),
         longitude: Number(markers[0].longitude),
         label: selectedUnit.name,
-        locationName: markers[0].locationName,
+        locationName: markers[0].locationName, 
       };
       dispatch(setMarkers([]));
       return;
