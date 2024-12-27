@@ -32,6 +32,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { TailSpin } from "react-loader-spinner";
 import { z } from "zod";
+import Link from "next/link";
 
 type Input = z.infer<typeof loginSchema>;
 
@@ -170,6 +171,11 @@ const LoginForm = () => {
                     </FormItem>
                   )}
                 />
+                <Link href="/forgot-password">
+                  <i className="text-xs font-normal cursor-pointer hover:text-red-500">
+                    Forgot password?
+                  </i>
+                </Link>
                 <div className="flex gap-3 items-center pt-4">
                   <Button
                     type="submit"
