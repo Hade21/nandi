@@ -84,6 +84,16 @@ export const userApi = createApi({
       }),
       invalidatesTags: ["Users"],
     }),
+    forgotPassword: builder.mutation<
+      { message: String },
+      Pick<AuthRequest, "email">
+    >({
+      query: (body) => ({
+        url: "/auth/forgot-password",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -94,4 +104,5 @@ export const {
   useGetAllUsersQuery,
   useChangeRoleMutation,
   useUpdateUserMutation,
+  useForgotPasswordMutation,
 } = userApi;
