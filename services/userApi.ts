@@ -1,11 +1,8 @@
 import type {
   AuthRequest,
-  ChangeRoleResponse,
   LoginResponse,
   RegisterResponse,
-  UserData,
   UserResponse,
-  UsersResponse,
 } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -42,47 +39,14 @@ export const userApi = createApi({
           Authorization: `Bearer ${accessToken}`,
         },
       }),
-      providesTags: ["Users"],
     }),
-    getAllUsers: builder.query<UsersResponse, string>({
+    getAllUsers: builder.query<UserResponse[], string>({
       query: (accessToken) => ({
         url: "/users/all",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       }),
-      providesTags: ["Users"],
-    }),
-    changeRole: builder.mutation<
-      ChangeRoleResponse,
-      UserData & { accessToken: string }
-    >({
-      query: (body) => ({
-        url: `/users/${body.id}`,
-        method: "PATCH",
-        body,
-        headers: {
-          Authorization: `Bearer ${body.accessToken}`,
-        },
-      }),
-      invalidatesTags: ["Users"],
-    }),
-    updateUser: builder.mutation<UserData, UserData & { accessToken: string }>({
-      query: (body) => ({
-        url: `/users/${body.id}`,
-        method: "PUT",
-        body: {
-          id: body.id,
-          email: body.email,
-          firstName: body.firstName,
-          lastName: body.lastName,
-          username: body.username,
-        },
-        headers: {
-          Authorization: `Bearer ${body.accessToken}`,
-        },
-      }),
-      invalidatesTags: ["Users"],
     }),
   }),
 });
@@ -92,6 +56,4 @@ export const {
   useRegisterMutation,
   useGetUserQuery,
   useGetAllUsersQuery,
-  useChangeRoleMutation,
-  useUpdateUserMutation,
 } = userApi;
