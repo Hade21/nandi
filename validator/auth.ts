@@ -28,3 +28,16 @@ export const registerSchema = z
 export const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email").min(1, "Email is required"),
 });
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Password is too short")
+      .max(100, "Password is too long"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Password didn't match",
+    path: ["confirmPassword"],
+  });

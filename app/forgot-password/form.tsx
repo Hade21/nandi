@@ -5,6 +5,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { BackgroundGradient } from "@/components/ui/background-gradient";
 import { Button } from "@/components/ui/button";
@@ -108,7 +109,9 @@ const ResetForm = () => {
       </BackgroundGradient>
       <AlertDialog open={alert} onOpenChange={setAlert}>
         <AlertDialogContent>
-          <AlertDialogHeader>Success</AlertDialogHeader>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Success</AlertDialogTitle>
+          </AlertDialogHeader>
           <AlertDialogDescription>
             Check your email and follow reset instruction
           </AlertDialogDescription>
