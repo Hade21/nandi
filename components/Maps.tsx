@@ -136,8 +136,8 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                 icon={{
                   url: "/cortana.svg",
                   scaledSize: {
-                    width: 40,
-                    height: 40,
+                    width: 24,
+                    height: 24,
                     equals: () => true,
                   },
                 }}
