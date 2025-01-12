@@ -6,6 +6,7 @@ import { TailSpin } from "react-loader-spinner";
 const MapsProvider = ({ children }: { children: React.ReactNode }) => {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY as string,
+    mapIds: [process.env.NEXT_PUBLIC_MAPS_ID as string],
   });
 
   if (loadError)
