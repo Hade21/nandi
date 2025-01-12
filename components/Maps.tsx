@@ -106,7 +106,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
             key="my-location"
             position={{ lat: myLocation.latitude, lng: myLocation.longitude }}
             icon={{
-              url: "/car.png",
+              url: "/position.svg",
               scaledSize: {
                 width: 40,
                 height: 40,
@@ -134,10 +134,10 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                 position={{ lat: marker.latitude, lng: marker.longitude }}
                 animation={google.maps.Animation.DROP}
                 icon={{
-                  url: "/marker.png",
+                  url: "/cortana.svg",
                   scaledSize: {
-                    width: 40,
-                    height: 40,
+                    width: 24,
+                    height: 24,
                     equals: () => true,
                   },
                 }}
