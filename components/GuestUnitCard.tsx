@@ -39,14 +39,14 @@ const GuestUnitCard = ({
       </div>
       <Separator />
       <p className="text-center font-light text-xs">{egi}</p>
-      <div className="flex flex-wrap ">
-        <div className="flex items-start gap-2 flex-1">
+      <div className="flex flex-wrap gap-4">
+        <div className="flex items-start gap-3 flex-1 w-full">
           <Image src={"/location.svg"} alt="Location" width={20} height={20} />
-          <p className="text-center font-semibold text-sm">{locationName}</p>
+          <p className="text-left font-semibold text-sm">{locationName}</p>
         </div>
-        <div className="flex items-start gap-2 flex-1">
+        <div className="flex items-start gap-3 flex-1 w-full">
           <Image src={"/date.svg"} alt="Last updated" width={20} height={20} />
-          <p className="text-center font-semibold text-sm">
+          <p className="text-left font-semibold text-sm">
             {timeStampFormatted}
           </p>
         </div>
