@@ -4,6 +4,7 @@ import ThemeProvider from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { Inter, Rubik_Moonrocks } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -26,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} ${rubik_moonrocks.variable}`}>
+        <NextTopLoader />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

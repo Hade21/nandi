@@ -20,10 +20,14 @@ const CardUnit = ({
   timeStamp,
 }: CardUnitProps) => {
   const date = new Date(timeStamp!);
-  const timeStampFormatted = `${date.toLocaleDateString()} ${date.toLocaleTimeString(
-    "id-ID",
-    { hour: "numeric", minute: "numeric" }
-  )}`;
+  const timeStampFormatted = `${date.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  })} ${date.toLocaleTimeString("id-ID", {
+    hour: "numeric",
+    minute: "numeric",
+  })}`;
   const icons = {
     "TOWER LAMP": "/street-light.png",
     GENSET: "/generator.svg",
