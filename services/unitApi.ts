@@ -76,6 +76,7 @@ export const unitApi = createApi({
         headers: {
           Authorization: `Bearer ${body.accessToken}`,
         },
+        timeout: 2000,
       }),
       invalidatesTags: ["Units"],
     }),

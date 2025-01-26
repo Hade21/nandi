@@ -9,7 +9,7 @@ import {
   setOpenModal,
   setPinMaps,
 } from "@/services/unitService";
-import { ErrorType, MarkerTypes } from "@/types";
+import { MarkerTypes } from "@/types";
 import { locationNameSchema } from "@/validator/unit";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
@@ -84,9 +84,9 @@ const ChangeLocationCard = () => {
         latitude: Number(markers[0].latitude),
         longitude: Number(markers[0].longitude),
         label: selectedUnit.name,
-        locationName: markers[0].locationName, 
+        locationName: markers[0].locationName,
       };
-      dispatch(setMarkers([]));
+      dispatch(setMarkers([location]));
       return;
     }
     const res = await GetTokenCookies();
@@ -207,15 +207,39 @@ const ChangeLocationCard = () => {
   }, [data, dispatch]);
   useEffect(() => {
     if (error) {
-      const errObj = error as ErrorType;
+      const body = {
+        long: pinMaps ? markers[0].longitude.toString() : unitData.long,
+        lat: pinMaps ? markers[0].latitude.toString() : unitData.lat,
+        alt: unitData.alt ?? "unknown",
+        location: form.getValues("locationName")!,
+        dateTime: unitData.dateTime,
+      };
+      const pendingUpdate = localStorage.getItem("updatePending");
+      const storedData = pendingUpdate ? JSON.parse(pendingUpdate) : [];
+      storedData.push({
+        id: unitData.id,
+        ...body,
+        accessToken: "",
+      });
+      localStorage.setItem("updatePending", JSON.stringify(storedData));
       toast({
-        title: errObj.data.errors.message || "Error",
-        description: "Something went wrong",
-        variant: "destructive",
+        title: "Failed to update location",
+        description: "Don't worry! we'll keep these data and try again later",
+        variant: "default",
       });
       setSavingLocation(false);
     }
-  }, [error]);
+  }, [
+    error,
+    form,
+    markers,
+    pinMaps,
+    unitData.alt,
+    unitData.dateTime,
+    unitData.id,
+    unitData.lat,
+    unitData.long,
+  ]);
 
   return (
     <motion.div
