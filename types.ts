@@ -87,6 +87,7 @@ export type UserData = {
   username: string;
   email: string;
   role: string;
+  profilePict?: string;
 };
 
 export type UserResponse = {

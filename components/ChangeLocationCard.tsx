@@ -229,17 +229,7 @@ const ChangeLocationCard = () => {
       });
       setSavingLocation(false);
     }
-  }, [
-    error,
-    form,
-    markers,
-    pinMaps,
-    unitData.alt,
-    unitData.dateTime,
-    unitData.id,
-    unitData.lat,
-    unitData.long,
-  ]);
+  }, [error, form, markers, pinMaps, unitData]);
 
   return (
     <motion.div

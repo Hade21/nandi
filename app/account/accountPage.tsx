@@ -21,6 +21,7 @@ import EditProfile from "./form";
 const AccountPage = () => {
   const [token, setToken] = useState<string>("");
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [uploadImage, setUploadImage] = useState<boolean>(false);
   const [unavailable, setUnavailable] = useState<boolean>(false);
   const { data: user, isLoading, error } = useGetUserQuery(token);
   const [
@@ -139,9 +140,6 @@ const AccountPage = () => {
       setEditMode(false);
     }
   }, [updateSuccess]);
-  useEffect(() => {
-    console.log("🚀 ~ AccountPage ~ editMode:", editMode);
-  }, [editMode]);
 
   if (isLoading) return <Loading />;
 
@@ -164,6 +162,8 @@ const AccountPage = () => {
           isLoading={updating}
           onSubmit={onSubmit}
           cancelFunc={() => setEditMode(false)}
+          uploadImage={uploadImage}
+          setUploadImage={setUploadImage}
         />
       ) : (
         <ProfileComponent />

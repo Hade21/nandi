@@ -27,12 +27,12 @@ import { loginSchema } from "@/validator/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { TailSpin } from "react-loader-spinner";
 import { z } from "zod";
-import Link from "next/link";
 
 type Input = z.infer<typeof loginSchema>;
 
@@ -86,7 +86,7 @@ const LoginForm = () => {
           const notFound = error as NotFound;
           setErrMsg("Error");
           setErrDesc(notFound.data.errors);
-        } else if (errorObj.data?.errors.statusCode !== undefined) {
+        } else if (errorObj.data?.errors?.statusCode !== undefined) {
           setErrMsg(errorObj.data.errors.error!);
           setErrDesc(errorObj.data.errors.message);
         }

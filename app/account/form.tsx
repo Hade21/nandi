@@ -1,3 +1,4 @@
+import FileUploader from "@/components/FileUploader";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -9,7 +10,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { profileSchema } from "@/validator/user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleUserRound, Mail, UserRoundPenIcon } from "lucide-react";
+import { Mail, Pencil, UserRoundPenIcon } from "lucide-react";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { TailSpin } from "react-loader-spinner";
 import { z } from "zod";
@@ -22,10 +24,13 @@ interface EditProfileProps {
     lastName: string;
     username: string;
     email: string;
+    profilePict?: string;
   };
   isLoading: boolean;
   onSubmit: (data: Input) => void;
   cancelFunc: () => void;
+  uploadImage: boolean;
+  setUploadImage: (open: boolean) => void;
 }
 
 const EditProfile = ({
@@ -33,6 +38,8 @@ const EditProfile = ({
   isLoading,
   onSubmit,
   cancelFunc,
+  uploadImage,
+  setUploadImage,
 }: EditProfileProps) => {
   const form = useForm<Input>({
     resolver: zodResolver(profileSchema),
@@ -49,7 +56,20 @@ const EditProfile = ({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <section>
           <div className="profile-picture flex flex-col items-center justify-center">
-            <CircleUserRound width={60} height={60} />
+            <div className="profile-pict w-[calc(100%*0.1505)] h-[calc(100%*0.1505)] relative">
+              <Image
+                className="rounded-full overflow-hidden border-2 border-slate-50"
+                src={data.profilePict ?? "/man.png"}
+                alt={data.username}
+                width={64}
+                height={64}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+              <Pencil
+                className="absolute bottom-0 right-0 translate-x-1/2 cursor-pointer"
+                onClick={() => setUploadImage(true)}
+              />
+            </div>
             <FormField
               control={form.control}
               name="username"
@@ -127,6 +147,7 @@ const EditProfile = ({
           </Button>
         </section>
       </form>
+      <FileUploader open={uploadImage} onOpenChange={setUploadImage} />
     </Form>
   );
 };

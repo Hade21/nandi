@@ -102,6 +102,17 @@ export const userApi = createApi({
         body,
       }),
     }),
+    changeProfilePict: builder.mutation<any, FormData>({
+      query: (body) => ({
+        url: `/users/profile-picture`,
+        method: "POST",
+        body,
+        headers: {
+          Authorization: `Bearer ${body.get("accessToken")}`,
+        },
+      }),
+      invalidatesTags: ["Users"],
+    }),
   }),
 });
 
@@ -114,4 +125,5 @@ export const {
   useUpdateUserMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useChangeProfilePictMutation,
 } = userApi;

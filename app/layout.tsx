@@ -27,18 +27,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} ${rubik_moonrocks.variable}`}>
-        <NextTopLoader />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <StoreProvider>
-            <FramerMotionPresent>{children}</FramerMotionPresent>
-          </StoreProvider>
-          <Toaster />
-        </ThemeProvider>
+        <FramerMotionPresent>
+          <NextTopLoader />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <StoreProvider>{children}</StoreProvider>
+            <Toaster />
+          </ThemeProvider>
+        </FramerMotionPresent>
       </body>
     </html>
   );
