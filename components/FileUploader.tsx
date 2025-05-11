@@ -130,11 +130,11 @@ const FileUploader = ({ open, onOpenChange }: FileUploaderProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTitle></DialogTitle>
       <DialogContent className="transition-all duration-200">
-        <motion.div
+        {/* <motion.div
           initial="close"
           animate={open ? "open" : "close"}
           variants={animationVariants}
-        >
+        > */}
           <div
             className="border-dashed m-2 rounded-lg border-2 flex items-center justify-center group/edit flex-col pb-2"
             onDragEnter={handleDragEvent}
@@ -230,7 +230,7 @@ const FileUploader = ({ open, onOpenChange }: FileUploaderProps) => {
               </div>
             </motion.div>
           )}
-        </motion.div>
+        {/* </motion.div> */}
       </DialogContent>
     </Dialog>
   );

@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Loading from "../loading";
 import EditProfile from "./form";
+import Image from "next/image";
 
 const AccountPage = () => {
   const [token, setToken] = useState<string>("");
@@ -44,7 +45,16 @@ const AccountPage = () => {
       <div>
         <section>
           <div className="profile-picture flex items-center justify-center">
-            <CircleUserRound width={60} height={60} />
+          <div className="profile-pict w-[calc(100%*0.1505)] h-[calc(100%*0.1505)] relative">
+              <Image
+                className="rounded-full overflow-hidden border-2 border-slate-50"
+                src={user?.data.profilePict ?? "/man.png"}
+                alt={user?.data.username ?? "Profile Picture"}
+                width={64}
+                height={64}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            </div>
           </div>
           <h1 className="text-xl text-center font-semibold">
             {user?.data.username}
@@ -93,6 +103,8 @@ const AccountPage = () => {
     getToken();
   }, []);
   useEffect(() => {
+    console.log("🚀 ~ useEffect ~ user:", user)
+    
     if (error) {
       const errorObj = error as ErrorType;
       if (errorObj.statusCode === 500) {
@@ -105,14 +117,15 @@ const AccountPage = () => {
           title: "Server Error",
           description: "Try again in few seconds",
         });
-      } else if (errorObj.status === 401) {
-        toast({
-          title: "Unauthorized",
-          description: "Please login again to access",
-        });
       }
+      // else if (errorObj.status === 401) {
+      //   toast({
+      //     title: "Unauthorized",
+      //     description: "Please login again to access",
+      //   });
+      // }
     }
-  }, [error]);
+  }, [error, user]);
   useEffect(() => {
     if (updateError) {
       const errorObj = updateError as ErrorType;
