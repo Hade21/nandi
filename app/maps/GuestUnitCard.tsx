@@ -1,24 +1,20 @@
-import { PopoverClose } from "@radix-ui/react-popover";
 import Image from "next/image";
-import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
+import { Separator } from "../../components/ui/separator";
 
-interface CardUnitProps {
+interface GuestUnitCardProps {
   name: string;
   type: string;
   egi: string;
   locationName: string;
-  onClick?: () => void;
   timeStamp?: string;
 }
-const CardUnit = ({
+const GuestUnitCard = ({
   name,
   type,
   egi,
   locationName,
-  onClick,
   timeStamp,
-}: CardUnitProps) => {
+}: GuestUnitCardProps) => {
   const date = new Date(timeStamp!);
   const timeStampFormatted = `${date.toLocaleDateString("id-ID", {
     day: "numeric",
@@ -44,24 +40,19 @@ const CardUnit = ({
       <Separator />
       <p className="text-center font-light text-xs">{egi}</p>
       <div className="flex flex-wrap gap-4">
-        <div className="flex items-center gap-3 flex-1 w-full">
+        <div className="flex items-start gap-3 flex-1 w-full">
           <Image src={"/location.svg"} alt="Location" width={20} height={20} />
           <p className="text-left font-semibold text-sm">{locationName}</p>
         </div>
-        <div className="flex items-center gap-3 flex-1 w-full">
+        <div className="flex items-start gap-3 flex-1 w-full">
           <Image src={"/date.svg"} alt="Last updated" width={20} height={20} />
           <p className="text-left font-semibold text-sm">
             {timeStampFormatted}
           </p>
         </div>
       </div>
-      <div className="flex pt-4 justify-center">
-        <PopoverClose>
-          <Button onClick={onClick}>Edit Location</Button>
-        </PopoverClose>
-      </div>
     </div>
   );
 };
 
-export default CardUnit;
+export default GuestUnitCard;

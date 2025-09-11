@@ -16,13 +16,18 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { TailSpin } from "react-loader-spinner";
+import RetrievingLocation from "../../components/RetrievingLocation";
+import { Button } from "../../components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+} from "../../components/ui/form";
+import { Input } from "../../components/ui/input";
+import { Separator } from "../../components/ui/separator";
+import { toast } from "../../components/ui/use-toast";
 import AlertDialogLocation from "./AlertDialogLocation";
-import RetrievingLocation from "./RetrievingLocation";
-import { Button } from "./ui/button";
-import { Form, FormControl, FormField, FormItem } from "./ui/form";
-import { Input } from "./ui/input";
-import { Separator } from "./ui/separator";
-import { toast } from "./ui/use-toast";
 
 const ChangeLocationCard = () => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);

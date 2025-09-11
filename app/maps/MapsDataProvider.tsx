@@ -16,11 +16,11 @@ import {
 import { MarkerTypes } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import SearchBox from "../../components/SearchBox";
+import ThemeSwitcher from "../../components/ThemeSwitcher";
+import { Button } from "../../components/ui/button";
+import { toast } from "../../components/ui/use-toast";
 import Maps from "./Maps";
-import SearchBox from "./SearchBox";
-import ThemeSwitcher from "./ThemeSwitcher";
-import { Button } from "./ui/button";
-import { toast } from "./ui/use-toast";
 
 interface UnitData {
   id: string;
@@ -126,6 +126,7 @@ const MapsDataProvider = () => {
       ];
       dispatch(setMarkers(location));
     } else if (data && data.data.length > 0) {
+      console.log(data.data);
       dispatch(setUnits(data.data));
       const locations: MarkerTypes[] = [];
       if (data?.data.length > 0) {

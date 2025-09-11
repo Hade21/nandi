@@ -14,10 +14,8 @@ import {
 } from "@react-google-maps/api";
 import { LocateFixed } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import MoreOption from "../../components/MoreOption";
 import CardUnit from "./CardUnit";
-import GuestUnitCard from "./GuestUnitCard";
-import MoreOption from "./MoreOption";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export const defaultMapsContainerStyle = {
   width: "100%",
@@ -142,53 +140,37 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                   },
                 }}
               >
-                <Popover>
-                  <OverlayView
-                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                    position={{ lat: marker.latitude, lng: marker.longitude }}
+                <OverlayView
+                  mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                  position={{ lat: marker.latitude, lng: marker.longitude }}
+                >
+                  <div
+                    className="w-max -translate-x-1/2 -translate-y-[175%]"
+                    onClick={() => {
+                      const unit = {
+                        selectedUnit: {
+                          id: unitData!.id ?? "",
+                          egi: unitData!.egi ?? "",
+                          name: unitData!.name ?? "",
+                          type: unitData!.type ?? "",
+                          locationName: marker.locationName!,
+                          timeStamp: marker.timeStamp!,
+                        },
+                      };
+                      dispatch(setSelectedUnit(unit));
+                    }}
                   >
-                    <PopoverTrigger asChild>
-                      <div
-                        className="p-2 bg-white dark:bg-slate-950 rounded-sm w-max -translate-x-1/2 left-1/2 -translate-y-[235%] cursor-pointer hover:bg-opacity-60"
-                        onClick={() => {
-                          const unit = {
-                            selectedUnit: {
-                              id: unitData!.id ?? "",
-                              egi: unitData!.egi ?? "",
-                              name: unitData!.name ?? "",
-                              type: unitData!.type ?? "",
-                              locationName: marker.locationName!,
-                              timeStamp: marker.timeStamp!,
-                            },
-                          };
-                          dispatch(setSelectedUnit(unit));
-                        }}
-                      >
-                        <p>{marker.label}</p>
-                      </div>
-                    </PopoverTrigger>
-                  </OverlayView>
-                  <PopoverContent>
-                    {isGuest ? (
-                      <GuestUnitCard
-                        egi={selectedUnit.egi}
-                        name={selectedUnit.name}
-                        type={selectedUnit.type}
-                        locationName={selectedUnit.locationName!}
-                        timeStamp={selectedUnit.timeStamp}
-                      />
-                    ) : (
-                      <CardUnit
-                        egi={selectedUnit.egi}
-                        name={selectedUnit.name}
-                        type={selectedUnit.type}
-                        locationName={selectedUnit.locationName!}
-                        timeStamp={selectedUnit.timeStamp}
-                        onClick={() => dispatch(setOpenModal(true))}
-                      />
-                    )}
-                  </PopoverContent>
-                </Popover>
+                    <CardUnit
+                      id={selectedUnit.id}
+                      egi={selectedUnit.egi}
+                      name={selectedUnit.name}
+                      type={selectedUnit.type}
+                      locationName={selectedUnit.locationName!}
+                      timeStamp={selectedUnit.timeStamp}
+                      onClick={() => dispatch(setOpenModal(true))}
+                    />
+                  </div>
+                </OverlayView>
               </MarkerF>
             );
           })}

@@ -1,7 +1,7 @@
 "use client";
-import ChangeLocationCard from "@/components/ChangeLocationCard";
-import MapsDataProvider from "@/components/MapsDataProvider";
-import MapsProvider from "@/components/MapsProvider";
+import ChangeLocationCard from "@/app/maps/ChangeLocationCard";
+import MapsDataProvider from "@/app/maps/MapsDataProvider";
+import MapsProvider from "@/app/maps/MapsProvider";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { GetTokenCookies } from "@/lib/tokenCookies";
 import { setIsGuest } from "@/services/userService";
