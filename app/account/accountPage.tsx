@@ -153,7 +153,7 @@ const AccountPage = () => {
         </div>
         <h1 className="font-bold text-lg text-right">
           Welcome back!{" "}
-          <span className="font-rubik-moonrocks bg-gradient-to-r from bg-purple-500 to-blue-500 text-transparent bg-clip-text uppercase text-3xl">
+          <span className="font-rubik-moonrocks bg-linear-to-r from bg-purple-500 to-blue-500 text-transparent bg-clip-text uppercase text-3xl">
             {user?.data ? user?.data.lastName : "Guests"}
           </span>
         </h1>

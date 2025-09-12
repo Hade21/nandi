@@ -13,7 +13,7 @@ export default function Home() {
         <div className="w-full min-h-screen flex flex-col justify-center items-center gap-2 z-50 relative">
           <h1 className="text-5xl text-center flex gap-4 flex-wrap font-bold justify-center">
             Welcome to
-            <span className="bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text flex gap-2 items-center font-rubik-moonrocks">
+            <span className="bg-linear-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text flex gap-2 items-center font-rubik-moonrocks">
               NANDI
               <MapPin color="#3b82f6" size={48} />
             </span>
