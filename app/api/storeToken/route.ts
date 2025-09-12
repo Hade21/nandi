@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   const { accessToken, refreshToken, id, role } = await request.json();
 
-  cookies().set(
+  (await cookies()).set(
     "token",
     JSON.stringify({ accessToken, refreshToken, id, role }),
     {

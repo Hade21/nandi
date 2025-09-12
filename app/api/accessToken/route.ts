@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 const baseUrl = process.env.NEXT_PUBLIC_URL_SERVER;
 
 export async function GET() {
-  const tokenCookies = cookies().get("token");
+  const tokenCookies = (await cookies()).get("token");
   const parsedTokenCookies = JSON.parse(tokenCookies?.value || "{}");
   const { accessToken, refreshToken, id } = parsedTokenCookies;
   if (!accessToken || !refreshToken || !id) {
@@ -25,11 +25,11 @@ export async function GET() {
       });
 
       if (!res.ok) {
-        cookies().delete("token");
+        (await cookies()).delete("token");
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       } else if (res.ok) {
         const { data } = await res.json();
-        cookies().set(
+        (await cookies()).set(
           "token",
           JSON.stringify({
             id,

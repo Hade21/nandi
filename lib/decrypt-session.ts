@@ -27,7 +27,7 @@ export default async function decryptSession(token: string) {
         return { message: "Unauthorized, token expired", data: null };
       } else if (res.ok) {
         const { body } = await res.json();
-        cookies().set(
+        (await cookies()).set(
           "token",
           JSON.stringify({
             id,

@@ -17,7 +17,7 @@ type Session =
     };
 
 export default async function middleware(req: NextRequest) {
-  const token = cookies().get("token")?.value || "";
+  const token = (await cookies()).get("token")?.value || "";
 
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.includes(path);
