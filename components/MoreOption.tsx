@@ -2,6 +2,7 @@
 import { useAppSelector } from "@/hooks/reduxHooks";
 import { CircleUserRound, FilePenLine, ListPlus, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import Logout from "./Logout";
 import { Button } from "./ui/button";
 import {
@@ -10,7 +11,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { toast } from "./ui/use-toast";
 
 const MoreOption = () => {
   const isGuest = useAppSelector((state) => state.user.isGuest);
@@ -19,8 +19,7 @@ const MoreOption = () => {
 
   const handleEdit = () => {
     if (!selectedUnit.id) {
-      toast({
-        title: "Missing unit",
+      toast.error("Missing unit", {
         description: "Please select a unit first",
       });
       return;

@@ -1,4 +1,5 @@
 "use client";
+
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { cn } from "@/lib/utils";
 import { usePrefetch } from "@/services/unitApi";
@@ -46,6 +47,7 @@ const SearchBox = () => {
     }
     dispatch(setSearchQuery(""));
   };
+
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
@@ -68,7 +70,7 @@ const SearchBox = () => {
         <Command>
           <CommandInput
             placeholder="Search unit number"
-            className="p-2 bg-transparent"
+            className="p-2"
           ></CommandInput>
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>

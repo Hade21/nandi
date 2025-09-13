@@ -3,7 +3,7 @@ import { useAppDispatch } from "@/hooks/reduxHooks";
 import { setIsGuest } from "@/services/userService";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { TailSpin } from "react-loader-spinner";
+// import { TailSpin } from "react-loader-spinner";
 import { Button } from "./ui/button";
 
 const GuestButton = () => {
@@ -22,7 +22,7 @@ const GuestButton = () => {
         setIsLoading(false);
       }}
     >
-      {isLoading && <TailSpin color="#3b82f6" height={20} width={20} />}
+      {/* {isLoading && <TailSpin color="#3b82f6" height={20} width={20} />} */}
       Login as Guest
     </Button>
   );

@@ -15,7 +15,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { TailSpin } from "react-loader-spinner";
+// import { TailSpin } from "react-loader-spinner";
+import { toast } from "sonner";
 import RetrievingLocation from "../../components/RetrievingLocation";
 import { Button } from "../../components/ui/button";
 import {
@@ -26,7 +27,6 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import { Separator } from "../../components/ui/separator";
-import { toast } from "../../components/ui/use-toast";
 import AlertDialogLocation from "./AlertDialogLocation";
 
 const ChangeLocationCard = () => {
@@ -79,10 +79,8 @@ const ChangeLocationCard = () => {
       dispatch(setOpenModal(false));
       dispatch(setIsUpdating(false));
       dispatch(setPinMaps(false));
-      toast({
-        title: "No Connection",
-        description: "Update will stored and uploaded when connection is alive",
-        variant: "default",
+      toast.info("No Connection", {
+        description: "Update will stored and uploaded when online",
       });
       setSavingLocation(false);
       const location = {
@@ -97,10 +95,8 @@ const ChangeLocationCard = () => {
     const res = await GetTokenCookies();
 
     if (!res.data) {
-      toast({
-        title: "Unauthorized",
+      toast.error("Unauthorized", {
         description: "Please login to update location",
-        variant: "destructive",
       });
       return;
     }
@@ -135,10 +131,8 @@ const ChangeLocationCard = () => {
           });
         },
         (error) => {
-          toast({
-            title: "Your location cannot be determined",
-            description: "Please enable geolocation on your browser.",
-            variant: "destructive",
+          toast.error("Your location not found", {
+            description: error.message,
           });
         },
         {
@@ -152,21 +146,17 @@ const ChangeLocationCard = () => {
   const pinOnMap = () => {
     const unit = units.filter((unit) => unit.id === id)[0];
     if (!unit.locations?.length) {
-      toast({
-        title: "Not Available",
+      toast.error("Not Available", {
         description:
           "For initial location please add location by your GPS location first",
-        variant: "destructive",
       });
       dispatch(setOpenModal(false));
       return;
     }
     dispatch(setIsUpdating(true));
     dispatch(setPinMaps(true));
-    toast({
-      title: "Pin on Map",
+    toast.info("Pin on Map", {
       description: "Pin on map to update location",
-      variant: "default",
     });
     dispatch(
       setMarkers([
@@ -201,8 +191,7 @@ const ChangeLocationCard = () => {
   }, [isOpen]);
   useEffect(() => {
     if (data) {
-      toast({
-        title: "Location updated",
+      toast.success("Success", {
         description: "Location updated successfully",
       });
       dispatch(setOpenModal(false));
@@ -227,10 +216,8 @@ const ChangeLocationCard = () => {
         accessToken: "",
       });
       localStorage.setItem("updatePending", JSON.stringify(storedData));
-      toast({
-        title: "Failed to update location",
+      toast.error("Failed to update location", {
         description: "Don't worry! we'll keep these data and try again later",
-        variant: "default",
       });
       setSavingLocation(false);
     }
@@ -303,9 +290,9 @@ const ChangeLocationCard = () => {
                 disabled={savingLocation}
                 className="flex gap-2"
               >
-                {savingLocation && (
+                {/* {savingLocation && (
                   <TailSpin height="20" width="20" color="#000" />
-                )}
+                )} */}
                 Save Location
               </Button>
             </div>

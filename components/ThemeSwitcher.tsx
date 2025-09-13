@@ -1,37 +1,31 @@
 "use client";
-import { Moon, Sun } from "lucide-react";
+
+import { Switch } from "@/components/animate-ui/components/base/switch";
+import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "./ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+import { useEffect, useState } from "react";
 
 const ThemeSwitcher = () => {
+  const [checked, setChecked] = useState(false);
+  const ThumbIcon = checked ? <MoonIcon /> : <SunIcon />;
   const { setTheme } = useTheme();
+
+  useEffect(() => {
+    if (checked) setTheme("dark");
+    else setTheme("light");
+  }, [checked, setTheme]);
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:scale-0 dark:rotate-180" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:scale-100 dark:rotate-0" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="cursor-pointer" aria-labelledby="Theme Switcher">
+      <Switch
+        checked={checked}
+        onCheckedChange={(value) => setChecked(value)}
+        aria-label="Toggle theme switcher"
+        startIcon={<SunIcon />}
+        endIcon={<MoonIcon />}
+        thumbIcon={ThumbIcon}
+      />
+    </div>
   );
 };
 

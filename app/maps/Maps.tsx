@@ -132,12 +132,13 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                 position={{ lat: marker.latitude, lng: marker.longitude }}
                 animation={google.maps.Animation.DROP}
                 icon={{
-                  url: "/cortana.svg",
+                  url: selectIcon(unitData?.type ?? ""),
                   scaledSize: {
                     width: 24,
                     height: 24,
                     equals: () => true,
                   },
+                  anchor: new google.maps.Point(12, 12),
                 }}
               >
                 <OverlayView
@@ -145,7 +146,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                   position={{ lat: marker.latitude, lng: marker.longitude }}
                 >
                   <div
-                    className="w-max -translate-x-1/2 -translate-y-[175%]"
+                    className="w-max -translate-x-1/2 -translate-y-[125%]"
                     onClick={() => {
                       const unit = {
                         selectedUnit: {
@@ -161,12 +162,12 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                     }}
                   >
                     <CardUnit
-                      id={selectedUnit.id}
-                      egi={selectedUnit.egi}
-                      name={selectedUnit.name}
-                      type={selectedUnit.type}
-                      locationName={selectedUnit.locationName!}
-                      timeStamp={selectedUnit.timeStamp}
+                      id={unitData?.id!}
+                      egi={unitData?.egi!}
+                      name={unitData?.name!}
+                      type={unitData?.type!}
+                      locationName={unitData?.locations![0].location!}
+                      timeStamp={unitData?.locations![0].dateTime}
                       onClick={() => dispatch(setOpenModal(true))}
                     />
                   </div>
@@ -191,5 +192,21 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
     </div>
   );
 };
+
+function selectIcon(type: string) {
+  switch (type) {
+    case "TOWER LAMP":
+      return "/tower-lamp.png";
+    case "GENSET":
+      return "/generator.svg";
+    case "AIR COMPRESSOR":
+      return "/air-compressor.png";
+    case "MEGA TOWER":
+      return "/mega-tower.svg";
+    case "WELDING MACHINE":
+      return "/welding-machine.png";
+  }
+  return "/location.png"; // Fallback icon
+}
 
 export default Maps;

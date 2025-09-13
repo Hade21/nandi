@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -36,34 +36,9 @@ const CardUnit = ({
   })}`;
 
   return (
-    // <div className="space-y-2">
-    //   <div className="flex items-center justify-center gap-4">
-    //     <Image src={icons[type]} alt={type} width={30} height={30} />
-    //     <h1 className="text-center font-semibold text-lg">{name}</h1>
-    //   </div>
-    //   <Separator />
-    //   <p className="text-center font-light text-xs">{egi}</p>
-    //   <div className="flex flex-wrap gap-4">
-    //     <div className="flex items-center gap-3 flex-1 w-full">
-    //       <Image src={"/location.svg"} alt="Location" width={20} height={20} />
-    //       <p className="text-left font-semibold text-sm">{locationName}</p>
-    //     </div>
-    //     <div className="flex items-center gap-3 flex-1 w-full">
-    //       <Image src={"/date.svg"} alt="Last updated" width={20} height={20} />
-    //       <p className="text-left font-semibold text-sm">
-    //         {timeStampFormatted}
-    //       </p>
-    //     </div>
-    //   </div>
-    //   <div className="flex pt-4 justify-center">
-    //     <PopoverClose>
-    //       <Button onClick={onClick}>Edit Location</Button>
-    //     </PopoverClose>
-    //   </div>
-    // </div>
     <motion.div
       className={`min-w-24 bg-white text-slate-950 p-3 dark:bg-slate-900 dark:text-slate-50 rounded-xl shadow-md overflow-hidden cursor-pointer space-y-2 ${
-        isExpanded ? "w-80" : "w-fit"
+        isExpanded ? "w-80 translate-y-1/6" : "w-fit"
       }`}
       layout // Enables layout animations
       onClick={() => setIsExpanded(!isExpanded)}

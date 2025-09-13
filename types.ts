@@ -58,7 +58,7 @@ export type LocationTypes = {
 };
 
 export type UnitTypes = {
-  id?: string;
+  id: string;
   name: string;
   type: string;
   egi: string;

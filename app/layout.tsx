@@ -1,7 +1,7 @@
 import FramerMotionPresent from "@/components/FramerMotionPresent";
 import StoreProvider from "@/components/StoreProvider";
 import ThemeProvider from "@/components/ThemeProvider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 import { Inter, Rubik_Moonrocks } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
@@ -25,19 +25,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} ${rubik_moonrocks.variable}`}>
         <NextTopLoader />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <ThemeProvider attribute="class" defaultTheme="system">
           <StoreProvider>
             <FramerMotionPresent>{children}</FramerMotionPresent>
           </StoreProvider>
-          <Toaster />
+          <Toaster richColors closeButton />
         </ThemeProvider>
       </body>
     </html>

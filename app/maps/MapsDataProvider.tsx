@@ -16,10 +16,10 @@ import {
 import { MarkerTypes } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import SearchBox from "../../components/SearchBox";
 import ThemeSwitcher from "../../components/ThemeSwitcher";
 import { Button } from "../../components/ui/button";
-import { toast } from "../../components/ui/use-toast";
 import Maps from "./Maps";
 
 interface UnitData {
@@ -47,11 +47,9 @@ const MapsDataProvider = () => {
     const update = async (data: UnitData[]) => {
       const token = await GetTokenCookies();
       if (!token.data) {
-        toast({
-          title: "There is pending update exist",
+        toast.info("There is pending update exist", {
           description:
             "Please login and stay connected to continue updating location",
-          variant: "default",
           action: (
             <Button
               onClick={() => {
@@ -66,11 +64,8 @@ const MapsDataProvider = () => {
       }
       if (token.data) {
         if (data.length > 0) {
-          toast({
-            title: "There is pending update exist",
-            description:
-              "Make sure you've logged in and your connection is alive",
-            variant: "default",
+          toast.info("Updating location", {
+            description: "There is pending update exist, we'll work on this",
           });
           data.forEach((unit: UnitData) => {
             updateLocation({
@@ -97,8 +92,7 @@ const MapsDataProvider = () => {
       });
       const latestLocation = unit![0].locations!.slice(-1)[0] ?? null;
       if (!latestLocation) {
-        toast({
-          title: "Location not found",
+        toast.error("Location not found", {
           description: "Please set location",
         });
         dispatch(setOpenModal(true));
@@ -173,10 +167,8 @@ const MapsDataProvider = () => {
           }
         );
       } else {
-        toast({
-          title: "Your location cannot be determined",
+        toast.error("Location not found", {
           description: "Please enable geolocation on your browser.",
-          variant: "destructive",
         });
       }
     }
