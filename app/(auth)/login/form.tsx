@@ -1,4 +1,5 @@
 "use client";
+
 import AlertComponent from "@/components/AlertComponent";
 import { BackgroundGradient } from "@/components/ui/background-gradient";
 import { Button } from "@/components/ui/button";
@@ -19,20 +20,21 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAppDispatch } from "@/hooks/reduxHooks";
-import { SetTokenCookies } from "@/lib/tokenCookies";
 import { useLoginMutation } from "@/services/userApi";
 import { setIsGuest } from "@/services/userService";
-import { ErrorType, NotFound } from "@/types";
 import { loginSchema } from "@/validator/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { TailSpin } from "react-loader-spinner";
-import { z } from "zod";
+// import { TailSpin } from "react-loader-spinner";
+import { SignInResult } from "@/types";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { MoonLoader } from "react-spinners";
+import { z } from "zod";
 
 type Input = z.infer<typeof loginSchema>;
 
@@ -51,55 +53,38 @@ const LoginForm = () => {
     },
   });
 
-  function onSubmit(data: Input) {
-    login(data);
-  }
-
-  useEffect(() => {
-    if (data?.data.id) {
-      const id = data?.data.id;
-      const accessToken = data?.data.token.accessToken;
-      const refreshToken = data?.data.token.refreshToken;
-      const role = data?.data.role;
-      SetTokenCookies({ accessToken, refreshToken, id, role })
-        .then((res) => {
-          if (!res.ok) {
-            setErrMsg("Error");
-            setErrDesc("Cookies not saved");
-          }
-          if (res.ok) {
-            dispatch(setIsGuest(false));
-            router.push("/maps");
-          }
-        })
-        .catch((err) => {
-          setErrMsg("Error");
-          setErrDesc(err);
-        });
-    }
-  }, [data, dispatch, router]);
-  useEffect(() => {
-    if (error) {
-      const errorObj = error as ErrorType;
-      if (errorObj.data) {
-        if (errorObj.status === 404) {
-          const notFound = error as NotFound;
-          setErrMsg("Error");
-          setErrDesc(notFound.data.errors);
-        } else if (errorObj.data?.errors.statusCode !== undefined) {
-          setErrMsg(errorObj.data.errors.error!);
-          setErrDesc(errorObj.data.errors.message);
-        }
+  function handleResult(result: SignInResult | undefined) {
+    if (result?.error) {
+      if (result.error.includes("CredentialsSignin")) {
+        console.log(`error : ${result.error}`);
+        setErrMsg("Invalid Credentials");
+        setErrDesc("Username or password invalid");
+        return;
       } else {
-        console.log(error);
-        setErrMsg("Error");
-        setErrDesc("Network Error");
+        setErrMsg("Something went wrong");
+        setErrDesc("Network error. Please check connection");
+        return;
       }
     } else {
       setErrMsg("");
       setErrDesc("");
+      return router.push("/maps");
     }
-  }, [error]);
+  }
+
+  async function onSubmit(data: Input) {
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        username: data.username,
+        password: data.password,
+      });
+      console.log(result);
+      handleResult(result);
+    } catch (error) {
+      setErrMsg("Something went wrong. Please try again");
+    }
+  }
 
   return (
     <div className="relative">
@@ -182,9 +167,7 @@ const LoginForm = () => {
                     disabled={isLoading}
                     className="flex gap-2"
                   >
-                    {isLoading && (
-                      <TailSpin height="20" width="20" color="#3b82f6" />
-                    )}
+                    {isLoading && <MoonLoader color="#3b82f6" size={18} />}
                     Login
                   </Button>
                   <span>or</span>
@@ -203,7 +186,7 @@ const LoginForm = () => {
             </Form>
           </CardContent>
         </Card>
-        {error && (
+        {errMsg && (
           <motion.div
             key="error"
             initial={{ opacity: 0, y: 50, scale: 0.3 }}

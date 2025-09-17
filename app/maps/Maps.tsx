@@ -1,10 +1,7 @@
 "use client";
+
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
-import {
-  setMarkers,
-  setOpenModal,
-  setSelectedUnit,
-} from "@/services/unitService";
+import { setMarkers, setOpenModal } from "@/services/unitService";
 import { MarkerTypes, UnitTypes } from "@/types";
 import {
   GoogleMap,
@@ -31,6 +28,7 @@ interface MapsProps {
 const Maps = ({ markers, myLocation }: MapsProps) => {
   const [maps, setMaps] = useState<google.maps.Map | null>(null);
   const [center, setCenter] = useState({ lat: 0, lng: 0 });
+  const [clicked, setClicked] = useState<UnitTypes | null>(null);
   const units = useAppSelector((state) => state.units.units);
   const selectedUnit = useAppSelector((state) => state.units.selectedUnit);
   const isUpdating = useAppSelector((state) => state.units.isUpdating);
@@ -126,6 +124,8 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
         {markers &&
           markers.map((marker, index) => {
             let unitData = findUnit(units, marker.latitude, marker.longitude);
+            if (clicked?.id === unitData?.id)
+              console.log("🚀 ~ unitData:", unitData?.name);
             return (
               <MarkerF
                 key={index}
@@ -140,26 +140,32 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                   },
                   anchor: new google.maps.Point(12, 12),
                 }}
+                zIndex={clicked?.id === unitData?.id ? 1000 : 10}
               >
                 <OverlayView
-                  mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                  mapPaneName={OverlayView.FLOAT_PANE}
                   position={{ lat: marker.latitude, lng: marker.longitude }}
+                  zIndex={clicked?.id === unitData?.id ? 1000 : 10}
                 >
                   <div
                     className="w-max -translate-x-1/2 -translate-y-[125%]"
-                    onClick={() => {
-                      const unit = {
-                        selectedUnit: {
-                          id: unitData!.id ?? "",
-                          egi: unitData!.egi ?? "",
-                          name: unitData!.name ?? "",
-                          type: unitData!.type ?? "",
-                          locationName: marker.locationName!,
-                          timeStamp: marker.timeStamp!,
-                        },
-                      };
-                      dispatch(setSelectedUnit(unit));
+                    style={{
+                      zIndex: clicked?.id === unitData?.id ? 1000 : 10,
                     }}
+                    onClick={() => setClicked(unitData!)}
+                    // onClick={() => {
+                    //   const unit = {
+                    //     selectedUnit: {
+                    //       id: unitData!.id ?? "",
+                    //       egi: unitData!.egi ?? "",
+                    //       name: unitData!.name ?? "",
+                    //       type: unitData!.type ?? "",
+                    //       locationName: marker.locationName!,
+                    //       timeStamp: marker.timeStamp!,
+                    //     },
+                    //   };
+                    //   dispatch(setSelectedUnit(unit));
+                    // }}
                   >
                     <CardUnit
                       id={unitData?.id!}

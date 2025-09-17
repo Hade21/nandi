@@ -1,25 +1,60 @@
-export type AuthRequest = {
-  firstName: string;
-  lastName: string;
-  email: string;
+import { CredentialsSignin } from "next-auth";
+
+export class InvalidLoginError extends CredentialsSignin {
+  constructor(message: string | undefined) {
+    super(message);
+    this.name = "InvalidLoginError";
+  }
+}
+
+export type Credentials = {
   username: string;
   password: string;
 };
 
-export type LoginResponse = {
-  data: {
-    id: string;
-    username: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    role: string;
-    token: {
-      accessToken: string;
-      refreshToken: string;
-    };
+export type SignInResult = {
+  error: string | undefined;
+  ok: boolean;
+  status: number;
+  url: string | null;
+};
+
+export type User = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  role: string;
+  profilePict: string;
+  token: {
+    accessToken: string;
+    refreshToken: string;
   };
 };
+
+// export type AuthRequest = {
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   username: string;
+//   password: string;
+// };
+
+// export type LoginResponse = {
+//   data: {
+//     id: string;
+//     username: string;
+//     firstName: string;
+//     lastName: string;
+//     email: string;
+//     role: string;
+//     token: {
+//       accessToken: string;
+//       refreshToken: string;
+//     };
+//   };
+// };
 
 export type RegisterResponse = {
   data: {
@@ -28,19 +63,17 @@ export type RegisterResponse = {
     lastName: string;
     username: string;
     email: string;
+    role: "USER" | "ADMIN";
+    profilePict: string | null;
   };
 };
 
 export interface ErrorType {
   data: {
-    errors: {
-      message: string;
-      error?: string;
-      statusCode: number;
-    };
+    message: string;
+    status: string;
+    statusCode: number;
   };
-  status?: number;
-  statusCode?: number;
 }
 
 export type NotFound = {

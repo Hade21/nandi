@@ -1,7 +1,9 @@
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { setSelectedUnit } from "@/services/unitService";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Separator } from "../../components/ui/separator";
 
@@ -24,6 +26,8 @@ const CardUnit = ({
   timeStamp,
 }: CardUnitProps) => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const units = useAppSelector((state) => state.units.units);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const date = new Date(timeStamp!);
   const timeStampFormatted = `${date.toLocaleDateString("id-ID", {
@@ -34,6 +38,25 @@ const CardUnit = ({
     hour: "numeric",
     minute: "numeric",
   })}`;
+
+  useEffect(() => {
+    if (isExpanded) {
+      const unitData = units.filter((unit) => unit.id === id)[0];
+      const marker = unitData.locations![unitData.locations!.length - 1];
+      const unit = {
+        selectedUnit: {
+          id: id,
+          egi: egi,
+          name: name,
+          type: type,
+          locationName: marker.location,
+          timeStamp: marker.dateTime,
+        },
+      };
+      dispatch(setSelectedUnit(unit));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isExpanded]);
 
   return (
     <motion.div

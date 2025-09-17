@@ -1,4 +1,5 @@
 "use client";
+
 import AlertComponent from "@/components/AlertComponent";
 import { BackgroundGradient } from "@/components/ui/background-gradient";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
 import { useAppDispatch } from "@/hooks/reduxHooks";
 import { useRegisterMutation } from "@/services/userApi";
 import { setIsGuest } from "@/services/userService";
@@ -30,7 +30,8 @@ import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { TailSpin } from "react-loader-spinner";
+import { MoonLoader } from "react-spinners";
+import { toast } from "sonner";
 import { z } from "zod";
 
 type Input = z.infer<typeof registerSchema>;
@@ -44,7 +45,6 @@ const RegisterForm = () => {
   const [register, { isLoading, data, error }] = useRegisterMutation();
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { toast } = useToast();
   const form = useForm<Input>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -59,22 +59,22 @@ const RegisterForm = () => {
 
   useEffect(() => {
     if (data?.data.id) {
-      toast({
-        title: "Register Success",
-        description: "You have successfully registered",
+      toast.success("You have successfully registered", {
+        description: "Login to continue access full feature",
       });
 
       setTimeout(() => {
         router.push("/login");
       }, 2000);
     }
-  }, [data, router, toast]);
+  }, [data, router]);
+
   useEffect(() => {
     if (error) {
       const errorObj = error as ErrorType;
-      if (errorObj.data?.errors) {
-        setErrMsg(errorObj.data.errors.error!);
-        setErrDesc(errorObj.data.errors.message);
+      if (errorObj.data) {
+        setErrMsg("Error");
+        setErrDesc(errorObj.data.message);
       } else {
         setErrMsg("Error");
         setErrDesc("Network Error");
@@ -234,9 +234,7 @@ const RegisterForm = () => {
                     disabled={isLoading}
                     className="flex gap-2"
                   >
-                    {isLoading && (
-                      <TailSpin height="20" width="20" color="#3b82f6" />
-                    )}
+                    {isLoading && <MoonLoader color="#3b82f6" size={18} />}
                     Register
                   </Button>
                   <span>or</span>
