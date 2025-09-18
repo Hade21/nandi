@@ -18,7 +18,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
 import { useForgotPasswordMutation } from "@/services/userApi";
 import { ErrorType } from "@/types";
 import { forgotPasswordSchema } from "@/validator/auth";
@@ -27,7 +26,8 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { TailSpin } from "react-loader-spinner";
+import { MoonLoader } from "react-spinners";
+import { toast } from "sonner";
 import { z } from "zod";
 
 type Input = z.infer<typeof forgotPasswordSchema>;
@@ -45,10 +45,8 @@ const ResetForm = () => {
 
   useEffect(() => {
     if (error) {
-      toast({
-        title: "Error occured",
-        description: (error as ErrorType).data.errors.message,
-        variant: "destructive",
+      toast.error("Something went wrong", {
+        description: (error as ErrorType).data.message,
       });
     }
     if (data) {
@@ -87,18 +85,16 @@ const ResetForm = () => {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex gap-2 transition-all duration-400 ease-in-out"
+                  className="flex w-full gap-2 transition-all ease-in-out duration-400"
                 >
-                  {isLoading && (
-                    <TailSpin height="20" width="20" color="#3b82f6" />
-                  )}
+                  {isLoading && <MoonLoader size={18} color="#3b82f6" />}
                   Reset Password
                 </Button>
               </form>
               <div>
                 <Link
                   href="/login"
-                  className="flex items-center gap-2 justify-center font-light text-sm"
+                  className="flex items-center justify-center gap-2 text-sm font-light"
                 >
                   <ArrowLeft /> Back to login
                 </Link>

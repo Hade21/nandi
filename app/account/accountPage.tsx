@@ -1,6 +1,6 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
 import UpcomingFeature from "@/components/UpcomingFeature";
 import { GetTokenCookies } from "@/lib/tokenCookies";
 import { useGetUserQuery, useUpdateUserMutation } from "@/services/userApi";
@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import Loading from "../loading";
 import EditProfile from "./form";
 
@@ -42,24 +43,24 @@ const AccountPage = () => {
     return (
       <div>
         <section>
-          <div className="profile-picture flex items-center justify-center">
+          <div className="flex items-center justify-center profile-picture">
             <CircleUserRound width={60} height={60} />
           </div>
-          <h1 className="text-xl text-center font-semibold">
+          <h1 className="text-xl font-semibold text-center">
             {user?.data.username}
           </h1>
         </section>
         <section className="mt-4 space-y-2">
-          <div className="mail flex items-center gap-2">
+          <div className="flex items-center gap-2 mail">
             <Mail />
             <p className="truncate">{user?.data.email}</p>
           </div>
-          <div className="role flex items-center gap-2">
+          <div className="flex items-center gap-2 role">
             <UserRound />
             <p className="truncate">{user?.data.role}</p>
           </div>
         </section>
-        <section className="flex flex-col gap-2 sm:flex-row sm:items-center justify-center mt-4">
+        <section className="flex flex-col justify-center gap-2 mt-4 sm:flex-row sm:items-center">
           <Button
             onClick={() => setEditMode(true)}
             type="button"
@@ -94,19 +95,16 @@ const AccountPage = () => {
   useEffect(() => {
     if (error) {
       const errorObj = error as ErrorType;
-      if (errorObj.statusCode === 500) {
-        toast({
-          title: "Network Error",
+      if (errorObj.data.statusCode !== 500) {
+        toast.error("Network Error", {
           description: `Check your network connection`,
         });
-      } else if (errorObj.status === 500) {
-        toast({
-          title: "Server Error",
-          description: "Try again in few seconds",
+      } else if (errorObj.data.statusCode === 500) {
+        toast.error("Server Error", {
+          description: `Try again in few seconds`,
         });
-      } else if (errorObj.status === 401) {
-        toast({
-          title: "Unauthorized",
+      } else if (errorObj.data.statusCode === 401) {
+        toast.error("Unauthorized", {
           description: "Please login again to access",
         });
       }
@@ -115,25 +113,18 @@ const AccountPage = () => {
   useEffect(() => {
     if (updateError) {
       const errorObj = updateError as ErrorType;
-      if (errorObj.data?.errors) {
-        toast({
-          title: errorObj.data.errors.error,
-          description: errorObj.data.errors.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "Network Error",
-          variant: "destructive",
-        });
-      }
+      toast.error(errorObj.data.status, {
+        description: errorObj.data.message,
+      });
+    } else {
+      toast.error("Network Error", {
+        description: `Check your network connection`,
+      });
     }
   }, [updateError]);
   useEffect(() => {
     if (updateSuccess) {
-      toast({
-        title: "Success",
+      toast.success("Success", {
         description: "Profile updated successfully",
       });
       setEditMode(false);
@@ -146,14 +137,14 @@ const AccountPage = () => {
   if (isLoading) return <Loading />;
 
   return (
-    <main className="px-4 py-8 min-h-screen space-y-8">
-      <header className="flex justify-between items-center">
-        <div className="back flex items-center">
+    <main className="min-h-screen px-4 py-8 space-y-8">
+      <header className="flex items-center justify-between">
+        <div className="flex items-center back">
           <ArrowLeft className="cursor-pointer" onClick={() => router.back()} />
         </div>
-        <h1 className="font-bold text-lg text-right">
+        <h1 className="text-lg font-bold text-right">
           Welcome back!{" "}
-          <span className="font-rubik-moonrocks bg-linear-to-r from bg-purple-500 to-blue-500 text-transparent bg-clip-text uppercase text-3xl">
+          <span className="text-3xl text-transparent uppercase bg-purple-500 font-rubik-moonrocks bg-linear-to-r from to-blue-500 bg-clip-text">
             {user?.data ? user?.data.lastName : "Guests"}
           </span>
         </h1>

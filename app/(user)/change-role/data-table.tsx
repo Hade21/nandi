@@ -20,7 +20,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { GetTokenCookies } from "@/lib/tokenCookies";
 import { useChangeRoleMutation, useGetAllUsersQuery } from "@/services/userApi";
-import { setChagedRole } from "@/services/userService";
+import { setChangedRole } from "@/services/userService";
 import { UserData } from "@/types";
 import {
   ColumnDef,
@@ -34,7 +34,7 @@ import {
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { TailSpin } from "react-loader-spinner";
+import { MoonLoader } from "react-spinners";
 import { columns } from "./columns";
 
 interface DataTableProps<TData, TValue> {
@@ -80,7 +80,7 @@ const DataTable = () => {
     const user = data?.data.filter((user) => user.id === id)[0];
     if (!user) return;
     const changedData: UserData = { ...user, role };
-    dispatch(setChagedRole(changedData));
+    dispatch(setChangedRole(changedData));
   };
 
   const onSubmit = async () => {
@@ -227,7 +227,7 @@ const DataTable = () => {
           disabled={isSaveLoading}
           className="flex gap-2"
         >
-          {isSaveLoading && <TailSpin height="20" width="20" color="#3b82f6" />}
+          {isSaveLoading && <MoonLoader size={18} color="#3b82f6" />}
           Save Changes
         </Button>
         <Button

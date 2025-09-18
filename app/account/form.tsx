@@ -11,7 +11,7 @@ import { profileSchema } from "@/validator/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CircleUserRound, Mail, UserRoundPenIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { TailSpin } from "react-loader-spinner";
+import { MoonLoader } from "react-spinners";
 import { z } from "zod";
 
 type Input = z.infer<typeof profileSchema>;
@@ -48,7 +48,7 @@ const EditProfile = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <section>
-          <div className="profile-picture flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center profile-picture">
             <CircleUserRound width={60} height={60} />
             <FormField
               control={form.control}
@@ -72,7 +72,7 @@ const EditProfile = ({
               <FormItem>
                 <FormControl>
                   <div className="flex items-center">
-                    <div className="border rounded-lg p-2">
+                    <div className="p-2 border rounded-lg">
                       <Mail />
                     </div>
                     <Input placeholder="Email" {...field} />
@@ -89,7 +89,7 @@ const EditProfile = ({
               <FormItem>
                 <FormControl>
                   <div className="flex items-center">
-                    <div className="border rounded-lg p-2">
+                    <div className="p-2 border rounded-lg">
                       <UserRoundPenIcon />
                     </div>
                     <Input placeholder="First Name" {...field} />
@@ -106,7 +106,7 @@ const EditProfile = ({
               <FormItem>
                 <FormControl>
                   <div className="flex items-center">
-                    <div className="border rounded-lg p-2">
+                    <div className="p-2 border rounded-lg">
                       <UserRoundPenIcon />
                     </div>
                     <Input placeholder="Last Name" {...field} />
@@ -117,9 +117,9 @@ const EditProfile = ({
             )}
           />
         </section>
-        <section className="flex flex-col gap-2 justify-center mt-2 sm:flex-row sm:items-center">
+        <section className="flex flex-col justify-center gap-2 mt-2 sm:flex-row sm:items-center">
           <Button type="submit" disabled={isLoading} className="flex gap-2">
-            {isLoading && <TailSpin height="20" width="20" color="#3b82f6" />}
+            {isLoading && <MoonLoader size={18} color="#3b82f6" />}
             Save Changes
           </Button>
           <Button type="button" variant="destructive" onClick={cancelFunc}>

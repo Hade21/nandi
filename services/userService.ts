@@ -23,7 +23,8 @@ export const userSlice = createSlice({
     setUser: (state, action: PayloadAction<UserData[]>) => {
       state.users = action.payload;
     },
-    setChagedRole: (state, action: PayloadAction<UserData>) => {
+
+    setChangedRole: (state, action: PayloadAction<UserData>) => {
       if (!state.changedRole.find((user) => user.id === action.payload.id)) {
         state.changedRole.push(action.payload);
       } else {
@@ -37,5 +38,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setIsGuest, setUser, setChagedRole } = userSlice.actions;
+export const { setIsGuest, setUser, setChangedRole } = userSlice.actions;
 export default userSlice.reducer;
