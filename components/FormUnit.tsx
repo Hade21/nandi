@@ -12,7 +12,8 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { TailSpin } from "react-loader-spinner";
+import { MoonLoader } from "react-spinners";
+import { toast } from "sonner";
 import { BackgroundGradient } from "./ui/background-gradient";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -25,12 +26,10 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { useToast } from "./ui/use-toast";
 
 const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
-  const [isLoading, setIsloading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
-  const { toast } = useToast();
   const form = useForm<UnitTypes>({
     resolver: zodResolver(unitSchema),
   });
@@ -47,11 +46,10 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
   } = useGetUnitByIdQuery(id ?? "");
 
   async function onSubmit(data: UnitTypes) {
-    setIsloading(true);
+    setIsLoading(true);
     const token = await GetTokenCookies();
     if (!token.data) {
-      toast({
-        title: "Session over",
+      toast.warning("Session over", {
         description: "Please login again",
       });
       setTimeout(() => {
@@ -62,85 +60,63 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
     if (type === "new") {
       add({ ...data, accessToken: token.data.accessToken });
     } else {
-      update({ ...data, id, accessToken: token.data.accessToken });
+      update({ ...data, id: id ?? "", accessToken: token.data.accessToken });
     }
-    setIsloading(false);
+    setIsLoading(false);
   }
 
   useEffect(() => {
     if (addLoading || updateLoading) {
-      setIsloading(true);
+      setIsLoading(true);
     } else {
-      setIsloading(false);
+      setIsLoading(false);
     }
   }, [addLoading, updateLoading]);
   useEffect(() => {
     if (addData?.data.id) {
-      toast({
-        title: "Success",
-        description: "New Unit added",
+      toast.success("Success", {
+        description: "New Unit Added",
       });
       form.reset({ egi: "", name: "", type: "" });
     }
     if (updateData?.data.id) {
-      toast({
-        title: "Success",
+      toast.success("Success", {
         description: "Unit updated successfully",
       });
       form.reset({ egi: "", name: "", type: "" });
       router.back();
     }
-  }, [addData, form, router, toast, updateData]);
+  }, [addData, form, router, updateData]);
   useEffect(() => {
     if (addError) {
       const errObj = addError as ErrorType;
-      if (errObj.status === 401) {
-        toast({
-          title: errObj.data.errors.message,
+      if (errObj.data.statusCode === 401) {
+        toast.warning(errObj.data.message, {
           description: "Login as Admin to use this feature",
-          variant: "destructive",
-          action: (
-            <Button onClick={() => router.push("/login")}>Relogin</Button>
-          ),
         });
-      } else if (errObj.data?.errors.statusCode) {
-        toast({
-          description: errObj.data.errors.error!,
-          title: errObj.data.errors.message,
-        });
+      } else if (errObj.data.statusCode) {
+        toast.error(errObj.data.status, { description: errObj.data.message });
       } else {
-        toast({
-          title: "Error",
-          description: (addError as any)?.data.errors,
-          variant: "destructive",
+        toast.error("Error", {
+          description: errObj.data.message,
         });
       }
     }
     if (updateError) {
       const errObj = updateError as ErrorType;
-      if (errObj.status === 401) {
-        toast({
-          title: errObj.data.errors.message,
+      if (errObj.data.statusCode === 401) {
+        toast.warning(errObj.data.message, {
           description: "Login as Admin to use this feature",
-          variant: "destructive",
-          action: (
-            <Button onClick={() => router.push("/login")}>Relogin</Button>
-          ),
         });
-      } else if (errObj.data?.errors.statusCode) {
-        toast({
-          description: errObj.data.errors.error!,
-          title: errObj.data.errors.message,
-        });
+      } else if (errObj.data.statusCode) {
+        toast.error(errObj.data.status, { description: errObj.data.message });
       } else {
-        toast({
-          title: "Error",
-          description: (updateError as any)?.data.errors,
-          variant: "destructive",
+        toast.error("Error", {
+          description: errObj.data.message,
         });
       }
     }
-  }, [updateError, router, toast, addError]);
+  }, [updateError, router, addError]);
   useEffect(() => {
     if (type === "update" && prevData) {
       form.setValue("name", prevData.data.name);
@@ -151,9 +127,9 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
 
   if (type === "update" && prevDataLoading) {
     return (
-      <div className="w-full h-full flex justify-center items-center gap-4">
+      <div className="flex items-center justify-center w-full h-full gap-4">
         <h1>Loading data ...</h1>
-        <TailSpin color="#3b82f6" height={24} width={24} />
+        <MoonLoader size={18} color="#3b82f6" />
       </div>
     );
   }
@@ -162,7 +138,7 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
     const notFound = prevDataError as NotFound;
     if (notFound.data.errors) {
       return (
-        <div className="w-full h-full flex flex-col justify-center items-center gap-4">
+        <div className="flex flex-col items-center justify-center w-full h-full gap-4">
           <h1 className="text-xl font-bold">
             {(prevDataError as NotFound).data.errors}
           </h1>
@@ -173,7 +149,7 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
       );
     } else {
       return (
-        <div className="w-full h-full flex justify-center items-center gap-4">
+        <div className="flex items-center justify-center w-full h-full gap-4">
           <h1 className="text-xl font-bold">Error loading data</h1>
           <h2>Please check your internet connection and try again</h2>
           <Button variant="ghost" onClick={() => router.refresh()}>
@@ -189,7 +165,7 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
       <BackgroundGradient>
         <Card>
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <ArrowLeft
                 onClick={() => router.back()}
                 className="cursor-pointer"
@@ -248,15 +224,13 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
                     </FormItem>
                   )}
                 />
-                <div className="flex items-center pt-4 justify-between">
+                <div className="flex items-center justify-between pt-4">
                   <Button
                     type="submit"
                     disabled={isLoading}
                     className="flex gap-2 min-w-[40%]"
                   >
-                    {isLoading && (
-                      <TailSpin height="20" width="20" color="#3b82f6" />
-                    )}
+                    {isLoading && <MoonLoader size={18} color="#3b82f6" />}
                     Save
                   </Button>
                   <Button

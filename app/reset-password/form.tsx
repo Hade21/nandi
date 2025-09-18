@@ -1,4 +1,5 @@
 "use client";
+
 import {
   AlertDialog,
   AlertDialogContent,
@@ -18,7 +19,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
 import { useResetPasswordMutation } from "@/services/userApi";
 import { ErrorType } from "@/types";
 import { resetPasswordSchema } from "@/validator/auth";
@@ -28,7 +28,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { TailSpin } from "react-loader-spinner";
+import { MoonLoader } from "react-spinners";
+import { toast } from "sonner";
 import { z } from "zod";
 
 type Input = z.infer<typeof resetPasswordSchema>;
@@ -58,15 +59,11 @@ const ResetPasswordForm = () => {
 
   useEffect(() => {
     if (error) {
-      console.log("🚀 ~ useEffect ~ error:", error);
-      toast({
-        title: "Error",
-        description: (error as ErrorType).data.errors.message,
-        variant: "destructive",
+      toast.error("Error", {
+        description: (error as ErrorType).data.message,
       });
     }
     if (data) {
-      console.log("🚀 ~ id ~ data:", data);
       setAlert(true);
     }
   }, [data, error]);
@@ -99,7 +96,7 @@ const ResetPasswordForm = () => {
                               {...field}
                             />
                             <div
-                              className="cursor-pointer absolute top-1/2 right-2 -translate-y-1/2 bg-white dark:bg-gray-950"
+                              className="absolute -translate-y-1/2 bg-white cursor-pointer top-1/2 right-2 dark:bg-gray-950"
                               onClick={() => setShowPassword(!showPassword)}
                             >
                               {showPassword ? <EyeOff /> : <Eye />}
@@ -123,7 +120,7 @@ const ResetPasswordForm = () => {
                               {...field}
                             />
                             <div
-                              className="cursor-pointer absolute top-1/2 right-2 -translate-y-1/2 bg-white dark:bg-gray-950"
+                              className="absolute -translate-y-1/2 bg-white cursor-pointer top-1/2 right-2 dark:bg-gray-950"
                               onClick={() =>
                                 setShowConfirmPassword(!showConfirmPassword)
                               }
@@ -139,11 +136,9 @@ const ResetPasswordForm = () => {
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full flex gap-2 transition-all duration-400 ease-in-out"
+                    className="flex w-full gap-2 transition-all ease-in-out duration-400"
                   >
-                    {isLoading && (
-                      <TailSpin height="20" width="20" color="#3b82f6" />
-                    )}
+                    {isLoading && <MoonLoader size={18} color="#3b82f6" />}
                     Reset Password
                   </Button>
                 </form>
@@ -151,7 +146,7 @@ const ResetPasswordForm = () => {
                   <div>
                     <Link
                       href="/login"
-                      className="flex items-center gap-2 justify-center font-light text-sm"
+                      className="flex items-center justify-center gap-2 text-sm font-light"
                     >
                       <ArrowLeft /> Back to login
                     </Link>
