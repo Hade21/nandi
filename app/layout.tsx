@@ -1,7 +1,8 @@
 import FramerMotionPresent from "@/components/FramerMotionPresent";
-import StoreProvider from "@/components/StoreProvider";
-import ThemeProvider from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
+import QueryProvider from "@/utils/QueryProvider";
+import StoreProvider from "@/utils/StoreProvider";
+import ThemeProvider from "@/utils/ThemeProvider";
 import type { Metadata } from "next";
 import { Inter, Rubik_Moonrocks } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
@@ -29,9 +30,11 @@ export default function RootLayout({
       <body className={`${inter.className} ${rubik_moonrocks.variable}`}>
         <NextTopLoader />
         <ThemeProvider attribute="class" defaultTheme="system">
-          <StoreProvider>
-            <FramerMotionPresent>{children}</FramerMotionPresent>
-          </StoreProvider>
+          <QueryProvider>
+            <StoreProvider>
+              <FramerMotionPresent>{children}</FramerMotionPresent>
+            </StoreProvider>
+          </QueryProvider>
           <Toaster richColors closeButton />
         </ThemeProvider>
       </body>

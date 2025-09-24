@@ -19,11 +19,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useRegister } from "@/hooks/queryUserHooks";
 import { useAppDispatch } from "@/hooks/reduxHooks";
-import { useRegisterMutation } from "@/services/userApi";
-import { setIsGuest } from "@/services/userService";
-import { ErrorType } from "@/types";
-import { registerSchema } from "@/validator/auth";
+import { setIsGuest } from "@/services/userService-old";
+import { RegisterSchema, registerSchema } from "@/validator/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
@@ -42,10 +41,10 @@ const RegisterForm = () => {
     useState<Boolean>(false);
   const [errMsg, setErrMsg] = useState<string>("");
   const [errDesc, setErrDesc] = useState<string>("");
-  const [register, { isLoading, data, error }] = useRegisterMutation();
+  // const [register, { isLoading, data, error }] = useRegisterMutation();
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const form = useForm<Input>({
+  const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       username: "",
@@ -53,8 +52,18 @@ const RegisterForm = () => {
     },
   });
 
-  function onSubmit(data: Input) {
-    register(data);
+  const { data, mutate, isPending, error } = useRegister();
+
+  function onSubmit(values: RegisterSchema) {
+    const data = new FormData();
+    data.append("firstName", values.firstName);
+    data.append("lastName", values.lastName);
+    data.append("email", values.email);
+    data.append("username", values.username);
+    data.append("password", values.password);
+    data.append("confirmPassword", values.confirmPassword);
+
+    mutate(data);
   }
 
   useEffect(() => {
@@ -71,10 +80,9 @@ const RegisterForm = () => {
 
   useEffect(() => {
     if (error) {
-      const errorObj = error as ErrorType;
-      if (errorObj.data) {
+      if (error.message) {
         setErrMsg("Error");
-        setErrDesc(errorObj.data.message);
+        setErrDesc(error.message);
       } else {
         setErrMsg("Error");
         setErrDesc("Network Error");
@@ -90,7 +98,7 @@ const RegisterForm = () => {
       <BackgroundGradient>
         <Card className="w-full max-w-sm">
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <ArrowLeft
                 onClick={() => router.push("/")}
                 className="cursor-pointer"
@@ -98,7 +106,7 @@ const RegisterForm = () => {
               <div className="text-right">
                 <CardTitle>
                   Welcome to{" "}
-                  <span className="font-rubik-moonrocks text-blue-500">
+                  <span className="text-blue-500 font-rubik-moonrocks">
                     Nandi
                   </span>
                 </CardTitle>
@@ -189,7 +197,7 @@ const RegisterForm = () => {
                             {...field}
                           />
                           <div
-                            className="cursor-pointer absolute top-1/2 right-2 -translate-y-1/2 bg-white dark:bg-gray-950"
+                            className="absolute -translate-y-1/2 bg-white cursor-pointer top-1/2 right-2 dark:bg-gray-950"
                             onClick={() => setShowPassword(!showPassword)}
                           >
                             {showPassword ? <EyeOff /> : <Eye />}
@@ -215,7 +223,7 @@ const RegisterForm = () => {
                             {...field}
                           />
                           <div
-                            className="cursor-pointer absolute top-1/2 right-2 -translate-y-1/2 bg-white dark:bg-gray-950"
+                            className="absolute -translate-y-1/2 bg-white cursor-pointer top-1/2 right-2 dark:bg-gray-950"
                             onClick={() =>
                               setShowConfirmPassword(!showConfirmPassword)
                             }
@@ -228,13 +236,13 @@ const RegisterForm = () => {
                     </FormItem>
                   )}
                 />
-                <div className="flex gap-3 items-center pt-4">
+                <div className="flex items-center gap-3 pt-4">
                   <Button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isPending}
                     className="flex gap-2"
                   >
-                    {isLoading && <MoonLoader color="#3b82f6" size={18} />}
+                    {isPending && <MoonLoader color="#3b82f6" size={18} />}
                     Register
                   </Button>
                   <span>or</span>
@@ -264,7 +272,7 @@ const RegisterForm = () => {
               transition: { duration: 0.2 },
             }}
             exit={{ opacity: 0, scale: 0.3, transition: { duration: 0.2 } }}
-            className="top-0 absolute w-full"
+            className="absolute top-0 w-full"
           >
             <AlertComponent
               variant="destructive"

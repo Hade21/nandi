@@ -20,7 +20,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { GetTokenCookies } from "@/lib/tokenCookies";
 import { useChangeRoleMutation, useGetAllUsersQuery } from "@/services/userApi";
-import { setChangedRole } from "@/services/userService";
+import { setChangedRole } from "@/services/userService-old";
 import { UserData } from "@/types";
 import {
   ColumnDef,

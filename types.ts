@@ -33,28 +33,28 @@ export type User = {
   };
 };
 
-// export type AuthRequest = {
-//   firstName: string;
-//   lastName: string;
-//   email: string;
-//   username: string;
-//   password: string;
-// };
+export type AuthRequest = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  password: string;
+};
 
-// export type LoginResponse = {
-//   data: {
-//     id: string;
-//     username: string;
-//     firstName: string;
-//     lastName: string;
-//     email: string;
-//     role: string;
-//     token: {
-//       accessToken: string;
-//       refreshToken: string;
-//     };
-//   };
-// };
+export type LoginResponse = {
+  data: {
+    id: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: string;
+    token: {
+      accessToken: string;
+      refreshToken: string;
+    };
+  };
+};
 
 export type RegisterResponse = {
   data: {
@@ -158,4 +158,10 @@ export type ChangeRoleResponse = {
 export type ResetPasswordRequest = {
   newPassword: string;
   token: string;
+};
+
+export type CustomError = {
+  message: string;
+  status: string;
+  statusCode: number;
 };

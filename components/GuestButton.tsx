@@ -1,6 +1,6 @@
 "use client";
 import { useAppDispatch } from "@/hooks/reduxHooks";
-import { setIsGuest } from "@/services/userService";
+import { setIsGuest } from "@/services/userService-old";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 // import { TailSpin } from "react-loader-spinner";
