@@ -1,48 +1,49 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import decryptSession from "./lib/decrypt-session";
+import { auth } from "./app/auth";
 
-const publicRoutes = ["/login", "/register", "/"];
-const protectedRoutes = ["/new", "/account", "/change-role"];
+const authRoutes = ["/login", "/register"];
+const adminRoutes = ["/new", "/change-role"];
+const userRoutes = ["/account", "/update"];
 
-type Session =
-  | undefined
-  | {
-      message: string;
-      data: {
-        id: any;
-        accessToken: any;
-        role: any;
-      } | null;
-    };
+// type Session =
+//   | undefined
+//   | {
+//       message: string;
+//       data: {
+//         id: any;
+//         accessToken: any;
+//         role: any;
+//       } | null;
+//     };
 
 export default async function middleware(req: NextRequest) {
-  const token = (await cookies()).get("token")?.value || "";
+  // const token = (await cookies()).get("token")?.value || "";
 
   const path = req.nextUrl.pathname;
-  const isProtectedRoute = protectedRoutes.includes(path);
-  const isPublicRoute = publicRoutes.includes(path);
+  const isAdminRoute = adminRoutes.some((route) => path.startsWith(route));
+  const isAuthRoute = authRoutes.some((route) => path.startsWith(route));
+  const isUserRoute = userRoutes.some((route) => path.startsWith(route));
 
-  const session: Session = await decryptSession(token);
+  // const session: Session = await decryptSession(token);
+  const session = await auth();
+  const isAdmin = session?.user?.role === "ADMIN";
+  const isLoggedIn = !!session?.user.id;
 
-  if (
-    (isProtectedRoute || req.nextUrl.pathname.startsWith("/update")) &&
-    !session?.data?.id
-  ) {
-    console.log("🚀 ~ middleware ~ session: token doesn't exist");
+  console.log("user: " + session?.user.name);
+  console.log(`isAdmin: ${isAdmin}`);
+  console.log(`isLoggedIn: ${isLoggedIn}`);
+  console.log(`isAuthRoute: ${isAuthRoute}`);
+  console.log(`isAdminRoute: ${isAdminRoute}`);
+  console.log(`isUserRoute: ${isUserRoute}`);
+
+  if (isAuthRoute && isLoggedIn) {
+    return NextResponse.redirect(new URL("/maps", req.url));
+  }
+  if (!isLoggedIn && (isUserRoute || isAdminRoute)) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
-
-  if (
-    (isProtectedRoute || req.nextUrl.pathname.startsWith("/update")) &&
-    session?.data?.role !== "ADMIN"
-  ) {
-    console.log("🚀 ~ middleware ~ session:", session?.data?.role);
+  if (isAdminRoute && !isAdmin) {
     return NextResponse.redirect(new URL("/unauthorized", req.url));
-  }
-
-  if (isPublicRoute && session?.data?.id) {
-    return NextResponse.redirect(new URL("/maps", req.url));
   }
 
   return NextResponse.next();

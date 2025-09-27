@@ -56,7 +56,6 @@ const LoginForm = () => {
   function handleResult(result: SignInResult | undefined) {
     if (result?.error) {
       if (result.error.includes("CredentialsSignin")) {
-        console.log(`error : ${result.error}`);
         setErrMsg("Invalid Credentials");
         setErrDesc("Username or password invalid");
         return;
@@ -79,7 +78,6 @@ const LoginForm = () => {
         username: data.username,
         password: data.password,
       });
-      console.log(result);
       handleResult(result);
     } catch (error) {
       setErrMsg("Something went wrong. Please try again");
@@ -91,7 +89,7 @@ const LoginForm = () => {
       <BackgroundGradient>
         <Card className="w-full max-w-sm">
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <ArrowLeft
                 onClick={() => router.push("/")}
                 className="cursor-pointer"
@@ -99,7 +97,7 @@ const LoginForm = () => {
               <div className="text-right">
                 <CardTitle>
                   Welcome to{" "}
-                  <span className="font-rubik-moonrocks text-blue-500">
+                  <span className="text-blue-500 font-rubik-moonrocks">
                     Nandi
                   </span>
                 </CardTitle>
@@ -145,7 +143,7 @@ const LoginForm = () => {
                             {...field}
                           />
                           <div
-                            className="cursor-pointer absolute top-1/2 right-2 -translate-y-1/2 bg-white dark:bg-gray-950"
+                            className="absolute -translate-y-1/2 bg-white cursor-pointer top-1/2 right-2 dark:bg-gray-950"
                             onClick={() => setShowPassword(!showPassword)}
                           >
                             {showPassword ? <EyeOff /> : <Eye />}
@@ -161,7 +159,7 @@ const LoginForm = () => {
                     Forgot password?
                   </i>
                 </Link>
-                <div className="flex gap-3 items-center pt-4">
+                <div className="flex items-center gap-3 pt-4">
                   <Button
                     type="submit"
                     disabled={isLoading}
@@ -197,13 +195,13 @@ const LoginForm = () => {
               transition: { duration: 0.2 },
             }}
             exit={{ opacity: 0, scale: 0.3, transition: { duration: 0.2 } }}
-            className="top-0 absolute w-full"
+            className="absolute top-0 w-full"
           >
             <AlertComponent
               variant="destructive"
               title={errMsg}
               desc={errDesc}
-              className="bg-red-800 dark:bg-red-400 text-red-500 dark:text-red-950"
+              className="text-red-500 bg-red-800 dark:bg-red-400 dark:text-red-950"
             />
           </motion.div>
         )}

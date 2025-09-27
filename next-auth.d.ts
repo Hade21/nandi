@@ -15,6 +15,7 @@ declare module "next-auth" {
       lastName: string;
       profilePict: string;
       role: "ADMIN" | "USER";
+      accessToken: string;
       token: AuthToken;
     };
   }
@@ -25,6 +26,7 @@ declare module "next-auth" {
       lastName: string;
       profilePict: string;
       role: "ADMIN" | "USER";
+      accessToken: string;
     } & DefaultSession["user"];
   }
 }

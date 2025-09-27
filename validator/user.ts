@@ -19,3 +19,5 @@ export const profileSchema = z.object({
     .min(1, "Last name is required")
     .max(100, "Last name is too long"),
 });
+
+export type ProfileSchema = z.infer<typeof profileSchema>;
