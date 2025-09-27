@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
-import { setMarkers, setOpenModal } from "@/services/unitService";
+import { setMarkers, setOpenModal } from "@/services/unitService-old";
 import { MarkerTypes, UnitTypes } from "@/types";
 import {
   GoogleMap,

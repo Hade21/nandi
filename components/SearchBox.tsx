@@ -3,7 +3,7 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { cn } from "@/lib/utils";
 import { usePrefetch } from "@/services/unitApi";
-import { setSearchQuery, setSelectedUnit } from "@/services/unitService";
+import { setSearchQuery, setSelectedUnit } from "@/services/unitService-old";
 import { UnitTypes } from "@/types";
 import { CommandInput } from "cmdk";
 import { Check, ChevronsUpDown } from "lucide-react";
