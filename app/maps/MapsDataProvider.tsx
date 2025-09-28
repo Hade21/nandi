@@ -1,19 +1,16 @@
 "use client";
 import Loading from "@/app/loading";
 import useNetworkStatus from "@/hooks/networkStatus";
+import { useGetAllUnitsQuery, useUpdateLocationMutation } from "@/hooks/queryUnitHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { GetTokenCookies } from "@/lib/tokenCookies";
-import {
-  useGetUnitsQuery,
-  useUpdateLocationMutation,
-} from "@/services/unitApi";
 import {
   setMarkers,
   setOpenModal,
   setSelectedUnit,
   setUnits,
 } from "@/services/unitService-old";
-import { MarkerTypes } from "@/types";
+import { MarkerTypes, UnitTypes } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -33,8 +30,10 @@ interface UnitData {
 }
 
 const MapsDataProvider = () => {
-  const { isLoading, data, error } = useGetUnitsQuery();
-  const [updateLocation] = useUpdateLocationMutation();
+  // const { isLoading, data, error } = useGetUnitsQuery();
+  const { data,error, isPending } = useGetAllUnitsQuery();
+  // const [updateLocation] = useUpdateLocationMutation();
+  const {mutate} = useUpdateLocationMutation()
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { isOnline } = useNetworkStatus();
@@ -68,9 +67,15 @@ const MapsDataProvider = () => {
             description: "There is pending update exist, we'll work on this",
           });
           data.forEach((unit: UnitData) => {
-            updateLocation({
+            const body = new FormData()
+            body.append("alt", unit.alt);
+    body.append("long", values.long);
+    body.append("lat", values.lat);
+    body.append("location", values.location);
+    body.append("dateTime", values.dateTime);
+    body.append("createdBy", values.createdBy);
+            mutate({
               ...unit,
-              accessToken: token.data.accessToken,
             });
           });
         }
@@ -84,10 +89,10 @@ const MapsDataProvider = () => {
     if (storedData.length > 0) {
       update(storedData);
     }
-  }, [router, updateLocation, isOnline]);
+  }, [router, isOnline]);
   useEffect(() => {
     if (searchQuery && data) {
-      const unit = data?.data.filter((units) => {
+      const unit = data?.data.filter((units:UnitTypes) => {
         return units.id === searchQuery;
       });
       const latestLocation = unit![0].locations!.slice(-1)[0] ?? null;
@@ -124,7 +129,7 @@ const MapsDataProvider = () => {
       dispatch(setUnits(data.data));
       const locations: MarkerTypes[] = [];
       if (data?.data.length > 0) {
-        data?.data.forEach((unit, index) => {
+        data?.data.forEach((unit:UnitTypes, index:number) => {
           if (
             data.data[index].locations &&
             data.data[index]!.locations.length > 0
@@ -177,11 +182,11 @@ const MapsDataProvider = () => {
     };
   }, [isUpdating, location]);
 
-  if (isLoading) return <Loading />;
+  if (isPending) return <Loading />;
 
   if (error)
     return (
-      <div className="w-full h-full flex justify-center items-center gap-3 min-h-screen flex-col">
+      <div className="flex flex-col items-center justify-center w-full h-full min-h-screen gap-3">
         <h1 className="text-xl font-bold">Error loading data</h1>
         <h2>
           Something Error with Server or Network. Please try again in few
