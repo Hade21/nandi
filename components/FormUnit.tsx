@@ -1,14 +1,15 @@
 "use client";
-import { GetTokenCookies } from "@/lib/tokenCookies";
 import {
   useAddUnitMutation,
-  useGetUnitByIdQuery,
+  useGetUnitQuery,
   useUpdateUnitMutation,
-} from "@/services/unitApi";
-import { ErrorType, NotFound, UnitTypes } from "@/types";
+} from "@/hooks/queryUnitHooks";
+import { GetTokenCookies } from "@/lib/tokenCookies";
+import { UnitTypes } from "@/types";
 import { unitSchema } from "@/validator/unit";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -30,20 +31,27 @@ import { Input } from "./ui/input";
 const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+  const { data: user } = useSession();
   const form = useForm<UnitTypes>({
     resolver: zodResolver(unitSchema),
   });
-  const [add, { isLoading: addLoading, data: addData, error: addError }] =
-    useAddUnitMutation();
-  const [
-    update,
-    { isLoading: updateLoading, data: updateData, error: updateError },
-  ] = useUpdateUnitMutation();
+  const {
+    mutate: add,
+    isPending: addLoading,
+    data: addData,
+    error: addError,
+  } = useAddUnitMutation();
+  const {
+    mutate: update,
+    isPending: updateLoading,
+    data: updateData,
+    error: updateError,
+  } = useUpdateUnitMutation();
   const {
     data: prevData,
     isLoading: prevDataLoading,
     error: prevDataError,
-  } = useGetUnitByIdQuery(id ?? "");
+  } = useGetUnitQuery(id ?? "");
 
   async function onSubmit(data: UnitTypes) {
     setIsLoading(true);
@@ -57,10 +65,16 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
       }, 5000);
       return;
     }
+    const unitData = new FormData();
+    unitData.append("name", data.name);
+    unitData.append("type", data.type);
+    unitData.append("egi", data.egi);
+    unitData.append("createdBy", user?.user.id ?? "");
+    unitData.append("id", id ?? "");
     if (type === "new") {
-      add({ ...data, accessToken: token.data.accessToken });
+      add(unitData);
     } else {
-      update({ ...data, id: id ?? "", accessToken: token.data.accessToken });
+      update(unitData);
     }
     setIsLoading(false);
   }
@@ -89,30 +103,24 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
   }, [addData, form, router, updateData]);
   useEffect(() => {
     if (addError) {
-      const errObj = addError as ErrorType;
-      if (errObj.data.statusCode === 401) {
-        toast.warning(errObj.data.message, {
-          description: "Login as Admin to use this feature",
+      if (addError.message) {
+        toast.error("Error", {
+          description: addError.message,
         });
-      } else if (errObj.data.statusCode) {
-        toast.error(errObj.data.status, { description: errObj.data.message });
       } else {
         toast.error("Error", {
-          description: errObj.data.message,
+          description: "Something went wrong. Please try again in few minutes",
         });
       }
     }
     if (updateError) {
-      const errObj = updateError as ErrorType;
-      if (errObj.data.statusCode === 401) {
-        toast.warning(errObj.data.message, {
-          description: "Login as Admin to use this feature",
+      if (updateError.message) {
+        toast.error("Error", {
+          description: updateError.message,
         });
-      } else if (errObj.data.statusCode) {
-        toast.error(errObj.data.status, { description: errObj.data.message });
       } else {
         toast.error("Error", {
-          description: errObj.data.message,
+          description: "Something went wrong. Please try again in few minutes",
         });
       }
     }
@@ -135,13 +143,10 @@ const FormUnit = ({ type, id }: { type: "new" | "update"; id?: string }) => {
   }
 
   if (type === "update" && prevDataError) {
-    const notFound = prevDataError as NotFound;
-    if (notFound.data.errors) {
+    if (prevDataError) {
       return (
         <div className="flex flex-col items-center justify-center w-full h-full gap-4">
-          <h1 className="text-xl font-bold">
-            {(prevDataError as NotFound).data.errors}
-          </h1>
+          <h1 className="text-xl font-bold">{prevDataError.message}</h1>
           <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft size={16} /> Go Back
           </Button>

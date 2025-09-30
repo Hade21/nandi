@@ -19,8 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useResetPasswordMutation } from "@/services/userApi";
-import { ErrorType } from "@/types";
+import { useResetPassword } from "@/hooks/queryUserHooks";
 import { resetPasswordSchema } from "@/validator/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
@@ -42,7 +41,7 @@ const ResetPasswordForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
 
-  const [submit, { isLoading, data, error }] = useResetPasswordMutation();
+  const { mutate, isPending, data, error } = useResetPassword();
   const form = useForm<Input>({
     resolver: zodResolver(resetPasswordSchema),
   });
@@ -50,17 +49,16 @@ const ResetPasswordForm = () => {
   function onSubmit(data: Input) {
     console.log("🚀 ~ onSubmit ~ data:", data);
     console.log("🚀 ~ onSubmit ~ token:", token);
-    const body = {
-      newPassword: data.password,
-      token: token ?? "",
-    };
-    submit(body);
+    const body = new FormData();
+    body.append("password", data.password);
+    body.append("token", token ?? "");
+    mutate(body);
   }
 
   useEffect(() => {
     if (error) {
       toast.error("Error", {
-        description: (error as ErrorType).data.message,
+        description: error.message,
       });
     }
     if (data) {
@@ -135,10 +133,10 @@ const ResetPasswordForm = () => {
                   />
                   <Button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isPending}
                     className="flex w-full gap-2 transition-all ease-in-out duration-400"
                   >
-                    {isLoading && <MoonLoader size={18} color="#3b82f6" />}
+                    {isPending && <MoonLoader size={18} color="#3b82f6" />}
                     Reset Password
                   </Button>
                 </form>

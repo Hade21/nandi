@@ -1,9 +1,11 @@
 "use client";
 import Loading from "@/app/loading";
 import useNetworkStatus from "@/hooks/networkStatus";
-import { useGetAllUnitsQuery, useUpdateLocationMutation } from "@/hooks/queryUnitHooks";
+import {
+  useGetAllUnitsQuery,
+  useUpdateLocationMutation,
+} from "@/hooks/queryUnitHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
-import { GetTokenCookies } from "@/lib/tokenCookies";
 import {
   setMarkers,
   setOpenModal,
@@ -11,6 +13,7 @@ import {
   setUnits,
 } from "@/services/unitService-old";
 import { MarkerTypes, UnitTypes } from "@/types";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -30,11 +33,10 @@ interface UnitData {
 }
 
 const MapsDataProvider = () => {
-  // const { isLoading, data, error } = useGetUnitsQuery();
-  const { data,error, isPending } = useGetAllUnitsQuery();
-  // const [updateLocation] = useUpdateLocationMutation();
-  const {mutate} = useUpdateLocationMutation()
+  const { data, error, isPending } = useGetAllUnitsQuery();
+  const { mutate } = useUpdateLocationMutation();
   const router = useRouter();
+  const { data: user } = useSession();
   const dispatch = useAppDispatch();
   const { isOnline } = useNetworkStatus();
   const markers = useAppSelector((state) => state.units.markers);
@@ -44,8 +46,7 @@ const MapsDataProvider = () => {
 
   useEffect(() => {
     const update = async (data: UnitData[]) => {
-      const token = await GetTokenCookies();
-      if (!token.data) {
+      if (!user?.user.accessToken) {
         toast.info("There is pending update exist", {
           description:
             "Please login and stay connected to continue updating location",
@@ -61,22 +62,20 @@ const MapsDataProvider = () => {
         });
         return;
       }
-      if (token.data) {
+      if (user.user.id) {
         if (data.length > 0) {
           toast.info("Updating location", {
             description: "There is pending update exist, we'll work on this",
           });
           data.forEach((unit: UnitData) => {
-            const body = new FormData()
+            const body = new FormData();
             body.append("alt", unit.alt);
-    body.append("long", values.long);
-    body.append("lat", values.lat);
-    body.append("location", values.location);
-    body.append("dateTime", values.dateTime);
-    body.append("createdBy", values.createdBy);
-            mutate({
-              ...unit,
-            });
+            body.append("long", unit.long);
+            body.append("lat", unit.lat);
+            body.append("location", unit.location);
+            body.append("dateTime", unit.dateTime);
+            body.append("createdBy", user?.user.id ?? "");
+            mutate(body);
           });
         }
         localStorage.removeItem("updatePending");
@@ -89,10 +88,10 @@ const MapsDataProvider = () => {
     if (storedData.length > 0) {
       update(storedData);
     }
-  }, [router, isOnline]);
+  }, [router, isOnline, mutate, user?.user.accessToken, user?.user.id]);
   useEffect(() => {
     if (searchQuery && data) {
-      const unit = data?.data.filter((units:UnitTypes) => {
+      const unit = data?.data.filter((units: UnitTypes) => {
         return units.id === searchQuery;
       });
       const latestLocation = unit![0].locations!.slice(-1)[0] ?? null;
@@ -129,7 +128,7 @@ const MapsDataProvider = () => {
       dispatch(setUnits(data.data));
       const locations: MarkerTypes[] = [];
       if (data?.data.length > 0) {
-        data?.data.forEach((unit:UnitTypes, index:number) => {
+        data?.data.forEach((unit: UnitTypes, index: number) => {
           if (
             data.data[index].locations &&
             data.data[index]!.locations.length > 0

@@ -1,6 +1,7 @@
 import FramerMotionPresent from "@/components/FramerMotionPresent";
 import { Toaster } from "@/components/ui/sonner";
 import QueryProvider from "@/utils/QueryProvider";
+import SessionProvider from "@/utils/SessionProvider";
 import StoreProvider from "@/utils/StoreProvider";
 import ThemeProvider from "@/utils/ThemeProvider";
 import type { Metadata } from "next";
@@ -32,7 +33,9 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system">
           <QueryProvider>
             <StoreProvider>
-              <FramerMotionPresent>{children}</FramerMotionPresent>
+              <SessionProvider>
+                <FramerMotionPresent>{children}</FramerMotionPresent>
+              </SessionProvider>
             </StoreProvider>
           </QueryProvider>
           <Toaster richColors closeButton />

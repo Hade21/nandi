@@ -1,8 +1,8 @@
 "use client";
 import useNetworkStatus from "@/hooks/networkStatus";
+import { useUpdateLocationMutation } from "@/hooks/queryUnitHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { GetTokenCookies } from "@/lib/tokenCookies";
-import { useUpdateLocationMutation } from "@/services/unitApi";
 import {
   setIsUpdating,
   setMarkers,
@@ -16,6 +16,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 // import { TailSpin } from "react-loader-spinner";
+import { MoonLoader } from "react-spinners";
 import { toast } from "sonner";
 import RetrievingLocation from "../../components/RetrievingLocation";
 import { Button } from "../../components/ui/button";
@@ -51,8 +52,9 @@ const ChangeLocationCard = () => {
   const pinMaps = useAppSelector((state) => state.units.pinMaps);
   const dispatch = useAppDispatch();
   const { isOnline } = useNetworkStatus();
-  const [updateLocation, { isLoading, error, data }] =
-    useUpdateLocationMutation();
+  // const [updateLocation, { isLoading, error, data }] =
+  //   useUpdateLocationMutation();
+  const { mutate, isPending, error, data } = useUpdateLocationMutation();
   const form = useForm<Pick<MarkerTypes, "locationName">>({
     resolver: zodResolver(locationNameSchema),
   });
@@ -101,11 +103,15 @@ const ChangeLocationCard = () => {
       return;
     }
     if (res.data) {
-      updateLocation({
-        id: unitData.id,
-        ...body,
-        accessToken: res.data.accessToken,
-      });
+      const data = new FormData();
+      data.append("id", unitData.id);
+      data.append("long", body.long);
+      data.append("lat", body.lat);
+      data.append("alt", body.alt);
+      data.append("location", body.location);
+      data.append("dateTime", body.dateTime);
+
+      mutate(data);
     }
   }
   const useGPSLocation = () => {
@@ -178,9 +184,9 @@ const ChangeLocationCard = () => {
   };
 
   useEffect(() => {
-    if (isLoading) setSavingLocation(true);
-    if (!isLoading) setSavingLocation(false);
-  }, [isLoading]);
+    if (isPending) setSavingLocation(true);
+    if (!isPending) setSavingLocation(false);
+  }, [isPending]);
   useEffect(() => {
     form.setValue("locationName", locationName);
   }, [form, locationName]);
@@ -252,24 +258,24 @@ const ChangeLocationCard = () => {
               height: 0,
             }
       }
-      className="p-4 rounded-t-md bg-white dark:bg-slate-950 absolute bottom-0 w-full"
+      className="absolute bottom-0 w-full p-4 bg-white rounded-t-md dark:bg-slate-950"
     >
       <div>
         <Form {...form}>
           <form className="space-y-3" onSubmit={form.handleSubmit(onSubmit)}>
-            <h1 className="text-center font-semibold text-lg">{name}</h1>
+            <h1 className="text-lg font-semibold text-center">{name}</h1>
             <Separator />
-            <div className="flex items-center space-x-2 h-6">
+            <div className="flex items-center h-6 space-x-2">
               <p className="w-1/3 text-sm">Type</p>
               <Separator orientation="vertical" />
               <p className="text-sm font-semibold">{type}</p>
             </div>
-            <div className="flex items-center space-x-2 h-6">
+            <div className="flex items-center h-6 space-x-2">
               <p className="w-1/3 text-sm">EGI</p>
               <Separator orientation="vertical" />
               <p className="text-sm font-semibold">{egi}</p>
             </div>
-            <div className="flex items-center space-x-2 h-7 mt-4">
+            <div className="flex items-center mt-4 space-x-2 h-7">
               <p className="w-1/3 text-sm">Location</p>
               <Separator orientation="vertical" />
               <FormField
@@ -284,15 +290,13 @@ const ChangeLocationCard = () => {
                 )}
               />
             </div>
-            <div className="flex pt-4 justify-center">
+            <div className="flex justify-center pt-4">
               <Button
                 type="submit"
                 disabled={savingLocation}
                 className="flex gap-2"
               >
-                {/* {savingLocation && (
-                  <TailSpin height="20" width="20" color="#000" />
-                )} */}
+                {savingLocation && <MoonLoader size={18} color="#3b82f6" />}
                 Save Location
               </Button>
             </div>
