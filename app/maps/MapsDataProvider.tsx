@@ -33,7 +33,7 @@ interface UnitData {
 }
 
 const MapsDataProvider = () => {
-  const { data, error, isPending } = useGetAllUnitsQuery();
+  const { data, error, isRefetching, isLoading } = useGetAllUnitsQuery();
   const { mutate } = useUpdateLocationMutation();
   const router = useRouter();
   const { data: user } = useSession();
@@ -180,8 +180,11 @@ const MapsDataProvider = () => {
       navigator.geolocation.clearWatch(0);
     };
   }, [isUpdating, location]);
+  useEffect(() => {
+    if (isRefetching) toast.info("Updating data...");
+  }, [isRefetching]);
 
-  if (isPending) return <Loading />;
+  if (isLoading) return <Loading />;
 
   if (error)
     return (

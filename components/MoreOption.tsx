@@ -4,7 +4,6 @@ import { CircleUserRound, FilePenLine, ListPlus, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Logout from "./Logout";
-import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,14 +29,16 @@ const MoreOption = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Button variant="outline" size="icon">
+        {/* <Button variant="outline" size="icon"> */}
+        <div className="p-2 bg-white rounded-lg cursor-pointer shadow-accent">
           <Menu />
-        </Button>
+        </div>
+        {/* </Button> */}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {!isGuest && (
           <DropdownMenuItem
-            className="flex gap-2 items-center cursor-pointer"
+            className="flex items-center gap-2 cursor-pointer"
             onClick={() => push("/account")}
           >
             <CircleUserRound />
@@ -45,14 +46,14 @@ const MoreOption = () => {
           </DropdownMenuItem>
         )}
         <DropdownMenuItem
-          className="flex gap-2 items-center cursor-pointer"
+          className="flex items-center gap-2 cursor-pointer"
           onClick={() => push("/new")}
         >
           <ListPlus />
           <span>Add New Unit</span>
         </DropdownMenuItem>
         <DropdownMenuItem
-          className="flex gap-2 items-center cursor-pointer"
+          className="flex items-center gap-2 cursor-pointer"
           onClick={handleEdit}
         >
           <FilePenLine />
