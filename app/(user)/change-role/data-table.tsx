@@ -17,9 +17,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useAllUsersQuery, useChangeRole } from "@/hooks/queryUserHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { GetTokenCookies } from "@/lib/tokenCookies";
-import { useChangeRoleMutation, useGetAllUsersQuery } from "@/services/userApi";
 import { setChangedRole } from "@/services/userService-old";
 import { UserData } from "@/types";
 import {
@@ -32,9 +32,11 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowLeft } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MoonLoader } from "react-spinners";
+import { toast } from "sonner";
 import { columns } from "./columns";
 
 interface DataTableProps<TData, TValue> {
@@ -50,20 +52,27 @@ interface User {
 
 const DataTable = () => {
   const [isSaveLoading, setIsSaveLoading] = useState<boolean>(false);
-  const [columnFilters, setcolumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const { push, back } = useRouter();
   const dispatch = useAppDispatch();
   const [token, setToken] = useState("");
+  const { status } = useSession();
   const changedRole = useAppSelector((state) => state.user.changedRole);
-  const { data, error, isLoading } = useGetAllUsersQuery(token);
-  const [changeRole, { data: changeRoleData, error: changeRoleError }] =
-    useChangeRoleMutation();
+  // const { data, error, isLoading } = useGetAllUsersQuery(token);
+  const { data, error, isPending } = useAllUsersQuery();
+  // const [changeRole, { data: changeRoleData, error: changeRoleError }] =
+  //   useChangeRoleMutation();
+  const {
+    mutate,
+    data: changeRoleData,
+    error: changeRoleError,
+  } = useChangeRole();
   const table = useReactTable({
     data: data?.data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onColumnFiltersChange: setcolumnFilters,
+    onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       columnFilters,
@@ -77,7 +86,8 @@ const DataTable = () => {
   };
 
   const onValueChange = (id: string, role: string) => {
-    const user = data?.data.filter((user) => user.id === id)[0];
+    console.log(data);
+    const user = data?.data.filter((user: UserData) => user.id === id)[0];
     if (!user) return;
     const changedData: UserData = { ...user, role };
     dispatch(setChangedRole(changedData));
@@ -87,7 +97,16 @@ const DataTable = () => {
     setIsSaveLoading(true);
     const token = await GetTokenCookies();
     changedRole.forEach((user) => {
-      changeRole({ ...user, accessToken: token.data?.accessToken });
+      const body = new FormData();
+      body.append("id", user.id);
+      body.append("role", user.role);
+      body.append("email", user.email);
+      body.append("firstName", user.firstName);
+      body.append("lastName", user.lastName);
+      body.append("username", user.username);
+      console.log(`changed: ${user.username} ${user.role}`);
+      // changeRole({ ...user, accessToken: token.data?.accessToken });
+      mutate(body);
     });
     setIsSaveLoading(false);
   };
@@ -95,9 +114,12 @@ const DataTable = () => {
   useEffect(() => {
     if (changeRoleData) {
       console.log(changeRoleData);
+      toast.success(
+        `${changeRoleData.data.username} is now ${changeRoleData.data.role}`
+      );
     }
     if (changeRoleError) {
-      console.log(changeRoleError);
+      toast.error(changeRoleError.message);
     }
   }, [changeRoleData, changeRoleError]);
   useEffect(() => {
@@ -105,17 +127,17 @@ const DataTable = () => {
   }, [changedRole]);
   useEffect(() => {
     if (error) {
-      console.log(error);
+      toast.error(error.message);
     }
   }, [error]);
   useEffect(() => {
     getToken();
   }, []);
 
-  if (isLoading) return <Loading />;
+  if (isPending) return <Loading />;
 
   return (
-    <div className="roounded-md">
+    <div className="rounded-md">
       <header className="flex items-center justify-start space-x-4">
         <ArrowLeft className="text-xl cursor-pointer" onClick={() => back()} />
         <h1 className="text-xl</div> sm:text-4xl font-bold">Change Role</h1>
@@ -205,7 +227,7 @@ const DataTable = () => {
           </TableBody>
         </Table>
       </div>
-      <div className="pagination mt-4 flex justify-end gap-3">
+      <div className="flex justify-end gap-3 mt-4 pagination">
         <Button
           variant="outline"
           disabled={!table.getCanPreviousPage}
@@ -221,7 +243,7 @@ const DataTable = () => {
           Next
         </Button>
       </div>
-      <div className="buttons flex justify-center md:justify-end gap-4 mt-4">
+      <div className="flex justify-center gap-4 mt-4 buttons md:justify-end">
         <Button
           onClick={onSubmit}
           disabled={isSaveLoading}

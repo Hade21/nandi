@@ -13,6 +13,7 @@ import { LocateFixed } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import MoreOption from "../../components/MoreOption";
 import CardUnit from "./CardUnit";
+import ChangeLocationCard from "./ChangeLocationCard";
 
 export const defaultMapsContainerStyle = {
   width: "100%",
@@ -30,10 +31,8 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
   const [center, setCenter] = useState({ lat: 0, lng: 0 });
   const [clicked, setClicked] = useState<UnitTypes | null>(null);
   const units = useAppSelector((state) => state.units.units);
-  const selectedUnit = useAppSelector((state) => state.units.selectedUnit);
   const isUpdating = useAppSelector((state) => state.units.isUpdating);
   const pinMaps = useAppSelector((state) => state.units.pinMaps);
-  const isGuest = useAppSelector((state) => state.user.isGuest);
   const dispatch = useAppDispatch();
   const mapRef2 = useRef<google.maps.Map | null>(null);
 
@@ -115,7 +114,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
               mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
               position={{ lat: myLocation.latitude, lng: myLocation.longitude }}
             >
-              <div className="p-2 bg-white dark:bg-slate-950 rounded-sm w-max -translate-x-1/2 left-1/2 translate-y-2 cursor-pointer hover:bg-opacity-60">
+              <div className="p-2 -translate-x-1/2 translate-y-2 bg-white rounded-sm cursor-pointer dark:bg-slate-950 w-max left-1/2 hover:bg-opacity-60">
                 <p>{myLocation.label}</p>
               </div>
             </OverlayView>
@@ -183,7 +182,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
           })}
       </GoogleMap>
       <div
-        className="absolute bottom-7 left-2 bg-white dark:bg-slate-950 rounded-sm p-2 cursor-pointer"
+        className="absolute p-2 bg-white rounded-sm cursor-pointer bottom-7 left-2 dark:bg-slate-950"
         onClick={() => {
           if (myLocation?.latitude && myLocation?.longitude) {
             panTo({ lat: myLocation?.latitude!, lng: myLocation?.longitude! });
@@ -195,6 +194,7 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
       <div className="absolute top-14 right-2">
         <MoreOption />
       </div>
+      <ChangeLocationCard />
     </div>
   );
 };

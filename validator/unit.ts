@@ -8,12 +8,12 @@ export const unitSchema = z.object({
 
 export const locationNameSchema = z
   .object({
-    locationName: z
+    location: z
       .string()
       .min(1, "Location name is required")
       .max(100, "Location name is too long"),
   })
-  .refine((data) => data.locationName.length <= 100, {
+  .refine((data) => data.location.length <= 100, {
     message: "Location name is too long",
     path: ["locationName"],
   });

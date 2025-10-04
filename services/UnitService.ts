@@ -3,7 +3,7 @@
 import { auth } from "@/app/auth";
 import axiosInstance from "@/lib/axiosInstance";
 import { CustomError } from "@/types";
-import { unitSchema } from "@/validator/unit";
+import { locationNameSchema, unitSchema } from "@/validator/unit";
 import { AxiosError } from "axios";
 
 function handleError(error: unknown) {
@@ -107,7 +107,7 @@ export async function updateLocation(formData: FormData) {
     createdBy: formData.get("createdBy"),
   };
 
-  const inputCheck = unitSchema.safeParse(data);
+  const inputCheck = locationNameSchema.safeParse(data);
   if (!inputCheck.success) throw new Error(inputCheck.error.message);
 
   try {

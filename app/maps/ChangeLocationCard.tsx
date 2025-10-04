@@ -1,8 +1,9 @@
 "use client";
+import RetrievingLocation from "@/components/RetrievingLocation";
+import { Button } from "@/components/ui/button";
 import useNetworkStatus from "@/hooks/networkStatus";
 import { useUpdateLocationMutation } from "@/hooks/queryUnitHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
-import { GetTokenCookies } from "@/lib/tokenCookies";
 import {
   setIsUpdating,
   setMarkers,
@@ -13,13 +14,11 @@ import { MarkerTypes } from "@/types";
 import { locationNameSchema } from "@/validator/unit";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-// import { TailSpin } from "react-loader-spinner";
 import { MoonLoader } from "react-spinners";
 import { toast } from "sonner";
-import RetrievingLocation from "../../components/RetrievingLocation";
-import { Button } from "../../components/ui/button";
 import {
   Form,
   FormControl,
@@ -52,6 +51,7 @@ const ChangeLocationCard = () => {
   const pinMaps = useAppSelector((state) => state.units.pinMaps);
   const dispatch = useAppDispatch();
   const { isOnline } = useNetworkStatus();
+  const { status } = useSession();
   // const [updateLocation, { isLoading, error, data }] =
   //   useUpdateLocationMutation();
   const { mutate, isPending, error, data } = useUpdateLocationMutation();
@@ -94,15 +94,15 @@ const ChangeLocationCard = () => {
       dispatch(setMarkers([location]));
       return;
     }
-    const res = await GetTokenCookies();
 
-    if (!res.data) {
+    if (status === "unauthenticated") {
       toast.error("Unauthorized", {
         description: "Please login to update location",
       });
+      setIsUpdating(false);
       return;
     }
-    if (res.data) {
+    if (status === "authenticated") {
       const data = new FormData();
       data.append("id", unitData.id);
       data.append("long", body.long);
@@ -110,6 +110,7 @@ const ChangeLocationCard = () => {
       data.append("alt", body.alt);
       data.append("location", body.location);
       data.append("dateTime", body.dateTime);
+      console.log(data);
 
       mutate(data);
     }
@@ -151,6 +152,7 @@ const ChangeLocationCard = () => {
   };
   const pinOnMap = () => {
     const unit = units.filter((unit) => unit.id === id)[0];
+    console.log(unit);
     if (!unit.locations?.length) {
       toast.error("Not Available", {
         description:

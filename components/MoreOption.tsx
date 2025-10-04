@@ -1,8 +1,7 @@
 "use client";
-import { useAppSelector } from "@/hooks/reduxHooks";
-import { CircleUserRound, FilePenLine, ListPlus, Menu } from "lucide-react";
+import { CircleUserRound, ListPlus, Menu } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import Logout from "./Logout";
 import {
   DropdownMenu,
@@ -12,31 +11,20 @@ import {
 } from "./ui/dropdown-menu";
 
 const MoreOption = () => {
-  const isGuest = useAppSelector((state) => state.user.isGuest);
-  const selectedUnit = useAppSelector((state) => state.units.selectedUnit);
   const { push } = useRouter();
-
-  const handleEdit = () => {
-    if (!selectedUnit.id) {
-      toast.error("Missing unit", {
-        description: "Please select a unit first",
-      });
-      return;
-    }
-    push(`/update/${selectedUnit.id}`);
-  };
+  const { status } = useSession();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         {/* <Button variant="outline" size="icon"> */}
-        <div className="p-2 bg-white rounded-lg cursor-pointer shadow-accent">
+        <div className="p-2 bg-white rounded-lg cursor-pointer shadow-accent dark:bg-slate-800 dark:text-white">
           <Menu />
         </div>
         {/* </Button> */}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {!isGuest && (
+        {status === "authenticated" && (
           <DropdownMenuItem
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => push("/account")}
@@ -52,14 +40,7 @@ const MoreOption = () => {
           <ListPlus />
           <span>Add New Unit</span>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="flex items-center gap-2 cursor-pointer"
-          onClick={handleEdit}
-        >
-          <FilePenLine />
-          <span>Edit Unit Detail</span>
-        </DropdownMenuItem>
-        {!isGuest && (
+        {status === "authenticated" && (
           <DropdownMenuItem>
             <Logout />
           </DropdownMenuItem>

@@ -124,7 +124,6 @@ const MapsDataProvider = () => {
       ];
       dispatch(setMarkers(location));
     } else if (data && data.data.length > 0) {
-      console.log(data.data);
       dispatch(setUnits(data.data));
       const locations: MarkerTypes[] = [];
       if (data?.data.length > 0) {

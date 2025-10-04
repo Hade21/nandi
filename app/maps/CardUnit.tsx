@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { setSelectedUnit } from "@/services/unitService-old";
 import { motion } from "motion/react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -26,6 +27,7 @@ const CardUnit = ({
   timeStamp,
 }: CardUnitProps) => {
   const router = useRouter();
+  const { status } = useSession();
   const dispatch = useAppDispatch();
   const units = useAppSelector((state) => state.units.units);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -72,8 +74,8 @@ const CardUnit = ({
       {/* Header with Lamp Icon */}
       <motion.div className="flex items-center justify-center gap-4" layout>
         {isExpanded && (
-          <div className="w-fit h-fit rounded-full bg-blue-400 mr-3 flex items-center justify-center">
-            <div className="w-fit h-fit p-2 rounded-full bg-blue-400 animate-pulse">
+          <div className="flex items-center justify-center mr-3 bg-blue-400 rounded-full w-fit h-fit">
+            <div className="p-2 bg-blue-400 rounded-full w-fit h-fit animate-pulse">
               <Image src={selectIcon(type)} alt={type} width={30} height={30} />
             </div>
           </div>
@@ -98,7 +100,7 @@ const CardUnit = ({
           transition={{ duration: 0.3 }}
         >
           <motion.p
-            className="text-gray-600 dark:text-gray-400 text-center text-xs"
+            className="text-xs text-center text-gray-600 dark:text-gray-400"
             layout
           >
             {egi}
@@ -106,7 +108,7 @@ const CardUnit = ({
 
           {/* Footer */}
           <motion.div className="flex flex-wrap gap-4" layout>
-            <div className="flex items-center gap-3 flex-1 w-full">
+            <div className="flex items-center flex-1 w-full gap-3">
               <Image
                 src={"/location.svg"}
                 alt="Location"
@@ -117,7 +119,7 @@ const CardUnit = ({
                 {locationName}
               </span>
             </div>
-            <div className="flex items-center gap-3 flex-1 w-full">
+            <div className="flex items-center flex-1 w-full gap-3">
               <Image
                 src={"/date.svg"}
                 alt="Last updated"
@@ -129,7 +131,7 @@ const CardUnit = ({
               </span>
             </div>
             {status === "authenticated" && (
-              <div className="action flex items-center justify-center gap-3 w-full">
+              <div className="flex items-center justify-center w-full gap-3 action">
                 <Button type="button" onClick={onClick}>
                   Update Location
                 </Button>
