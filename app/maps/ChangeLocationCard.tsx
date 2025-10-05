@@ -59,7 +59,8 @@ const ChangeLocationCard = () => {
     resolver: zodResolver(locationNameSchema),
   });
 
-  async function onSubmit() {
+  function onSubmit() {
+    console.log("form submit");
     setSavingLocation(true);
     const body = {
       long: pinMaps ? markers[0].longitude.toString() : unitData.long,
@@ -209,6 +210,7 @@ const ChangeLocationCard = () => {
   }, [data, dispatch]);
   useEffect(() => {
     if (error) {
+      console.log(error);
       const body = {
         long: pinMaps ? markers[0].longitude.toString() : unitData.long,
         lat: pinMaps ? markers[0].latitude.toString() : unitData.lat,
@@ -296,6 +298,7 @@ const ChangeLocationCard = () => {
               <Button
                 type="submit"
                 disabled={savingLocation}
+                onClick={onSubmit}
                 className="flex gap-2"
               >
                 {savingLocation && <MoonLoader size={18} color="#3b82f6" />}

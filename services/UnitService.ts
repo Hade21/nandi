@@ -111,7 +111,7 @@ export async function updateLocation(formData: FormData) {
   if (!inputCheck.success) throw new Error(inputCheck.error.message);
 
   try {
-    const response = await axiosInstance.put(
+    const response = await axiosInstance.post(
       `/api/v1/units/${data.id}/location`,
       data,
       {

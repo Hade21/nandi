@@ -123,8 +123,6 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
         {markers &&
           markers.map((marker, index) => {
             let unitData = findUnit(units, marker.latitude, marker.longitude);
-            if (clicked?.id === unitData?.id)
-              console.log("🚀 ~ unitData:", unitData?.name);
             return (
               <MarkerF
                 key={index}
@@ -139,19 +137,19 @@ const Maps = ({ markers, myLocation }: MapsProps) => {
                   },
                   anchor: new google.maps.Point(12, 12),
                 }}
-                zIndex={clicked?.id === unitData?.id ? 1000 : 10}
+                // zIndex={clicked?.id === unitData?.id ? 1000 : 10}
               >
                 <OverlayView
                   mapPaneName={OverlayView.FLOAT_PANE}
                   position={{ lat: marker.latitude, lng: marker.longitude }}
-                  zIndex={clicked?.id === unitData?.id ? 1000 : 10}
+                  // zIndex={clicked?.id === unitData?.id ? 1000 : 10}
                 >
                   <div
                     className="w-max -translate-x-1/2 -translate-y-[125%]"
-                    style={{
-                      zIndex: clicked?.id === unitData?.id ? 1000 : 10,
-                    }}
-                    onClick={() => setClicked(unitData!)}
+                    // style={{
+                    //   zIndex: clicked?.id === unitData?.id ? 1000 : 10,
+                    // }}
+                    // onClick={() => setClicked(unitData!)}
                     // onClick={() => {
                     //   const unit = {
                     //     selectedUnit: {
